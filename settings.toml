@@ -1,0 +1,11 @@
+[default]
+#SQLALCHEMY_DATABASE_URI = ''
+TITLE = 'Stock Prisma'
+#SECRET_KEY = "JSHSHJDS"
+EXTENSIOS = [
+    "stock_prisma.blueprints.views",
+    "stock_prisma.blueprints.restapi"
+]
+
+#[production]
+#SQLALCHEMY_DATABASE_URI = '' #apontar o banco de dados que foi criado
