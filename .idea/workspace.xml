@@ -5,10 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="114c430d-ab39-4d9a-acb1-87f6bb283eeb" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/stock_prisma.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/stock_prisma.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/stock_prisma/models/Compartimento.py" beforeDir="false" afterPath="$PROJECT_DIR$/stock_prisma/models/Compartimento.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/stock_prisma/models/Insumo.py" beforeDir="false" afterPath="$PROJECT_DIR$/stock_prisma/models/Insumo.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/stock_prisma/models/Movimentacao.py" beforeDir="false" afterPath="$PROJECT_DIR$/stock_prisma/models/Movimentacao.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/stock_prisma/models/Usuario.py" beforeDir="false" afterPath="$PROJECT_DIR$/stock_prisma/models/Usuario.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -171,7 +172,7 @@
       <workItem from="1778537731001" duration="816000" />
       <workItem from="1778542841826" duration="1483000" />
       <workItem from="1778544340109" duration="834000" />
-      <workItem from="1779227550218" duration="1136000" />
+      <workItem from="1779227550218" duration="1791000" />
     </task>
     <servers />
   </component>

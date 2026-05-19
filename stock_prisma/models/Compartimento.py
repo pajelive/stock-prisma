@@ -1,5 +1,16 @@
 class Compartimento:
-    def __init__(self, nome,localizacao,peso_atual,peso_tara,sensor_ativo,status,led_status,ultima_calibracao):
+    def __init__(
+        self,
+        nome,
+        localizacao,
+        peso_atual,
+        peso_tara,
+        sensor_ativo,
+        status,
+        led_status,
+        ultima_calibracao,
+        insumo
+    ):
         self.nome = nome
         self.localizacao = localizacao
         self.peso_atual = peso_atual
@@ -9,5 +20,5 @@ class Compartimento:
         self.led_status = led_status
         self.ultima_calibracao = ultima_calibracao
 
-
-
+        # RELACIONAMENTO
+        self.insumo = insumo

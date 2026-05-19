@@ -1,5 +1,14 @@
 class Insumo:
-    def __init__(self, nome,categoria,unidade,uid_rfid,peso_unitario,qtd_minima,ativo):
+    def __init__(
+        self,
+        nome,
+        categoria,
+        unidade,
+        uid_rfid,
+        peso_unitario,
+        qtd_minima,
+        ativo
+    ):
         self.nome = nome
         self.categoria = categoria
         self.unidade = unidade
@@ -8,4 +17,6 @@ class Insumo:
         self.qtd_minima = qtd_minima
         self.ativo = ativo
 
+        # RELACIONAMENTO
+        self.compartimentos = []
 
