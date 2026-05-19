@@ -5,15 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="114c430d-ab39-4d9a-acb1-87f6bb283eeb" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/stock_prisma/models/AlertaEstoque.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/stock_prisma/models/Compartimento.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/stock_prisma/models/EtapaProcesso.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/stock_prisma/models/Insumo.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/stock_prisma/models/Movimentacao.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/stock_prisma/models/OrdemProducao.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/stock_prisma/models/Perfil.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/stock_prisma/models/TipoMovimentacao.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/stock_prisma/models/Usuario.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/stock_prisma.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/stock_prisma.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/stock_prisma/models/Movimentacao.py" beforeDir="false" afterPath="$PROJECT_DIR$/stock_prisma/models/Movimentacao.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -53,6 +48,7 @@
   &quot;keyToString&quot;: {
     &quot;Python.app.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;last_opened_file_path&quot;: &quot;/home/romulo/PycharmProjects/stock_prisma&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
@@ -74,7 +70,7 @@
       <recent name="$PROJECT_DIR$/pythonsis" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.stock_prisma">
+  <component name="RunManager" selected="Flask server.stock_prisma">
     <configuration name="app" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="stock_prisma" />
       <option name="ENV_FILES" value="" />
@@ -131,6 +127,22 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="stock_prisma" type="Python.FlaskServer">
+      <module name="stock_prisma" />
+      <option name="target" value="$PROJECT_DIR$/stock_prisma/app.py" />
+      <option name="targetType" value="PATH" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="launchJavascriptDebuger" value="false" />
+      <method v="2" />
+    </configuration>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
@@ -158,6 +170,8 @@
       <workItem from="1772747089465" duration="114000" />
       <workItem from="1778537731001" duration="816000" />
       <workItem from="1778542841826" duration="1483000" />
+      <workItem from="1778544340109" duration="834000" />
+      <workItem from="1779227550218" duration="1136000" />
     </task>
     <servers />
   </component>
