@@ -1,11 +1,19 @@
 [default]
 #SQLALCHEMY_DATABASE_URI = ''
 TITLE = 'Stock Prisma'
-#SECRET_KEY = "JSHSHJDS"
+
+DB_USER = "usuario"
+DB_PASSWORD = "JSHSHJDS"
+DB_HOST = "localhost"
+DB_PORT = 5432
+DB_NAME = "stock_prisma"
+
+SQLALCHEMY_DATABASE_URI = "@format postgresql://{this.DB_USER}:{this.DB_PASSWORD}@{this.DB_HOST}:{this.DB_PORT}/{this.DB_NAME}"
+
 EXTENSIONS = [
     "stock_prisma.blueprints.views",
     "stock_prisma.blueprints.restapi"
 ]
 
 #[production]
-#SQLALCHEMY_DATABASE_URI = '' #apontar o banco de dados que foi criado
+#SQLALCHEMY_DATABASE_URI = 'postgresql://usuario:senha@localhost:5432/stock_prisma' #apontar o banco de dados que foi criado

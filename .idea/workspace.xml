@@ -7,9 +7,6 @@
     <list default="true" id="114c430d-ab39-4d9a-acb1-87f6bb283eeb" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/settings.toml" beforeDir="false" afterPath="$PROJECT_DIR$/settings.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/stock_prisma/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/stock_prisma/app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/stock_prisma/ext/configuration.py" beforeDir="false" afterPath="$PROJECT_DIR$/stock_prisma/ext/configuration.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/stock_prisma/ext/database.py" beforeDir="false" afterPath="$PROJECT_DIR$/stock_prisma/ext/database.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -173,7 +170,7 @@
       <workItem from="1778537731001" duration="816000" />
       <workItem from="1778542841826" duration="1483000" />
       <workItem from="1778544340109" duration="834000" />
-      <workItem from="1779227550218" duration="3859000" />
+      <workItem from="1779227550218" duration="5300000" />
     </task>
     <servers />
   </component>
