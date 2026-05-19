@@ -6,10 +6,10 @@
   <component name="ChangeListManager">
     <list default="true" id="114c430d-ab39-4d9a-acb1-87f6bb283eeb" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/stock_prisma/models/Compartimento.py" beforeDir="false" afterPath="$PROJECT_DIR$/stock_prisma/models/Compartimento.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/stock_prisma/models/Insumo.py" beforeDir="false" afterPath="$PROJECT_DIR$/stock_prisma/models/Insumo.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/stock_prisma/models/Movimentacao.py" beforeDir="false" afterPath="$PROJECT_DIR$/stock_prisma/models/Movimentacao.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/stock_prisma/models/Usuario.py" beforeDir="false" afterPath="$PROJECT_DIR$/stock_prisma/models/Usuario.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/settings.toml" beforeDir="false" afterPath="$PROJECT_DIR$/settings.toml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/stock_prisma/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/stock_prisma/app.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/stock_prisma/ext/configuration.py" beforeDir="false" afterPath="$PROJECT_DIR$/stock_prisma/ext/configuration.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/stock_prisma/ext/database.py" beforeDir="false" afterPath="$PROJECT_DIR$/stock_prisma/ext/database.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -45,22 +45,23 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Python.app.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/romulo/PycharmProjects/stock_prisma&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Flask server.stock_prisma.executor": "Run",
+    "Python.app.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "/home/romulo/PycharmProjects/stock_prisma",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/pythonsis/blueprints/restapi" />
@@ -172,7 +173,7 @@
       <workItem from="1778537731001" duration="816000" />
       <workItem from="1778542841826" duration="1483000" />
       <workItem from="1778544340109" duration="834000" />
-      <workItem from="1779227550218" duration="1791000" />
+      <workItem from="1779227550218" duration="3859000" />
     </task>
     <servers />
   </component>
@@ -181,6 +182,7 @@
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/stock_prisma$app.coverage" NAME="app Coverage Results" MODIFIED="1778543947969" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/stock_prisma$stock_prisma.coverage" NAME="stock_prisma Coverage Results" MODIFIED="1779231176722" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/pythonis$app.coverage" NAME="app Coverage Results" MODIFIED="1769561138636" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

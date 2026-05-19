@@ -2,7 +2,7 @@
 #SQLALCHEMY_DATABASE_URI = ''
 TITLE = 'Stock Prisma'
 #SECRET_KEY = "JSHSHJDS"
-EXTENSIOS = [
+EXTENSIONS = [
     "stock_prisma.blueprints.views",
     "stock_prisma.blueprints.restapi"
 ]
