@@ -1,11 +1,9 @@
-from flask import jsonify, abort
 from flask_restful import Resource
-#from stock_prisma.ext.database import Clientes
+from flask import request
 
-# class ClientResource(Resource):
-#     def get(self):
-#         clientes = ClientResource or abort(204)
-#         return jsonify({
-#             'clientes': cliente.to_dict()
-#             for cliente in clientes
-#         })
+from stock_prisma.models import (
+    Compartimento,
+    Movimentacao
+)
+
+from stock_prisma.ext.database import db
