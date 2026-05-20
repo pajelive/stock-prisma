@@ -13,6 +13,7 @@ class Movimentacao(db.Model):
     op_id = db.Column(db.BigInteger, db.ForeignKey("ordem_producao.id"))
     etapa_id = db.Column(db.BigInteger, db.ForeignKey("etapa_processo.id"))
     tipo_movimentacao_id = db.Column(db.BigInteger, db.ForeignKey("tipo_movimentacao.id"))
+    ferramenta_id = db.Column(db.BigInteger, db.ForeignKey("ferramenta.id"))
 
     usuario = db.relationship("Usuario", back_populates="movimentacoes")
     compartimento = db.relationship("Compartimento", back_populates="movimentacoes")
@@ -20,3 +21,4 @@ class Movimentacao(db.Model):
     etapa = db.relationship("EtapaProcesso", back_populates="movimentacoes")
     tipo_movimentacao = db.relationship("TipoMovimentacao")
 
+    ferramenta = db.relationship("Ferramenta", back_populates="movimentacoes")

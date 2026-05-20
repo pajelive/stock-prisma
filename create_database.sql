@@ -73,6 +73,7 @@ CREATE TABLE movimentacao (
     id BIGSERIAL PRIMARY KEY,
 
     usuario_id BIGINT REFERENCES usuario(id),
+    ferramenta_id BIGINT REFERENCES ferramenta(id),
     compartimento_id BIGINT REFERENCES compartimento(id),
 
     op_id BIGINT REFERENCES ordem_producao(id),
@@ -83,6 +84,22 @@ CREATE TABLE movimentacao (
     data_hora TIMESTAMP DEFAULT NOW(),
     origem_leitura VARCHAR(100),
     observacao VARCHAR(300),
+
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE ferramenta (
+    id BIGSERIAL PRIMARY KEY,
+
+    nome VARCHAR(100) NOT NULL,
+    categoria VARCHAR(50),
+    descricao VARCHAR(300),
+
+    uid_rfid VARCHAR(30) UNIQUE NOT NULL,
+
+    status VARCHAR(30) DEFAULT 'DISPONIVEL',
+
+    ativo BOOLEAN DEFAULT TRUE,
 
     created_at TIMESTAMP DEFAULT NOW()
 );

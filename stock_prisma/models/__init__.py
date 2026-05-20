@@ -7,3 +7,4 @@ from .Insumo import Insumo
 from .EtapaProcesso import EtapaProcesso
 from .OrdemProducao import OrdemProducao
 from .AlertaEstoque import AlertaEstoque
+from .Ferramenta import Ferramenta

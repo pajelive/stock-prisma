@@ -1,34 +1,60 @@
 from stock_prisma.app import create_app
 from stock_prisma.ext.database import db
-from stock_prisma.models import OrdemProducao, EtapaProcesso
+
+from stock_prisma.models import Ferramenta, Usuario, Compartimento, TipoMovimentacao, Movimentacao
+
+from datetime import datetime
 
 app = create_app()
 
 with app.app_context():
 
-    op = OrdemProducao(
-        codigo="OP-105",
-        descricao="Produção de peças",
-        status="EM_ANDAMENTO"
+    # -------------------------
+    # 1. cria ferramenta
+    # -------------------------
+    ferramenta = Ferramenta(
+        nome="Parafusadeira Bosch",
+        categoria="Elétrica",
+        descricao="Ferramenta elétrica de montagem",
+        uid_rfid="RFID_FERR_001",
+        status="DISPONIVEL",
+        ativo=True
     )
 
-    db.session.add(op)
+    db.session.add(ferramenta)
     db.session.commit()
 
-    print("[OK] Ordem de produção criada")
+    print("[OK] Ferramenta criada")
 
+    # -------------------------
+    # 2. busca dependências
+    # -------------------------
+    usuario = Usuario.query.first()
+    compartimento = Compartimento.query.first()
+    tipo = TipoMovimentacao.query.first()
 
-    etapa = EtapaProcesso(
-        nome="Separação",
-        descricao="Separação de materiais",
-        ordem=1,
-        ativo=True,
-        op_id=op.id
+    if not usuario or not compartimento or not tipo:
+        print("❌ Dados base não encontrados")
+        exit()
+
+    # -------------------------
+    # 3. cria movimentação com ferramenta
+    # -------------------------
+    mov = Movimentacao(
+        usuario_id=usuario.id,
+        compartimento_id=compartimento.id,
+        ferramenta_id=ferramenta.id,
+        tipo_movimentacao_id=tipo.id,
+
+        quantidade=1,
+        data_hora=datetime.now(),
+        origem_leitura="RFID",
+        observacao="Teste ferramenta"
     )
 
-    db.session.add(etapa)
+    db.session.add(mov)
     db.session.commit()
 
-    print("[OK] Etapa criada")
+    print("[OK] Movimentação com ferramenta criada")
 
     print("\n🔥 Teste finalizado com sucesso!")
