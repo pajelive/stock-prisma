@@ -10,3 +10,5 @@ class OrdemProducao(db.Model):
     data_fim = db.Column(db.DateTime, nullable=True)
 
     movimentacoes = db.relationship("Movimentacao", back_populates="ordem_producao")
+
+    etapas = db.relationship("EtapaProcesso",back_populates="ordem_producao")

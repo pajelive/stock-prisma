@@ -9,3 +9,8 @@ class EtapaProcesso(db.Model):
     ativo = db.Column(db.Boolean, default=True)
 
     movimentacoes = db.relationship("Movimentacao", back_populates="etapa")
+
+    op_id = db.Column(db.BigInteger,db.ForeignKey("ordem_producao.id"))
+
+    # relacionamento ORM
+    ordem_producao = db.relationship("OrdemProducao",back_populates="etapas")
