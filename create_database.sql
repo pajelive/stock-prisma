@@ -71,14 +71,19 @@ CREATE TABLE compartimento (
 
 CREATE TABLE movimentacao (
     id BIGSERIAL PRIMARY KEY,
+
     usuario_id BIGINT REFERENCES usuario(id),
+    compartimento_id BIGINT REFERENCES compartimento(id),
+
     op_id BIGINT REFERENCES ordem_producao(id),
     etapa_id BIGINT REFERENCES etapa_processo(id),
     tipo_movimentacao_id BIGINT REFERENCES tipo_movimentacao(id),
+
     quantidade INT,
     data_hora TIMESTAMP DEFAULT NOW(),
     origem_leitura VARCHAR(100),
     observacao VARCHAR(300),
+
     created_at TIMESTAMP DEFAULT NOW()
 );
 
