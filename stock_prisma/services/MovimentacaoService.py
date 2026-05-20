@@ -1,3 +1,4 @@
+from datetime import datetime
 from stock_prisma.ext.database import db
 
 from stock_prisma.models import (Usuario,Compartimento,TipoMovimentacao,Movimentacao,Ferramenta)
@@ -41,7 +42,8 @@ class MovimentacaoService:
             tipo_movimentacao_id=tipo.id if tipo else None,
             quantidade=data.get("quantidade", 1),
             origem_leitura=data.get("origem", "API"),
-            observacao=data.get("observacao")
+            observacao=data.get("observacao"),
+            data_hora=datetime.utcnow()
         )
 
         db.session.add(mov)
