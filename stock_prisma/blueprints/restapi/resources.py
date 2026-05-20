@@ -36,7 +36,7 @@ class MovimentacaoResource(Resource):
         dados = request.json
 
         try:
-            mov = MovimentacaoService.registrar(dados)
+            mov = MovimentacaoService.registrar_movimentacao(dados)
 
             return {
                 "msg": "Movimentação registrada",
