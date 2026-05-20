@@ -9,7 +9,6 @@ class Compartimento(db.Model):
     peso_tara = db.Column(db.Float, nullable=False)
     sensor_ativo = db.Column(db.Boolean, nullable=False)
     status = db.Column(db.String(50), nullable=False)
-    led_status = db.Column(db.String(50), nullable=False)
     ultima_calibracao = db.Column(db.DateTime, nullable=True)
 
     insumo_id = db.Column(db.BigInteger, db.ForeignKey("insumo.id"))
