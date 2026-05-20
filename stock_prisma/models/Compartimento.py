@@ -1,24 +1,12 @@
-class Compartimento:
-    def __init__(
-        self,
-        nome,
-        localizacao,
-        peso_atual,
-        peso_tara,
-        sensor_ativo,
-        status,
-        led_status,
-        ultima_calibracao,
-        insumo
-    ):
-        self.nome = nome
-        self.localizacao = localizacao
-        self.peso_atual = peso_atual
-        self.peso_tara = peso_tara
-        self.sensor_ativo = sensor_ativo
-        self.status = status
-        self.led_status = led_status
-        self.ultima_calibracao = ultima_calibracao
+class Compartimento(db.Model):
+    __tablename__ = 'compartimento'
 
-        # RELACIONAMENTO
-        self.insumo = insumo
+    id = db.Column(db.Integer, primary_key=True)
+    nome = db.Column(db.String(255), nullable=False)
+    localizacao = db.Column(db.String(255), nullable=False)
+    peso_atual = db.Column(db.Float, nullable=False)
+    peso_tara = db.Column(db.Float, nullable=False)
+    sensor_ativo = db.Column(db.Boolean, nullable=False)
+    status = db.Column(db.String(50), nullable=False)
+    led_status = db.Column(db.String(50), nullable=False)
+    ultima_calibracao = db.Column(db.DateTime, nullable=True)

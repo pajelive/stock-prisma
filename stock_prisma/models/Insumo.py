@@ -1,22 +1,11 @@
-class Insumo:
-    def __init__(
-        self,
-        nome,
-        categoria,
-        unidade,
-        uid_rfid,
-        peso_unitario,
-        qtd_minima,
-        ativo
-    ):
-        self.nome = nome
-        self.categoria = categoria
-        self.unidade = unidade
-        self.uid_rfid = uid_rfid
-        self.peso_unitario = peso_unitario
-        self.qtd_minima = qtd_minima
-        self.ativo = ativo
+class Insumo(db.Model):
+    __tablename__ = 'insumo'
 
-        # RELACIONAMENTO
-        self.compartimentos = []
-
+    id = db.Column(db.Integer, primary_key=True)
+    nome = db.Column(db.String(255), nullable=False)
+    categoria = db.Column(db.String(255), nullable=False)
+    unidade = db.Column(db.String(50), nullable=False)
+    uid_rfid = db.Column(db.String(255), unique=True, nullable=False)
+    peso_unitario = db.Column(db.Float, nullable=False)
+    qtd_minima = db.Column(db.Integer, nullable=False)
+    ativo = db.Column(db.Boolean, default=True)

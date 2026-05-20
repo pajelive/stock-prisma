@@ -1,20 +1,13 @@
-class Usuario:
-    def __init__(
-        self,
-        nome,
-        matricula,
-        uid_rfid,
-        setor,
-        ativo,
-        perfil
-    ):
-        self.nome = nome
-        self.matricula = matricula
-        self.uid_rfid = uid_rfid
-        self.setor = setor
-        self.ativo = ativo
+class Usuario(db.Model):
+    __tablename__ = 'usuario'
 
-        # RELACIONAMENTO
-        self.perfil = perfil
+    id = db.Column(db.Integer, primary_key=True)
+    nome = db.Column(db.String(255), nullable=False)
+    matricula = db.Column(db.String(255), nullable=False, unique=True)
+    uid_rfid = db.Column(db.String(255), nullable=False, unique=True)
+    setor = db.Column(db.String(255), nullable=False)
+    ativo = db.Column(db.Boolean, nullable=False)
+
+ 
 
 

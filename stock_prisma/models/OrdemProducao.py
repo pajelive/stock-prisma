@@ -1,17 +1,9 @@
-class OrdemProducao:
-    def __init__(
-        self,
-        codigo,
-        descricao,
-        status,
-        data_inicio,
-        data_fim
-    ):
-        self.codigo = codigo
-        self.descricao = descricao
-        self.status = status
-        self.data_inicio = data_inicio
-        self.data_fim = data_fim
+class OrdemProducao(db.Model):
+    __tablename__ = 'ordem_producao'
 
-        # RELACIONAMENTO
-        self.etapas = []
+    id = db.Column(db.Integer, primary_key=True)
+    codigo = db.Column(db.String(255), nullable=False, unique=True)
+    descricao = db.Column(db.String(255), nullable=False)
+    status = db.Column(db.String(50), nullable=False)
+    data_inicio = db.Column(db.DateTime, nullable=False)
+    data_fim = db.Column(db.DateTime, nullable=True)

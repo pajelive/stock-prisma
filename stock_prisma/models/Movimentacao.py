@@ -1,28 +1,9 @@
-class Movimentacao:
-    def __init__(
-        self,
-        usuario,
-        insumo,
-        compartimento,
-        ordem_producao,
-        etapa_processo,
-        tipo_movimentacao,
-        quantidade,
-        data_hora,
-        origem_leitura,
-        observacao
-    ):
+class Movimentacao(db.Model):
+    __tablename__ = 'movimentacao'
 
-        # RELACIONAMENTOS
-        self.usuario = usuario
-        self.insumo = insumo
-        self.compartimento = compartimento
-        self.ordem_producao = ordem_producao
-        self.etapa_processo = etapa_processo
-        self.tipo_movimentacao = tipo_movimentacao
+    id = db.Column(db.Integer, primary_key=True)
+    quantidade = db.Column(db.Float, nullable=False)
+    data_hora = db.Column(db.DateTime, nullable=False)
+    origem_leitura = db.Column(db.String(255), nullable=False)
+    observacao = db.Column(db.String(255), nullable=True)
 
-        # DADOS
-        self.quantidade = quantidade
-        self.data_hora = data_hora
-        self.origem_leitura = origem_leitura
-        self.observacao = observacao

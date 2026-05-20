@@ -1,16 +1,8 @@
-class EtapaProcesso:
-    def __init__(
-        self,
-        nome,
-        descricao,
-        ordem,
-        ativo,
-        ordem_producao
-    ):
-        self.nome = nome
-        self.descricao = descricao
-        self.ordem = ordem
-        self.ativo = ativo
-
-        # RELACIONAMENTO
-        self.ordem_producao = ordem_producao
+class EtapaProcesso(db.Model):
+    __tablename__ = 'etapa_processo'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    nome = db.Column(db.String(255), nullable=False)
+    descricao = db.Column(db.String(255), nullable=True)
+    ordem = db.Column(db.Integer, nullable=False)
+    ativo = db.Column(db.Boolean, default=True)
