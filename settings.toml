@@ -11,6 +11,7 @@ DB_NAME = "postgres"
 SQLALCHEMY_DATABASE_URI = "@format postgresql://{this.DB_USER}:{this.DB_PASSWORD}@{this.DB_HOST}:{this.DB_PORT}/{this.DB_NAME}"
 
 EXTENSIONS = [
+    "stock_prisma.ext.database",
     "stock_prisma.blueprints.views",
     "stock_prisma.blueprints.restapi"
 ]
