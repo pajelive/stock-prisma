@@ -1,3 +1,4 @@
+from stock_prisma.ext.database import db
 class Perfil(db.Model):
     __tablename__ = 'perfil'
 

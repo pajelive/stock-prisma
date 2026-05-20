@@ -1,3 +1,4 @@
+from stock_prisma.ext.database import db
 class AlertaEstoque(db.Model):
     __tablename__ = 'alerta_estoque'
 

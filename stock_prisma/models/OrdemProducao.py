@@ -1,3 +1,4 @@
+from stock_prisma.ext.database import db
 class OrdemProducao(db.Model):
     __tablename__ = 'ordem_producao'
 

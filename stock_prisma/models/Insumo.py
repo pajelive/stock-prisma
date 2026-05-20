@@ -1,3 +1,4 @@
+from stock_prisma.ext.database import db
 class Insumo(db.Model):
     __tablename__ = 'insumo'
 

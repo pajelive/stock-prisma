@@ -1,3 +1,4 @@
+from stock_prisma.ext.database import db
 class TipoMovimentacao(db.Model):
     __tablename__ = 'tipo_movimentacao'
     

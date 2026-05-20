@@ -1,3 +1,4 @@
+from stock_prisma.ext.database import db
 class EtapaProcesso(db.Model):
     __tablename__ = 'etapa_processo'
     
