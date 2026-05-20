@@ -7,3 +7,15 @@ class Movimentacao(db.Model):
     origem_leitura = db.Column(db.String(255), nullable=False)
     observacao = db.Column(db.String(255), nullable=True)
 
+    usuario_id = db.Column(db.BigInteger, db.ForeignKey("usuario.id"))
+    compartimento_id = db.Column(db.BigInteger, db.ForeignKey("compartimento.id"))
+    op_id = db.Column(db.BigInteger, db.ForeignKey("ordem_producao.id"))
+    etapa_id = db.Column(db.BigInteger, db.ForeignKey("etapa_processo.id"))
+    tipo_movimentacao_id = db.Column(db.BigInteger, db.ForeignKey("tipo_movimentacao.id"))
+
+    usuario = db.relationship("Usuario", back_populates="movimentacoes")
+    compartimento = db.relationship("Compartimento", back_populates="movimentacoes")
+    ordem_producao = db.relationship("OrdemProducao", back_populates="movimentacoes")
+    etapa = db.relationship("EtapaProcesso", back_populates="movimentacoes")
+    tipo_movimentacao = db.relationship("TipoMovimentacao")
+

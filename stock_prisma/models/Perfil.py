@@ -5,4 +5,4 @@ class Perfil(db.Model):
     nome = db.Column(db.String(255), nullable=False)
     descricao = db.Column(db.String(255), nullable=True)
 
-
+    usuarios = db.relationship("Usuario", back_populates="perfil")

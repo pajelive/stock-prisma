@@ -9,3 +9,5 @@ class Insumo(db.Model):
     peso_unitario = db.Column(db.Float, nullable=False)
     qtd_minima = db.Column(db.Integer, nullable=False)
     ativo = db.Column(db.Boolean, default=True)
+
+    compartimentos = db.relationship("Compartimento", back_populates="insumo")

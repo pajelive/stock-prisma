@@ -6,3 +6,5 @@ class EtapaProcesso(db.Model):
     descricao = db.Column(db.String(255), nullable=True)
     ordem = db.Column(db.Integer, nullable=False)
     ativo = db.Column(db.Boolean, default=True)
+
+    movimentacoes = db.relationship("Movimentacao", back_populates="etapa")

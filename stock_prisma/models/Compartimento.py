@@ -10,3 +10,9 @@ class Compartimento(db.Model):
     status = db.Column(db.String(50), nullable=False)
     led_status = db.Column(db.String(50), nullable=False)
     ultima_calibracao = db.Column(db.DateTime, nullable=True)
+
+    insumo_id = db.Column(db.BigInteger, db.ForeignKey("insumo.id"))
+
+    insumo = db.relationship("Insumo", back_populates="compartimentos")
+
+    movimentacoes = db.relationship("Movimentacao", back_populates="compartimento")

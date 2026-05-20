@@ -7,3 +7,5 @@ class OrdemProducao(db.Model):
     status = db.Column(db.String(50), nullable=False)
     data_inicio = db.Column(db.DateTime, nullable=False)
     data_fim = db.Column(db.DateTime, nullable=True)
+
+    movimentacoes = db.relationship("Movimentacao", back_populates="ordem_producao")

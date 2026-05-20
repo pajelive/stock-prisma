@@ -8,6 +8,8 @@ class Usuario(db.Model):
     setor = db.Column(db.String(255), nullable=False)
     ativo = db.Column(db.Boolean, nullable=False)
 
- 
+    perfil_id = db.Column(db.BigInteger, db.ForeignKey("perfil.id"))
 
+    perfil = db.relationship("Perfil", back_populates="usuarios")
 
+    movimentacoes = db.relationship("Movimentacao", back_populates="usuario")

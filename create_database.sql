@@ -72,7 +72,6 @@ CREATE TABLE compartimento (
 CREATE TABLE movimentacao (
     id BIGSERIAL PRIMARY KEY,
     usuario_id BIGINT REFERENCES usuario(id),
-    insumo_id BIGINT REFERENCES insumo(id),
     op_id BIGINT REFERENCES ordem_producao(id),
     etapa_id BIGINT REFERENCES etapa_processo(id),
     tipo_movimentacao_id BIGINT REFERENCES tipo_movimentacao(id),
