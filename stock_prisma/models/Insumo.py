@@ -8,7 +8,6 @@ class Insumo(db.Model):
     unidade = db.Column(db.String(50), nullable=False)
     uid_rfid = db.Column(db.String(255), unique=True, nullable=False)
     peso_unitario = db.Column(db.Float, nullable=False)
-    qtd_minima = db.Column(db.Integer, nullable=False)
     ativo = db.Column(db.Boolean, default=True)
 
     compartimentos = db.relationship("Compartimento", back_populates="insumo")
