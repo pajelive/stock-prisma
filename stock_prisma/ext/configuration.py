@@ -10,14 +10,10 @@ def load_extensions(app):
 
 
 def init_app(app):
-    # primeiro carrega Dynaconf
     FlaskDynaconf(app)
 
-    # depois sobrescreve com variável de produção (Vercel)
-    db_url = os.getenv("DATABASE_URL")
+    print("[DEBUG] EXTENSIONS:", app.config.get("EXTENSIONS"))
 
-    if db_url:
-        app.config["SQLALCHEMY_DATABASE_URI"] = db_url
-        print("[CONFIG] DATABASE_URL carregada do ambiente (Vercel)")
-    else:
-        print("[CONFIG] DATABASE_URL não encontrada (usando settings.toml)")
+    load_extensions(app)
+
+    print("[DEBUG] app urls:", app.url_map)
