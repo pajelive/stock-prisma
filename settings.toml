@@ -4,10 +4,4 @@ TITLE = 'Stock Prisma'
 
 SQLALCHEMY_DATABASE_URI = "@format {env[DATABASE_URL]}"
 
-EXTENSIONS = [
-    "stock_prisma.ext.database",
-    "stock_prisma.blueprints.views",
-    "stock_prisma.blueprints.restapi"
-]
-
 #[production]
