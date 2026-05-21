@@ -1,29 +1,40 @@
 from datetime import datetime
-from stock_prisma.ext.database import db
+from stock_prisma.models import (
+    Usuario,
+    Compartimento,
+    TipoMovimentacao,
+    Movimentacao,
+    Ferramenta
+)
 
-from stock_prisma.models import (Usuario,Compartimento,TipoMovimentacao,Movimentacao,Ferramenta)
 
 class MovimentacaoService:
 
     @staticmethod
-    def registrar_movimentacao(data):
+    def registrar_movimentacao(data, session):
 
-        usuario = Usuario.query.filter_by(uid_rfid=data["usuario_uid"]).first()
+        usuario = session.query(Usuario).filter_by(
+            uid_rfid=data["usuario_uid"]
+        ).first()
 
         if not usuario:
-            raise Exception("Usuário não encontrado")
+            raise ValueError("Usuário não encontrado")
 
         compartimento = None
         if data.get("compartimento_id"):
-            compartimento = Compartimento.query.get(data["compartimento_id"])
+            compartimento = session.query(Compartimento).get(
+                data["compartimento_id"]
+            )
 
         ferramenta = None
         if data.get("ferramenta_id"):
-            ferramenta = Ferramenta.query.get(data["ferramenta_id"])
+            ferramenta = session.query(Ferramenta).get(
+                data["ferramenta_id"]
+            )
 
         tipo = None
         if data.get("tipo_movimentacao"):
-            tipo = TipoMovimentacao.query.filter_by(
+            tipo = session.query(TipoMovimentacao).filter_by(
                 nome=data["tipo_movimentacao"]
             ).first()
 
@@ -44,7 +55,7 @@ class MovimentacaoService:
             data_hora=datetime.utcnow()
         )
 
-        db.session.add(mov)
-        db.session.commit()
+        session.add(mov)
+        session.flush()  # garante ID antes do commit
 
         return mov
