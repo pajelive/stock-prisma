@@ -18,6 +18,9 @@ def create_app():
     if not database_url:
         raise RuntimeError("POSTGRES_PRISMA_URL não encontrada na Vercel")
 
+    # 🔥 FIX CRÍTICO (SQLAlchemy não aceita postgres://)
+    database_url = database_url.replace("postgres://", "postgresql://")
+
     app.config["SQLALCHEMY_DATABASE_URI"] = database_url
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
