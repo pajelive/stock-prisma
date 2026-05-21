@@ -55,3 +55,5 @@ def create_app():
     print("[BOOT] API carregada com sucesso")
 
     return app
+
+# vercel e banco de dados funcionado api e os carai
