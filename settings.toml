@@ -16,4 +16,3 @@ EXTENSIONS = [
 ]
 
 #[production]
-#SQLALCHEMY_DATABASE_URI = 'postgresql://usuario:senha@localhost:5432/stock_prisma' #apontar o banco de dados que foi criado
