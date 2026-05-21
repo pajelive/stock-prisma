@@ -10,8 +10,6 @@ def load_extensions(app):
 
 
 def init_app(app):
-    # primeiro carrega Dynaconf
-    FlaskDynaconf(app)
 
     # depois sobrescreve com variável de produção (Vercel)
     db_url = os.getenv("DATABASE_URL")
