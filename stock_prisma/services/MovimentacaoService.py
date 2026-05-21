@@ -8,9 +8,7 @@ class MovimentacaoService:
     @staticmethod
     def registrar_movimentacao(data):
 
-        usuario = Usuario.query.filter_by(
-            uid_rfid=data["usuario_uid"]
-        ).first()
+        usuario = Usuario.query.filter_by(uid_rfid=data["usuario_uid"]).first()
 
         if not usuario:
             raise Exception("Usuário não encontrado")

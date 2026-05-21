@@ -6,21 +6,11 @@
 
 MFRC522 rfid(SS_PIN, RST_PIN);
 
-enum Modo {
-  LEITURA,
-  CADASTRO_CARTAO,
-  CADASTRO_TAG
-};
-
-Modo modoAtual = LEITURA;
-
-String nomeCadastro = "";
-
-// Controle anti-repetição
-String ultimoUID = "";
+// debounce
+char ultimoUID[32] = "";
 unsigned long ultimoTempo = 0;
 
-const unsigned long intervaloLeitura = 2000;
+const unsigned long intervaloLeitura = 3000;
 
 void setup() {
 
@@ -30,132 +20,60 @@ void setup() {
 
   rfid.PCD_Init();
 
+  delay(4);
+
   Serial.println("Sistema RFID iniciado");
 }
 
 void loop() {
 
-  verificarSerial();
-
-  if (!rfid.PICC_IsNewCardPresent())
+  // cartão presente?
+  if (!rfid.PICC_IsNewCardPresent()) {
+    delay(10);
     return;
-
-  if (!rfid.PICC_ReadCardSerial())
-    return;
-
-  switch (modoAtual) {
-
-    case LEITURA:
-      lerUID();
-      break;
-
-    case CADASTRO_CARTAO:
-      cadastrarUID("CARTAO");
-      break;
-
-    case CADASTRO_TAG:
-      cadastrarUID("TAG");
-      break;
   }
 
-  // Finaliza comunicação com a tag/cartão
+  // conseguiu ler?
+  if (!rfid.PICC_ReadCardSerial()) {
+    delay(10);
+    return;
+  }
+
+  char uidAtual[32] = "";
+
+  for (byte i = 0; i < rfid.uid.size; i++) {
+
+    char buffer[4];
+
+    sprintf(buffer, "%02X", rfid.uid.uidByte[i]);
+
+    strcat(uidAtual, buffer);
+  }
+
+  // debounce
+  if (
+    strcmp(uidAtual, ultimoUID) == 0 &&
+    millis() - ultimoTempo < intervaloLeitura
+  ) {
+
+    rfid.PICC_HaltA();
+    rfid.PCD_StopCrypto1();
+
+    delay(50);
+
+    return;
+  }
+
+  strcpy(ultimoUID, uidAtual);
+
+  ultimoTempo = millis();
+
+  Serial.print("UID:");
+  Serial.println(uidAtual);
+
   rfid.PICC_HaltA();
 
   rfid.PCD_StopCrypto1();
 
-  // Reinicia RC522 para evitar travamentos
-  rfid.PCD_Init();
-
-  delay(300);
-}
-
-void verificarSerial() {
-
-  if (Serial.available()) {
-
-    String comando = Serial.readStringUntil('\n');
-
-    comando.trim();
-
-    if (comando == "READ") {
-
-      modoAtual = LEITURA;
-
-      Serial.println("Modo leitura");
-
-    } else if (comando.startsWith("WRITE_CARD:")) {
-
-      nomeCadastro = comando.substring(11);
-
-      modoAtual = CADASTRO_CARTAO;
-
-      Serial.println("Aproxime o cartao");
-
-    } else if (comando.startsWith("WRITE_TAG:")) {
-
-      nomeCadastro = comando.substring(10);
-
-      modoAtual = CADASTRO_TAG;
-
-      Serial.println("Aproxime a tag");
-    }
-  }
-}
-
-void lerUID() {
-
-  String uidAtual = "";
-
-  for (byte i = 0; i < rfid.uid.size; i++) {
-
-    if (rfid.uid.uidByte[i] < 0x10)
-      uidAtual += "0";
-
-    uidAtual += String(rfid.uid.uidByte[i], HEX);
-  }
-
-  uidAtual.toUpperCase();
-
-  // Evita repetir mesma leitura várias vezes
-  if (uidAtual == ultimoUID &&
-      millis() - ultimoTempo < intervaloLeitura) {
-
-    return;
-  }
-
-  ultimoUID = uidAtual;
-  ultimoTempo = millis();
-
-  Serial.print("UID:");
-  Serial.println(uidAtual);
-}
-
-void cadastrarUID(String tipo) {
-
-  String uidAtual = "";
-
-  for (byte i = 0; i < rfid.uid.size; i++) {
-
-    if (rfid.uid.uidByte[i] < 0x10)
-      uidAtual += "0";
-
-    uidAtual += String(rfid.uid.uidByte[i], HEX);
-  }
-
-  uidAtual.toUpperCase();
-
-  ultimoUID = uidAtual;
-  ultimoTempo = millis();
-
-  Serial.println(tipo);
-
-  Serial.print("NOME:");
-  Serial.println(nomeCadastro);
-
-  Serial.print("UID:");
-  Serial.println(uidAtual);
-
-  modoAtual = LEITURA;
-
-  Serial.println("Modo leitura");
+  delay(50);
 }
