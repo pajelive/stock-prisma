@@ -27,22 +27,18 @@ class MovimentacaoService:
         # COMPARTIMENTO (OPCIONAL)
         # =========================
         compartimento = None
-        compartimento_uid = data.get("compartimento_uid")
-
-        if compartimento_uid:
+        if data.get("compartimento_uid"):
             compartimento = session.query(Compartimento).filter_by(
-                uid_rfid=compartimento_uid
+                uid_rfid=data["compartimento_uid"]
             ).first()
 
         # =========================
         # FERRAMENTA (OPCIONAL)
         # =========================
         ferramenta = None
-        ferramenta_uid = data.get("ferramenta_uid")
-
-        if ferramenta_uid:
+        if data.get("ferramenta_uid"):
             ferramenta = session.query(Ferramenta).filter_by(
-                uid_rfid=ferramenta_uid
+                uid_rfid=data["ferramenta_uid"]
             ).first()
 
         # =========================
@@ -55,14 +51,13 @@ class MovimentacaoService:
             ).first()
 
         # =========================
-        # ATUALIZAÇÃO DE COMPARTIMENTO
+        # ATUALIZA COMPARTIMENTO
         # =========================
-        if compartimento:
-            if data.get("peso_atual") is not None:
-                compartimento.peso_atual = data["peso_atual"]
+        if compartimento and data.get("peso_atual") is not None:
+            compartimento.peso_atual = data["peso_atual"]
 
         # =========================
-        # MOVIMENTAÇÃO
+        # CRIA MOVIMENTAÇÃO
         # =========================
         mov = Movimentacao(
             usuario_id=usuario.id,
@@ -76,6 +71,7 @@ class MovimentacaoService:
         )
 
         session.add(mov)
-        session.flush()
+
+        # ⚠️ IMPORTANTE: NÃO DAR COMMIT AQUI
 
         return mov

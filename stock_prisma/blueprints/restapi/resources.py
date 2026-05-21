@@ -50,43 +50,32 @@ class CompartimentoResource(Resource):
 # =========================
 # MOVIMENTAÇÃO
 # =========================
+
 class MovimentacaoResource(Resource):
 
     def post(self):
 
-        dados = request.get_json()
-
-        if not dados:
-            return {
-                "success": False,
-                "error": "payload inválido"
-            }, 400
+        data = request.json
 
         try:
             with db.session() as session:
-                mov = MovimentacaoService.registrar_movimentacao(dados, session)
+
+                mov = MovimentacaoService.registrar_movimentacao(data, session)
+
+                session.commit()  # 🔥 AQUI ESTÁ A CORREÇÃO REAL
 
                 return {
                     "success": True,
-                    "data": {
-                        "id": mov.id
-                    },
+                    "data": {"id": mov.id},
                     "message": "Movimentação registrada"
                 }, 201
 
         except ValueError as e:
-            return {
-                "success": False,
-                "error": str(e)
-            }, 400
+            return {"success": False, "error": str(e)}, 400
 
         except Exception as e:
-            print("[ERROR]", str(e))
-            return {
-                "success": False,
-                "error": "erro interno"
-            }, 500
-
+            print("[DB ERROR]", str(e))
+            return {"success": False, "error": "erro interno"}, 500
 
 # =========================
 # RFID TYPE DETECTION
