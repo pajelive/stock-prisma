@@ -2,12 +2,7 @@
 #SQLALCHEMY_DATABASE_URI = ''
 TITLE = 'Stock Prisma'
 
-DB_USER = "postgres"
-DB_HOST = "db.rkhgiwvevpobkzxtbfpk.supabase.co"
-DB_PORT = 5432
-DB_NAME = "postgres"
-
-SQLALCHEMY_DATABASE_URI = "@format postgresql://{this.DB_USER}:{env[DB_PASSWORD]}@{this.DB_HOST}:{this.DB_PORT}/{this.DB_NAME}"
+SQLALCHEMY_DATABASE_URI = "@format {env[DATABASE_URL]}"
 
 EXTENSIONS = [
     "stock_prisma.ext.database",

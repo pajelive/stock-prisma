@@ -4,17 +4,20 @@ from dynaconf import FlaskDynaconf
 
 
 def load_extensions(app):
-    for extension in app.config.get('EXTENSIONS'):
+    for extension in app.config.get("EXTENSIONS", []):
         mod = import_module(extension)
         mod.init_app(app)
 
 
 def init_app(app):
+    # primeiro carrega Dynaconf
     FlaskDynaconf(app)
 
-    # 🔥 OVERRIDE PRODUÇÃO (VERCEL + SUPABASE)
+    # depois sobrescreve com variável de produção (Vercel)
     db_url = os.getenv("DATABASE_URL")
 
     if db_url:
         app.config["SQLALCHEMY_DATABASE_URI"] = db_url
-        print("[CONFIG] DATABASE_URL carregada do ambiente")
+        print("[CONFIG] DATABASE_URL carregada do ambiente (Vercel)")
+    else:
+        print("[CONFIG] DATABASE_URL não encontrada (usando settings.toml)")
