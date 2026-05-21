@@ -5,10 +5,13 @@ from sqlalchemy.pool import NullPool
 
 Base = declarative_base()
 
-DATABASE_URL = os.getenv("POSTGRES_PRISMA_URL")
+raw_url = os.getenv("POSTGRES_PRISMA_URL")
 
-if not DATABASE_URL:
-    raise Exception("POSTGRES_PRISMA_URL não está definida na Vercel")
+if not raw_url:
+    raise Exception("POSTGRES_PRISMA_URL não definida")
+
+# 🔥 FIX CRÍTICO PARA SQLAlchemy 2.x
+DATABASE_URL = raw_url.replace("postgres://", "postgresql://")
 
 engine = create_engine(
     DATABASE_URL,
