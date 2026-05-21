@@ -18,8 +18,16 @@ def create_app():
     if not database_url:
         raise RuntimeError("POSTGRES_PRISMA_URL não encontrada na Vercel")
 
-    # 🔥 FIX CRÍTICO (SQLAlchemy não aceita postgres://)
+    # 🔥 FIX 1: corrigir schema antigo (postgres:// → postgresql://)
     database_url = database_url.replace("postgres://", "postgresql://")
+
+    # 🔥 FIX 2: remover pgbouncer (quebra psycopg2 + SQLAlchemy)
+    if "?pgbouncer=true" in database_url:
+        database_url = database_url.replace("?pgbouncer=true", "")
+
+    # (extra seguro) remove qualquer query string restante
+    if "?" in database_url:
+        database_url = database_url.split("?")[0]
 
     app.config["SQLALCHEMY_DATABASE_URI"] = database_url
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
@@ -30,7 +38,7 @@ def create_app():
     db.init_app(app)
 
     # =========================
-    # ROTA DE TESTE
+    # HEALTHCHECK
     # =========================
     @app.get("/")
     def home():
