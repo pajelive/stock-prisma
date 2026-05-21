@@ -16,10 +16,26 @@ print("[DEBUG] carregou resources.py")
 
 class CompartimentoResource(Resource):
 
-    
     def get(self):
-        print("[DEBUG] GET compartimentos")
-        return {"ok": True}
+        try:
+            with db.session() as session:
+                compartimentos = session.query(Compartimento).all()
+
+                return [
+                    {
+                        "id": c.id,
+                        "nome": c.nome,
+                        "localizacao": c.localizacao,
+                        "peso_atual": c.peso_atual,
+                        "status": c.status,
+                        "insumo_id": c.insumo_id
+                    }
+                    for c in compartimentos
+                ], 200
+
+        except Exception as e:
+            print("[DB ERROR]", str(e))
+            return {"erro": "db failure"}, 500
     
 class MovimentacaoResource(Resource):
 
