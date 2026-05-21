@@ -12,26 +12,14 @@ from stock_prisma.models import (
 
 from stock_prisma.ext.database import db
 
+print("[DEBUG] carregou resources.py")
+
 class CompartimentoResource(Resource):
 
+    
     def get(self):
-
-        compartimentos = Compartimento.query.all()
-
-        dados = []
-
-        for c in compartimentos:
-
-            dados.append({
-                "id": c.id,
-                "nome": c.nome,
-                "localizacao": c.localizacao,
-                "peso_atual": c.peso_atual,
-                "status": c.status,
-                "insumo_id": c.insumo_id
-            })
-
-        return dados, 200
+        print("[DEBUG] GET compartimentos")
+        return {"ok": True}
     
 class MovimentacaoResource(Resource):
 
