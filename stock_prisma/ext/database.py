@@ -1,12 +1,19 @@
-from flask_sqlalchemy import SQLAlchemy
+import os
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker, declarative_base
 from sqlalchemy.pool import NullPool
 
-db = SQLAlchemy()
+Base = declarative_base()
 
-def init_app(app):
-    app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
-        "poolclass": NullPool,
-        "pool_pre_ping": True
-    }
+DATABASE_URL = os.environ.get("POSTGRES_PRISMA_URL")
 
-    db.init_app(app)
+engine = create_engine(
+    DATABASE_URL,
+    poolclass=NullPool,   # importante pra serverless
+    pool_pre_ping=True
+)
+
+SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
+
+def get_session():
+    return SessionLocal()
