@@ -2,8 +2,8 @@ import os
 from flask import Flask, jsonify
 from flask_cors import CORS
 
+from stock_prisma.ext.database import db
 from stock_prisma.blueprints.restapi import init_app as restapi_init
-from stock_prisma.ext.database import init_app as db_init
 
 
 def create_app():
@@ -11,35 +11,36 @@ def create_app():
     CORS(app)
 
     # =========================
-    # CONFIGURAÇÃO DO BANCO
+    # CONFIG DO BANCO (VERCEL + SUPABASE)
     # =========================
-    db_uri = os.getenv("SQLALCHEMY_DATABASE_URI")
+    database_url = os.getenv("POSTGRES_PRISMA_URL")
 
-    if not db_uri:
-        # erro CLARO (em vez de crash misterioso do SQLAlchemy)
-        raise RuntimeError(
-            "Missing environment variable: SQLALCHEMY_DATABASE_URI"
-        )
+    if not database_url:
+        raise RuntimeError("POSTGRES_PRISMA_URL não encontrada na Vercel")
 
-    app.config["SQLALCHEMY_DATABASE_URI"] = db_uri
+    app.config["SQLALCHEMY_DATABASE_URI"] = database_url
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
     # =========================
-    # ROTA DE SAÚDE
+    # INIT EXTENSIONS
+    # =========================
+    db.init_app(app)
+
+    # =========================
+    # ROTA DE TESTE
     # =========================
     @app.get("/")
     def home():
         return jsonify({
             "status": "ok",
-            "db_configured": bool(db_uri)
+            "db_configured": True
         })
 
     # =========================
-    # INIT EXTENSIONS
+    # BLUEPRINTS
     # =========================
-    db_init(app)
     restapi_init(app)
 
-    print("[BOOT] API carregada:", app.url_map)
+    print("[BOOT] API carregada com sucesso")
 
     return app
