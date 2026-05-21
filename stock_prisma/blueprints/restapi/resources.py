@@ -2,8 +2,12 @@ from flask_restful import Resource
 from flask import request
 from stock_prisma.services.MovimentacaoService import MovimentacaoService
 
+
 from stock_prisma.models import (
-    Compartimento
+    Compartimento,
+    Usuario,
+    Ferramenta,
+    Insumo
 )
 
 from stock_prisma.ext.database import db
@@ -48,3 +52,38 @@ class MovimentacaoResource(Resource):
 
         except Exception as e:
             return {"erro": "erro interno"}, 500
+
+class TipoRFIDResource(Resource):
+
+    def get(self, uid):
+
+        usuario = Usuario.query.filter_by(uid_rfid=uid).first()
+
+        if usuario:
+            return {
+                "tipo": "usuario",
+                "id": usuario.id,
+                "nome": usuario.nome
+            }, 200
+
+        ferramenta = Ferramenta.query.filter_by(uid_rfid=uid).first()
+
+        if ferramenta:
+            return {
+                "tipo": "ferramenta",
+                "id": ferramenta.id,
+                "nome": ferramenta.nome
+            }, 200
+
+        insumo = Insumo.query.filter_by(uid_rfid=uid).first()
+
+        if insumo:
+            return {
+                "tipo": "insumo",
+                "id": insumo.id,
+                "nome": insumo.nome
+            }, 200
+
+        return {
+            "erro": "RFID não encontrado"
+        }, 404
