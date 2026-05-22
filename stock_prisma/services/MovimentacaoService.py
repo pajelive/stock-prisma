@@ -59,7 +59,7 @@ class MovimentacaoService:
         # =========================
         # CRIA MOVIMENTAÇÃO
         # =========================
-        BRASILIA = timezone(timedelta(hours=-3))
+
         mov = Movimentacao(
             usuario_id=usuario.id,
             compartimento_id=compartimento.id if compartimento else None,
@@ -68,7 +68,7 @@ class MovimentacaoService:
             quantidade=data.get("quantidade", 1),
             origem_leitura=data.get("origem", "RFID"),
             observacao=data.get("observacao"),
-            data_hora = datetime.now(BRASILIA)
+            data_hora = datetime.now(BRASILIA).replace(tzinfo=None)
         )
 
         session.add(mov)
