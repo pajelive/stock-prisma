@@ -4,7 +4,9 @@ from stock_prisma.models import (
     Compartimento,
     TipoMovimentacao,
     Movimentacao,
-    Ferramenta
+    Ferramenta,
+    EtapaProcesso,
+    OrdemProducao
 )
 
 
@@ -42,12 +44,38 @@ class MovimentacaoService:
             ).first()
 
         # =========================
-        # TIPO MOVIMENTAÇÃO (OPCIONAL)
+        # TIPO MOVIMENTAÇÃO (inferido pela origem)
         # =========================
+        origem = data.get("origem", "RFID_1")
+
+        tipo_nome = None
+        if origem == "RFID_1":
+            tipo_nome = "Retirada"
+        elif origem == "COMPARTIMENTO_1":
+            tipo_nome = "Consumo"
+
         tipo = None
-        if data.get("tipo_movimentacao"):
+        if tipo_nome:
             tipo = session.query(TipoMovimentacao).filter_by(
-                nome=data["tipo_movimentacao"]
+                nome=tipo_nome
+            ).first()
+
+        # =========================
+        # ETAPA PROCESSO (OPCIONAL)
+        # =========================
+        etapa = None
+        if data.get("etapa_id"):
+            etapa = session.query(EtapaProcesso).filter_by(
+                id=data["etapa_id"]
+            ).first()
+
+        # =========================
+        # ORDEM DE PRODUÇÃO (OPCIONAL)
+        # =========================
+        op = None
+        if data.get("op_codigo"):
+            op = session.query(OrdemProducao).filter_by(
+                codigo=data["op_codigo"]
             ).first()
 
         # =========================
@@ -65,14 +93,16 @@ class MovimentacaoService:
             compartimento_id=compartimento.id if compartimento else None,
             ferramenta_id=ferramenta.id if ferramenta else None,
             tipo_movimentacao_id=tipo.id if tipo else None,
+            etapa_id=etapa.id if etapa else None,
+            op_id=op.id if op else None,
             quantidade=data.get("quantidade", 1),
-            origem_leitura=data.get("origem", "RFID"),
+            origem_leitura=origem,
             observacao=data.get("observacao"),
-            data_hora = datetime.now(BRASILIA).replace(tzinfo=None)
+            data_hora=datetime.now(BRASILIA).replace(tzinfo=None)
         )
 
         session.add(mov)
 
-        # ⚠️ IMPORTANTE: NÃO DAR COMMIT AQUI
+        # ⚠️ NÃO DAR COMMIT AQUI
 
         return mov
