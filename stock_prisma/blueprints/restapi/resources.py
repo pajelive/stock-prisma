@@ -1,7 +1,7 @@
 from flask_restful import Resource
 from flask import request
 from stock_prisma.services.MovimentacaoService import MovimentacaoService
-from stock_prisma.models import Compartimento
+from stock_prisma.models import Usuario, Ferramenta, Compartimento
 from stock_prisma.ext.database import db
 
 
@@ -48,3 +48,49 @@ class MovimentacaoResource(Resource):
         except Exception as e:
             db.session.rollback()
             return {"erro": "erro interno", "detalhe": str(e)}, 500
+
+class TipoRFIDResource(Resource):
+
+    def get(self, uid):
+
+        # testa usuário
+        usuario = Usuario.query.filter_by(uid_rfid=uid).first()
+        if usuario:
+            return {
+                "success": True,
+                "data": {
+                    "tipo": "usuario",
+                    "id": usuario.id,
+                    "nome": usuario.nome
+                }
+            }, 200
+
+        # testa ferramenta
+        ferramenta = Ferramenta.query.filter_by(uid_rfid=uid).first()
+        if ferramenta:
+            return {
+                "success": True,
+                "data": {
+                    "tipo": "ferramenta",
+                    "id": ferramenta.id,
+                    "nome": ferramenta.nome
+                }
+            }, 200
+
+        # testa compartimento
+        compartimento = Compartimento.query.filter_by(uid_rfid=uid).first()
+        if compartimento:
+            return {
+                "success": True,
+                "data": {
+                    "tipo": "compartimento",
+                    "id": compartimento.id,
+                    "nome": compartimento.nome
+                }
+            }, 200
+
+        # uid não encontrado
+        return {
+            "success": False,
+            "erro": "UID não encontrado"
+        }, 404
