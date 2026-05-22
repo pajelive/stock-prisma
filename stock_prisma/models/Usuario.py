@@ -11,6 +11,11 @@ class Usuario(db.Model):
 
     perfil_id = db.Column(db.BigInteger, db.ForeignKey("perfil.id"))
 
+    etapa_id = db.Column(db.Integer, db.ForeignKey("etapa_processo.id"))
+
     perfil = db.relationship("Perfil", back_populates="usuarios")
 
     movimentacoes = db.relationship("Movimentacao", back_populates="usuario")
+
+    etapa = db.relationship("EtapaProcesso")
+
