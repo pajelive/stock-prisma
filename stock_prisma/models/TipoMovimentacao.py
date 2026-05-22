@@ -6,4 +6,5 @@ class TipoMovimentacao(db.Model):
     nome = db.Column(db.String(50), nullable=False)
     descricao = db.Column(db.String(200), nullable=True)
 
-    movimentacoes = db.relationship("Movimentacao", back_populates="tipo")
+    # model TipoMovimentacao
+    movimentacoes = db.relationship("Movimentacao", back_populates="tipo_movimentacao")
