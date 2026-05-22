@@ -59,7 +59,7 @@ class MovimentacaoService:
         # =========================
         # CRIA MOVIMENTAÇÃO
         # =========================
-
+        BRASILIA = timezone(timedelta(hours=-3))
         mov = Movimentacao(
             usuario_id=usuario.id,
             compartimento_id=compartimento.id if compartimento else None,
