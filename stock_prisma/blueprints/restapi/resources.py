@@ -53,44 +53,50 @@ class TipoRFIDResource(Resource):
 
     def get(self, uid):
 
-        # testa usuário
-        usuario = Usuario.query.filter_by(uid_rfid=uid).first()
-        if usuario:
-            return {
-                "success": True,
-                "data": {
-                    "tipo": "usuario",
-                    "id": usuario.id,
-                    "nome": usuario.nome
-                }
-            }, 200
+        try:
+            with db.session() as session:
 
-        # testa ferramenta
-        ferramenta = Ferramenta.query.filter_by(uid_rfid=uid).first()
-        if ferramenta:
-            return {
-                "success": True,
-                "data": {
-                    "tipo": "ferramenta",
-                    "id": ferramenta.id,
-                    "nome": ferramenta.nome
-                }
-            }, 200
+                usuario = session.query(Usuario).filter_by(uid_rfid=uid).first()
+                if usuario:
+                    return {
+                        "success": True,
+                        "data": {
+                            "tipo": "usuario",
+                            "id": usuario.id,
+                            "nome": usuario.nome
+                        }
+                    }, 200
 
-        # testa compartimento
-        compartimento = Compartimento.query.filter_by(uid_rfid=uid).first()
-        if compartimento:
-            return {
-                "success": True,
-                "data": {
-                    "tipo": "compartimento",
-                    "id": compartimento.id,
-                    "nome": compartimento.nome
-                }
-            }, 200
+                ferramenta = session.query(Ferramenta).filter_by(uid_rfid=uid).first()
+                if ferramenta:
+                    return {
+                        "success": True,
+                        "data": {
+                            "tipo": "ferramenta",
+                            "id": ferramenta.id,
+                            "nome": ferramenta.nome
+                        }
+                    }, 200
 
-        # uid não encontrado
-        return {
-            "success": False,
-            "erro": "UID não encontrado"
-        }, 404
+                compartimento = session.query(Compartimento).filter_by(uid_rfid=uid).first()
+                if compartimento:
+                    return {
+                        "success": True,
+                        "data": {
+                            "tipo": "compartimento",
+                            "id": compartimento.id,
+                            "nome": compartimento.nome
+                        }
+                    }, 200
+
+                return {
+                    "success": False,
+                    "error": "RFID não encontrado"
+                }, 404
+
+        except Exception as e:
+            print("[ERROR RFID]", str(e))
+            return {
+                "success": False,
+                "error": "erro interno"
+            }, 500
