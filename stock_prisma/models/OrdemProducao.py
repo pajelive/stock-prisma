@@ -11,4 +11,3 @@ class OrdemProducao(db.Model):
 
     movimentacoes = db.relationship("Movimentacao", back_populates="ordem_producao")
 
-    etapas = db.relationship("EtapaProcesso",back_populates="ordem_producao")
