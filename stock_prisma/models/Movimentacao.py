@@ -19,6 +19,6 @@ class Movimentacao(db.Model):
     compartimento = db.relationship("Compartimento", back_populates="movimentacoes")
     ordem_producao = db.relationship("OrdemProducao", back_populates="movimentacoes")
     etapa = db.relationship("EtapaProcesso", back_populates="movimentacoes")
-    tipo_movimentacao = db.relationship("TipoMovimentacao")
+    tipo_movimentacao = db.relationship("TipoMovimentacao", back_populates="movimentacoes")
 
     ferramenta = db.relationship("Ferramenta", back_populates="movimentacoes")
