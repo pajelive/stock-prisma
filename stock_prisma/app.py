@@ -1,6 +1,7 @@
 import os
 from flask import Flask, jsonify
 from flask_cors import CORS
+from flask_jwt_extended import JWTManager
 
 from stock_prisma.ext.database import db
 from stock_prisma.blueprints.restapi import init_app as restapi_init
@@ -31,12 +32,21 @@ def create_app():
 
     app.config["SQLALCHEMY_DATABASE_URI"] = database_url
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+    # =========================
+    # CONFIG JWT
+    # =========================
+    jwt_secret = os.getenv("JWT_SECRET_KEY")
 
+    if not jwt_secret:
+        raise RuntimeError("JWT_SECRET_KEY não encontrada")
+
+    app.config["JWT_SECRET_KEY"] = jwt_secret
+    app.config["JWT_ACCESS_TOKEN_EXPIRES"] = 28800
     # =========================
     # INIT EXTENSIONS
     # =========================
     db.init_app(app)
-
+    JWTManager(app)
     # =========================
     # HEALTHCHECK
     # =========================
