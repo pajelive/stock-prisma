@@ -5,3 +5,4 @@ __pycache__/
 instance/
 .idea/
 venv/
+SENHA_HASH.py

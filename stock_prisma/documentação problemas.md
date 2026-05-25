@@ -244,4 +244,4 @@ Os problemas vieram de 3 fontes principais:
 
 ✔ Backend estável em serverless
 ✔ Banco conectado corretamente
-✔ Arquitetura Flask padronizad
+✔ Arquitetura Flask padronizada
