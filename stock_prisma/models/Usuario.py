@@ -8,6 +8,7 @@ class Usuario(db.Model):
     uid_rfid = db.Column(db.String(255), nullable=True, unique=True)
     setor = db.Column(db.String(255), nullable=False)
     ativo = db.Column(db.Boolean, nullable=False)
+    senha_hash = db.Column(db.String(255), nullable=True)
 
     perfil_id = db.Column(db.BigInteger, db.ForeignKey("perfil.id"))
 
