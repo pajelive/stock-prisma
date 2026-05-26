@@ -1,8 +1,39 @@
+# ==========================================
+# PYTHON
+# ==========================================
 .env
 .venv/
+venv/
 __pycache__/
 *.pyc
 instance/
-.idea/
-venv/
 SENHA_HASH.py
+
+# ==========================================
+# IDE
+# ==========================================
+.idea/
+.vscode/
+
+# ==========================================
+# NEXT / NODE
+# ==========================================
+
+# dependencies
+node_modules/
+.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+coverage/
+
+# next.js
+.next/
+out/
+
+#
