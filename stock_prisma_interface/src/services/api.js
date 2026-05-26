@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-    baseURL: 'https://stockprisma.com.br',
+    baseURL: 'https://stockprisma.com',
     timeout: 5000
 })
 
