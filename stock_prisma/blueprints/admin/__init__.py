@@ -12,7 +12,7 @@ from .resources import (
     OrdemProducaoDetalheResource
 )
 
-bp = Blueprint("admin", __name__, url_prefix="/admin/api/v1")
+bp = Blueprint("admin", __name__, url_prefix="/api/v1/admin")
 
 api = Api(bp)
 
