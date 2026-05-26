@@ -13,26 +13,24 @@ def create_app():
     CORS(app)
 
     # =========================
-    # CONFIG DO BANCO (VERCEL + SUPABASE)
+    # CONFIG DO BANCO
     # =========================
     database_url = os.getenv("POSTGRES_PRISMA_URL")
 
     if not database_url:
         raise RuntimeError("POSTGRES_PRISMA_URL não encontrada na Vercel")
 
-    # 🔥 FIX 1: corrigir schema antigo (postgres:// → postgresql://)
     database_url = database_url.replace("postgres://", "postgresql://")
 
-    # 🔥 FIX 2: remover pgbouncer (quebra psycopg2 + SQLAlchemy)
     if "?pgbouncer=true" in database_url:
         database_url = database_url.replace("?pgbouncer=true", "")
 
-    # (extra seguro) remove qualquer query string restante
     if "?" in database_url:
         database_url = database_url.split("?")[0]
 
     app.config["SQLALCHEMY_DATABASE_URI"] = database_url
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
     # =========================
     # CONFIG JWT
     # =========================
@@ -43,11 +41,29 @@ def create_app():
 
     app.config["JWT_SECRET_KEY"] = jwt_secret
     app.config["JWT_ACCESS_TOKEN_EXPIRES"] = 28800
+
     # =========================
     # INIT EXTENSIONS
     # =========================
     db.init_app(app)
-    JWTManager(app)
+
+    jwt = JWTManager(app)
+
+    # =========================
+    # JWT ERROR HANDLERS
+    # =========================
+    @jwt.unauthorized_loader
+    def unauthorized_callback(error):
+        return jsonify({"erro": "token ausente"}), 401
+
+    @jwt.invalid_token_loader
+    def invalid_token_callback(error):
+        return jsonify({"erro": "token inválido"}), 401
+
+    @jwt.expired_token_loader
+    def expired_token_callback(jwt_header, jwt_payload):
+        return jsonify({"erro": "token expirado"}), 401
+
     # =========================
     # HEALTHCHECK
     # =========================
@@ -63,8 +79,7 @@ def create_app():
     # =========================
     restapi_init(app)
     admin_init(app)
+
     print("[BOOT] API carregada com sucesso")
 
     return app
-
-# vercel e banco de dados funcionado api e os carai
