@@ -2,7 +2,7 @@ from flask import Blueprint
 from flask_restful import Api
 from .resources import (CompartimentoResource,MovimentacaoResource, TipoRFIDResource)
 
-bp = Blueprint("restapi", __name__,url_prefix="/api/v1")
+bp = Blueprint("restapi", __name__,url_prefix="public/api/v1")
 
 api = Api(bp)
 
