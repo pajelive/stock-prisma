@@ -5,6 +5,7 @@ from flask_jwt_extended import JWTManager
 
 from stock_prisma.ext.database import db
 from stock_prisma.blueprints.restapi import init_app as restapi_init
+from stock_prisma.blueprints.admin import init_app as admin_init
 
 
 def create_app():
@@ -61,7 +62,7 @@ def create_app():
     # BLUEPRINTS
     # =========================
     restapi_init(app)
-
+    admin_init(app)
     print("[BOOT] API carregada com sucesso")
 
     return app
