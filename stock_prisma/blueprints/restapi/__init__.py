@@ -12,7 +12,6 @@ api.add_resource(MovimentacaoResource,"/movimentacoes")
 
 api.add_resource(TipoRFIDResource,"/rfid/<string:uid>")
 
-api.add_resource(MovimentacaoResource, "/movimentacoes/historico")
 
 # conecta blueprint no flask
 def init_app(app):
