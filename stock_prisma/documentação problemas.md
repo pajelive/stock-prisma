@@ -245,3 +245,113 @@ Os problemas vieram de 3 fontes principais:
 ✔ Backend estável em serverless
 ✔ Banco conectado corretamente
 ✔ Arquitetura Flask padronizada
+
+# Problema: 404 na Vercel — Monorepo Python + Next.js
+
+## Contexto
+
+O repositório `stock-prisma` possui estrutura de monorepo com dois projetos:
+
+- **Backend** Flask/Python na raiz do repo (`wsgi.py`, `stock_prisma/`)
+- **Frontend** Next.js em `stock_prisma_interface/`
+
+---
+
+## Sintomas
+
+- Build local (`npm run build`) concluía com sucesso
+- Deploy na Vercel também concluía com status **Ready**
+- Todas as URLs retornavam `404: NOT_FOUND` (erro da Vercel, não da aplicação)
+- Erro com ID no formato `gru1::xxxx-xxxxxxxxxx-xxxxxxxxxxxx`
+
+---
+
+## Causa Raiz
+
+Dois fatores combinados causaram o problema:
+
+### 1. `vercel.json` Python na raiz do repo
+
+Havia um `vercel.json` na raiz apontando para o backend Python:
+
+```json
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "wsgi.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "wsgi.py"
+    }
+  ]
+}
+```
+
+Esse arquivo fazia a Vercel tratar o projeto inteiro como Python, redirecionando todas as requisições para o `wsgi.py` — que não estava sendo servido corretamente — resultando em 404 para todas as rotas.
+
+### 2. Ausência de configuração de Root Directory
+
+Sem indicar à Vercel onde estava o projeto Next.js, ela tentava buildar a partir da raiz do repo, onde só existe código Python.
+
+---
+
+## Solução
+
+### Passo 1 — Configurar Root Directory na Vercel
+
+No painel da Vercel:
+
+```
+Projeto → Settings → General → Root Directory → stock_prisma_interface
+```
+
+Isso instrui a Vercel a tratar `stock_prisma_interface/` como raiz do projeto.
+
+### Passo 2 — Substituir o `vercel.json` da raiz
+
+Remover o `vercel.json` Python e criar um novo na raiz do repo informando o framework correto:
+
+```json
+{
+  "framework": "nextjs"
+}
+```
+
+```bash
+# Na raiz do repo
+cat > vercel.json << 'EOF'
+{
+  "framework": "nextjs"
+}
+EOF
+
+git add vercel.json
+git commit -m "fix: vercel.json apontando pro next.js"
+git push
+```
+
+---
+
+## Resultado
+
+Após as duas alterações, o deploy passou a servir o frontend Next.js corretamente em todos os domínios:
+
+- `https://stock-prisma.vercel.app` ✅
+- `https://stockprisma.com.br` ✅
+- `https://www.stockprisma.com.br` ✅
+
+---
+
+## Lição Aprendida
+
+Em monorepos com múltiplos projetos (ex: API Python + Frontend Next.js), a Vercel precisa de duas informações explícitas:
+
+1. **Root Directory** — onde está o projeto a ser buildado
+2. **`vercel.json`** com `"framework"` correto — para não confundir com outros arquivos de configuração na raiz
+
+> Se houver um `vercel.json` antigo de outro projeto na raiz do repo, ele **sempre** vai sobrescrever as configurações da Vercel, independente do Root Directory configurado no painel.

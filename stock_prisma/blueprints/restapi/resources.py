@@ -4,6 +4,7 @@ from flask import request
 from stock_prisma.services.MovimentacaoService import MovimentacaoService
 from stock_prisma.models import Usuario, Ferramenta, Compartimento
 from stock_prisma.ext.database import db
+from stock_prisma.models import Movimentacao
 
 class CompartimentoResource(Resource):
 
@@ -48,6 +49,27 @@ class MovimentacaoResource(Resource):
         except Exception as e:
             db.session.rollback()
             return {"erro": "erro interno", "detalhe": str(e)}, 500
+
+    def get(self):
+        movimentacoes = Movimentacao.query.order_by(Movimentacao.data_hora.desc()).all()
+
+        dados = []
+        for m in movimentacoes:
+            dados.append({
+                "id": m.id,
+                "data_hora": str(m.data_hora),
+                "quantidade": m.quantidade,
+                "origem_leitura": m.origem_leitura,
+                "observacao": m.observacao,
+                "tipo": m.tipo_movimentacao.nome if m.tipo_movimentacao else None,
+                "usuario": m.usuario.nome if m.usuario else None,
+                "ferramenta": m.ferramenta.nome if m.ferramenta else None,
+                "compartimento": m.compartimento.nome if m.compartimento else None,
+                "etapa": m.etapa.nome if m.etapa else None,
+                "op": m.ordem_producao.codigo if m.ordem_producao else None,
+            })
+
+        return dados, 200
 
 class TipoRFIDResource(Resource):
 
