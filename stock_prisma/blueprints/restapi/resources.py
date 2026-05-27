@@ -2,9 +2,9 @@ from flask_restful import Resource
 from flask import request
 
 from stock_prisma.services.MovimentacaoService import MovimentacaoService
-from stock_prisma.models import Usuario, Ferramenta, Compartimento
+from stock_prisma.models import Usuario, Ferramenta, Compartimento, Movimentacao
 from stock_prisma.ext.database import db
-from stock_prisma.models import Movimentacao
+
 
 class CompartimentoResource(Resource):
 
@@ -28,7 +28,6 @@ class CompartimentoResource(Resource):
 
 
 class MovimentacaoResource(Resource):
-
     def post(self):
 
         dados = request.json
