@@ -1,4 +1,4 @@
-import Tabela from '../components/Tabela'
+import Tabela from '../../components/Tabela'
 
 export default function Movimentacoes() {
     return (
