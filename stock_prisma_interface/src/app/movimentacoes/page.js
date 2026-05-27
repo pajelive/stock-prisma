@@ -1,5 +1,11 @@
+import Tabela from '../components/Tabela'
+
 export default function Movimentacoes() {
     return (
-        <h1>Movimentações</h1>
+        <div>
+            <h1>Stock Prisma</h1>
+
+            <Tabela titulo="Tabela Prisma" />
+        </div>
     )
 }

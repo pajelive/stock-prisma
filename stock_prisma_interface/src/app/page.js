@@ -2,10 +2,6 @@ import Tabela from '../components/Tabela'
 
 export default function Home() {
     return (
-        <div>
-            <h1>Stock Prisma</h1>
-
-            <Tabela titulo="Tabela Prisma" />
-        </div>
+         <h1>Home</h1>
     )
 }
