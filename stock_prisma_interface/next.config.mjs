@@ -1,7 +1,6 @@
-cat > next.config.mjs << 'EOF'
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'standalone',
+  /* config options here */
 };
+
 export default nextConfig;
-EOF
