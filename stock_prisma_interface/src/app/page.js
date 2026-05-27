@@ -5,7 +5,7 @@ export default function Home() {
         <div>
             <h1>Stock Prisma</h1>
 
-            <Tabela />
+            <Tabela titulo="Tabela Prisma" />
         </div>
     )
 }
