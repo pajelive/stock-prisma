@@ -1,6 +1,3 @@
 {
-  "buildCommand": "cd stock_prisma_interface && npm run build",
-  "outputDirectory": "stock_prisma_interface/.next",
-  "framework": "nextjs",
-  "installCommand": "cd stock_prisma_interface && npm install"
+  "framework": "nextjs"
 }
