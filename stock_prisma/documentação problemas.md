@@ -355,3 +355,83 @@ Em monorepos com múltiplos projetos (ex: API Python + Frontend Next.js), a Verc
 2. **`vercel.json`** com `"framework"` correto — para não confundir com outros arquivos de configuração na raiz
 
 > Se houver um `vercel.json` antigo de outro projeto na raiz do repo, ele **sempre** vai sobrescrever as configurações da Vercel, independente do Root Directory configurado no painel.
+
+# Problema: GET retornando 405 na API Flask — Vercel
+
+## Contexto
+
+Backend Flask com Flask-RESTful hospedado na Vercel, compartilhando o mesmo repositório monorepo com um frontend Next.js em `stock_prisma_interface/`.
+
+---
+
+## Sintomas
+
+- `POST /api/v1/public/movimentacoes` funcionava normalmente
+- `GET /api/v1/public/movimentacoes` retornava `405 Method Not Allowed`
+- Código estava correto no GitHub com `def get()` e `def post()` na mesma classe
+- Debug de rotas mostrava a URL registrada mas sem os métodos `GET` e `POST`
+- Outras rotas como `/compartimentos` funcionavam normalmente
+
+---
+
+## Causa Raiz
+
+Dois fatores combinados causaram o problema:
+
+### 1. Framework Preset configurado como Next.js no projeto API
+
+O projeto API na Vercel estava com o **Framework Preset** definido como `Next.js`. Isso fazia a Vercel tentar executar `next build` em vez de detectar e subir o Flask corretamente, causando um boot incompleto da aplicação onde as rotas eram registradas parcialmente.
+
+### 2. "Include files outside root directory" ativado
+
+Com esse toggle habilitado, o projeto API lia arquivos fora do seu Root Directory — incluindo o `vercel.json` dentro de `stock_prisma_interface/` que continha `"framework": "nextjs"`, contaminando o build da API.
+
+---
+
+## Solução
+
+### Passo 1 — Corrigir o Framework Preset
+
+No painel da Vercel:
+
+```
+Projeto API → Settings → General → Framework Preset → Other
+```
+
+### Passo 2 — Desativar "Include files outside root directory"
+
+```
+Projeto API → Settings → General → Root Directory
+→ "Include files outside the root directory in the Build Step" → Disabled
+```
+
+### Passo 3 — Redeploy
+
+Após salvar as configurações, fazer redeploy do projeto API.
+
+---
+
+## Por que o GET não aparecia?
+
+O Flask subia com erro silencioso por conta do conflito de configuração — ele registrava a URL mas não expunha os métodos corretamente. Quando a Vercel parou de interferir no build, o Flask subiu limpo e todos os métodos (`GET`, `POST`, `OPTIONS`) passaram a funcionar normalmente.
+
+---
+
+## Configuração final correta
+
+| Projeto | Framework Preset | Root Directory | Include files outside root |
+|---|---|---|---|
+| stock-prisma (API) | Other | `./` | Disabled |
+| stock-prisma-interface (Next.js) | Next.js | `stock_prisma_interface` | Enabled |
+
+---
+
+## Lição Aprendida
+
+Em monorepos com projetos de tecnologias diferentes (Python + Node.js), cada projeto na Vercel precisa ter:
+
+1. **Framework Preset correto** — nunca deixar no padrão se o repo tiver múltiplas tecnologias
+2. **"Include files outside root directory" desativado** — para evitar que configurações de um projeto contaminem o outro
+3. **Root Directory apontando para a pasta correta** de cada projeto
+
+> Um `vercel.json` em qualquer subpasta do repo pode ser lido por outros projetos se o toggle "Include files outside root directory" estiver ativado.
