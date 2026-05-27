@@ -68,12 +68,17 @@ def create_app():
     # =========================
     # HEALTHCHECK
     # =========================
-    @app.get("/")
-    def home():
-        return jsonify({
-            "status": "ok",
-            "db_configured": True
-        })
+    @app.get("/debug/methods")
+    def debug_methods():
+        from flask import jsonify
+        rules = []
+        for rule in app.url_map.iter_rules():
+            rules.append({
+                "endpoint": rule.endpoint,
+                "methods": list(rule.methods),
+                "url": str(rule)
+            })
+        return jsonify(rules)
 
     # =========================
     # BLUEPRINTS
