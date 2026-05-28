@@ -10,13 +10,16 @@ export default function Tabela({ titulo, dados }) {
         op: '',
         origem: '',
         etapa: '',
+        nome: '',
+        quantidade: '',
+        dataInicio: '',
+        dataFim: ''
     })
 
     function handleFiltro(campo, valor) {
         setFiltros(prev => ({ ...prev, [campo]: valor }))
     }
 
-    // valores únicos para os selects
     const tipos = [...new Set(dados.map(m => m.tipo).filter(Boolean))]
     const origens = [...new Set(dados.map(m => m.origem_leitura).filter(Boolean))]
     const etapas = [...new Set(dados.map(m => m.etapa).filter(Boolean))]
@@ -27,9 +30,16 @@ export default function Tabela({ titulo, dados }) {
             const cat = m.ferramenta ? 'Ferramenta' : 'Compartimento'
             if (cat !== filtros.categoria) return false
         }
+        if (filtros.nome) {
+            const nome = m.ferramenta || m.compartimento || ''
+            if (!nome.toLowerCase().includes(filtros.nome.toLowerCase())) return false
+        }
+        if (filtros.quantidade && m.quantidade !== Number(filtros.quantidade)) return false
         if (filtros.usuario && !m.usuario?.toLowerCase().includes(filtros.usuario.toLowerCase())) return false
-        if (filtros.op && !m.op?.toLowerCase().includes(filtros.op.toLowerCase())) return false
+        if (filtros.dataInicio && m.data_hora < filtros.dataInicio) return false
+        if (filtros.dataFim && m.data_hora > filtros.dataFim + ' 23:59:59') return false
         if (filtros.origem && m.origem_leitura !== filtros.origem) return false
+        if (filtros.op && !m.op?.toLowerCase().includes(filtros.op.toLowerCase())) return false
         if (filtros.etapa && m.etapa !== filtros.etapa) return false
         return true
     })
@@ -48,7 +58,6 @@ export default function Tabela({ titulo, dados }) {
                 <table className="w-full text-sm">
                     <thead>
 
-                        {/* linha 1 — títulos */}
                         <tr className="bg-gray-50 border-b border-gray-100">
                             <th className="px-4 py-3 text-left font-medium text-gray-500">ID</th>
                             <th className="px-4 py-3 text-left font-medium text-gray-500">Tipo</th>
@@ -63,7 +72,6 @@ export default function Tabela({ titulo, dados }) {
                             <th className="px-4 py-3 text-left font-medium text-gray-500">Observação</th>
                         </tr>
 
-                        {/* linha 2 — filtros */}
                         <tr className="bg-white border-b border-gray-200">
                             <th></th>
                             <th className="px-3 py-2">
@@ -87,8 +95,24 @@ export default function Tabela({ titulo, dados }) {
                                     <option value="Compartimento">Compartimento</option>
                                 </select>
                             </th>
-                            <th></th>
-                            <th></th>
+                            <th className="px-3 py-2">
+                                <input
+                                    type="text"
+                                    placeholder="Filtrar..."
+                                    value={filtros.nome}
+                                    onChange={(e) => handleFiltro('nome', e.target.value)}
+                                    className="w-full border border-gray-200 rounded-lg px-2 py-1 text-xs text-gray-600 focus:outline-none"
+                                />
+                            </th>
+                            <th className="px-3 py-2">
+                                <input
+                                    type="number"
+                                    placeholder="Qtd"
+                                    value={filtros.quantidade}
+                                    onChange={(e) => handleFiltro('quantidade', e.target.value)}
+                                    className="w-full border border-gray-200 rounded-lg px-2 py-1 text-xs text-gray-600 focus:outline-none"
+                                />
+                            </th>
                             <th className="px-3 py-2">
                                 <input
                                     type="text"
@@ -98,7 +122,22 @@ export default function Tabela({ titulo, dados }) {
                                     className="w-full border border-gray-200 rounded-lg px-2 py-1 text-xs text-gray-600 focus:outline-none"
                                 />
                             </th>
-                            <th></th>
+                            <th className="px-3 py-2">
+                                <div className="flex flex-col gap-1">
+                                    <input
+                                        type="date"
+                                        value={filtros.dataInicio}
+                                        onChange={(e) => handleFiltro('dataInicio', e.target.value)}
+                                        className="w-full border border-gray-200 rounded-lg px-2 py-1 text-xs text-gray-600 focus:outline-none"
+                                    />
+                                    <input
+                                        type="date"
+                                        value={filtros.dataFim}
+                                        onChange={(e) => handleFiltro('dataFim', e.target.value)}
+                                        className="w-full border border-gray-200 rounded-lg px-2 py-1 text-xs text-gray-600 focus:outline-none"
+                                    />
+                                </div>
+                            </th>
                             <th className="px-3 py-2">
                                 <select
                                     value={filtros.origem}
