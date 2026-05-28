@@ -20,15 +20,15 @@ export default function Tabela(props) {
                 </thead>
 
                 <tbody>
-                {props.data.map((movimentacao) => (
+                {props.dados.map((movimentacao) => (
                     <tr>
                         <td>{movimentacao.id}</td>
-                        <td>{movimentacao.ferramenta || movimentacao.compartimento}</td>
-                        <td>{movimentacao.nome}</td>
+                        <td>{movimentacao.ferramenta ? 'Ferramenta' : 'Compartimento'}</td>
+                        <td>movimentacao.ferramenta || movimentacao.compartimento</td>
                         <td>{movimentacao.quantidade}</td>
                         <td>{movimentacao.usuario}</td>
-                        <td>{movimentacao.data}</td>
-                        <td>{movimentacao.origem}</td>
+                        <td>{movimentacao.data_hora}</td>
+                        <td>{movimentacao.origem_leitura}</td>
                         <td>{movimentacao.op}</td>
                         <td>{movimentacao.etapa}</td>
                         <td>{movimentacao.observacao}</td>
