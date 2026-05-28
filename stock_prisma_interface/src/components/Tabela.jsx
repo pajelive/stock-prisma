@@ -1,85 +1,64 @@
-export default function Tabela(props) {
-    return (
-        <div className="p-6">
-            <h2 className="text-3xl font-bold mb-6 text-zinc-800">
-                {props.titulo}
-            </h2>
+export default function Tabela({ titulo, dados }) {
+  return (
+    <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
 
-            <div className="bg-white rounded-2xl shadow-md overflow-hidden border border-zinc-200">
-                <table className="w-full">
-                    <thead className="bg-zinc-50 border-b border-zinc-200">
-                        <tr>
-                            <th className="px-6 py-4 text-left text-sm font-semibold text-zinc-600">ID</th>
-                            <th className="px-6 py-4 text-left text-sm font-semibold text-zinc-600">Tipo</th>
-                            <th className="px-6 py-4 text-left text-sm font-semibold text-zinc-600">Categoria</th>
-                            <th className="px-6 py-4 text-left text-sm font-semibold text-zinc-600">Nome</th>
-                            <th className="px-6 py-4 text-left text-sm font-semibold text-zinc-600">Quantidade</th>
-                            <th className="px-6 py-4 text-left text-sm font-semibold text-zinc-600">Responsável</th>
-                            <th className="px-6 py-4 text-left text-sm font-semibold text-zinc-600">Data</th>
-                            <th className="px-6 py-4 text-left text-sm font-semibold text-zinc-600">Origem</th>
-                            <th className="px-6 py-4 text-left text-sm font-semibold text-zinc-600">OP</th>
-                            <th className="px-6 py-4 text-left text-sm font-semibold text-zinc-600">Etapa</th>
-                            <th className="px-6 py-4 text-left text-sm font-semibold text-zinc-600">Observação</th>
-                        </tr>
-                    </thead>
+      <div className="px-5 py-4 border-b border-gray-200 flex items-center justify-between">
+        <h2 className="text-base font-semibold text-gray-800">{titulo}</h2>
 
-                    <tbody>
-                        {props.dados.map((movimentacao) => (
-                            <tr
-                                key={movimentacao.id}
-                                className="border-b border-zinc-100 hover:bg-zinc-50 transition"
-                            >
-                                <td className="px-6 py-4 text-sm text-zinc-700">
-                                    {movimentacao.id}
-                                </td>
+        <span className="text-xs bg-gray-100 text-gray-600 px-3 py-1 rounded-full">
+          {dados.length} registros
+        </span>
+      </div>
 
-                                <td className="px-6 py-4 text-sm text-zinc-700">
-                                    {movimentacao.tipo || '-'}
-                                </td>
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm">
 
-                                <td className="px-6 py-4 text-sm text-zinc-700">
-                                    {movimentacao.ferramenta
-                                        ? 'Ferramenta'
-                                        : 'Compartimento'}
-                                </td>
+          <thead>
+            <tr className="bg-gray-50 border-b border-gray-200">
+              <th className="px-4 py-3 text-left font-medium text-gray-500">ID</th>
+              <th className="px-4 py-3 text-left font-medium text-gray-500">Tipo</th>
+              <th className="px-4 py-3 text-left font-medium text-gray-500">Categoria</th>
+              <th className="px-4 py-3 text-left font-medium text-gray-500">Nome</th>
+              <th className="px-4 py-3 text-left font-medium text-gray-500">Qtd</th>
+              <th className="px-4 py-3 text-left font-medium text-gray-500">Responsável</th>
+              <th className="px-4 py-3 text-left font-medium text-gray-500">Data</th>
+              <th className="px-4 py-3 text-left font-medium text-gray-500">Origem</th>
+              <th className="px-4 py-3 text-left text-gray-500">OP</th>
+              <th className="px-4 py-3 text-left text-gray-500">Etapa</th>
+              <th className="px-4 py-3 text-left text-gray-500">Observação</th>
+            </tr>
+          </thead>
 
-                                <td className="px-6 py-4 text-sm text-zinc-700">
-                                    {movimentacao.ferramenta ||
-                                        movimentacao.compartimento}
-                                </td>
+          <tbody>
+            {dados.map((m) => (
+              <tr
+                key={m.id}
+                className="border-b border-gray-100 hover:bg-gray-50 transition"
+              >
+                <td className="px-4 py-3 text-gray-400">#{m.id}</td>
+                <td className="px-4 py-3">
+                  <TipoPill tipo={m.tipo} />
+                </td>
+                <td className="px-4 py-3 text-gray-700">
+                  {m.ferramenta ? "Ferramenta" : "Compartimento"}
+                </td>
+                <td className="px-4 py-3 text-gray-700">
+                  {m.ferramenta || m.compartimento}
+                </td>
+                <td className="px-4 py-3 text-gray-700">{m.quantidade}</td>
+                <td className="px-4 py-3 text-gray-700">{m.usuario}</td>
+                <td className="px-4 py-3 text-gray-500">{m.data_hora}</td>
+                <td className="px-4 py-3 text-gray-500">{m.origem_leitura}</td>
+                <td className="px-4 py-3 text-gray-700">{m.op || "—"}</td>
+                <td className="px-4 py-3 text-gray-700">{m.etapa || "—"}</td>
+                <td className="px-4 py-3 text-gray-400">{m.observacao || "—"}</td>
+              </tr>
+            ))}
+          </tbody>
 
-                                <td className="px-6 py-4 text-sm text-zinc-700">
-                                    {movimentacao.quantidade}
-                                </td>
+        </table>
+      </div>
 
-                                <td className="px-6 py-4 text-sm text-zinc-700">
-                                    {movimentacao.usuario}
-                                </td>
-
-                                <td className="px-6 py-4 text-sm text-zinc-700">
-                                    {movimentacao.data_hora || '-'}
-                                </td>
-
-                                <td className="px-6 py-4 text-sm text-zinc-700">
-                                    {movimentacao.origem_leitura}
-                                </td>
-
-                                <td className="px-6 py-4 text-sm text-zinc-700">
-                                    {movimentacao.op || '-'}
-                                </td>
-
-                                <td className="px-6 py-4 text-sm text-zinc-700">
-                                    {movimentacao.etapa || '-'}
-                                </td>
-
-                                <td className="px-6 py-4 text-sm text-zinc-700">
-                                    {movimentacao.observacao || '-'}
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    )
+    </div>
+  );
 }
