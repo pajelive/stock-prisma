@@ -11,7 +11,7 @@ export default function Movimentacoes() {
 
     useEffect(() => {
         async function buscarMovimentacoes() {
-            const resposta = await api.get('/movimentacoes')
+            const resposta = await api.get('/public/movimentacoes')
             setMovimentacoes(resposta.data)
         }
         buscarMovimentacoes()
