@@ -1,3 +1,5 @@
+import TipoPill from "./TipoPill";
+
 export default function Tabela({ titulo, dados }) {
   return (
     <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
