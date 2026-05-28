@@ -20,18 +20,20 @@ export default function Tabela(props) {
                 </thead>
 
                 <tbody>
+                {props.data.map((movimentacao) => (
                     <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                        <td>{movimentacao.id}</td>
+                        <td>{movimentacao.ferramenta || movimentacao.compartimento}</td>
+                        <td>{movimentacao.nome}</td>
+                        <td>{movimentacao.quantidade}</td>
+                        <td>{movimentacao.usuario}</td>
+                        <td>{movimentacao.data}</td>
+                        <td>{movimentacao.origem}</td>
+                        <td>{movimentacao.op}</td>
+                        <td>{movimentacao.etapa}</td>
+                        <td>{movimentacao.observacao}</td>
                     </tr>
+                ))}
                 </tbody>
             </table>
         </div>
