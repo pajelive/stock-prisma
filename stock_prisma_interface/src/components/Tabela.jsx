@@ -16,8 +16,15 @@ export default function Tabela({ titulo, dados }) {
         dataFim: ''
     })
 
+    const [mostrarData, setMostrarData] = useState(false)
+
     function handleFiltro(campo, valor) {
         setFiltros(prev => ({ ...prev, [campo]: valor }))
+    }
+
+    function limparData() {
+        setFiltros(prev => ({ ...prev, dataInicio: '', dataFim: '' }))
+        setMostrarData(false)
     }
 
     const tipos = [...new Set(dados.map(m => m.tipo).filter(Boolean))]
@@ -43,6 +50,8 @@ export default function Tabela({ titulo, dados }) {
         if (filtros.etapa && m.etapa !== filtros.etapa) return false
         return true
     })
+
+    const temFiltroData = filtros.dataInicio || filtros.dataFim
 
     return (
         <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
@@ -122,22 +131,48 @@ export default function Tabela({ titulo, dados }) {
                                     className="w-full border border-gray-200 rounded-lg px-2 py-1 text-xs text-gray-600 focus:outline-none"
                                 />
                             </th>
-                            <th className="px-3 py-2">
-                                <div className="flex flex-col gap-1">
-                                    <input
-                                        type="date"
-                                        value={filtros.dataInicio}
-                                        onChange={(e) => handleFiltro('dataInicio', e.target.value)}
-                                        className="w-full border border-gray-200 rounded-lg px-2 py-1 text-xs text-gray-600 focus:outline-none"
-                                    />
-                                    <input
-                                        type="date"
-                                        value={filtros.dataFim}
-                                        onChange={(e) => handleFiltro('dataFim', e.target.value)}
-                                        className="w-full border border-gray-200 rounded-lg px-2 py-1 text-xs text-gray-600 focus:outline-none"
-                                    />
-                                </div>
+
+                            {/* filtro de data — um botão que abre o seletor de período */}
+                            <th className="px-3 py-2 relative">
+                                <button
+                                    onClick={() => setMostrarData(!mostrarData)}
+                                    className={`w-full border rounded-lg px-2 py-1 text-xs focus:outline-none text-left ${
+                                        temFiltroData
+                                            ? 'border-blue-300 bg-blue-50 text-blue-600'
+                                            : 'border-gray-200 text-gray-600'
+                                    }`}
+                                >
+                                    {temFiltroData
+                                        ? `${filtros.dataInicio || '...'} → ${filtros.dataFim || '...'}`
+                                        : 'Período'}
+                                </button>
+
+                                {mostrarData && (
+                                    <div className="absolute z-10 top-10 left-0 bg-white border border-gray-200 rounded-xl shadow-lg p-3 flex flex-col gap-2 min-w-48">
+                                        <label className="text-xs text-gray-500">De</label>
+                                        <input
+                                            type="date"
+                                            value={filtros.dataInicio}
+                                            onChange={(e) => handleFiltro('dataInicio', e.target.value)}
+                                            className="border border-gray-200 rounded-lg px-2 py-1 text-xs text-gray-600 focus:outline-none"
+                                        />
+                                        <label className="text-xs text-gray-500">Até</label>
+                                        <input
+                                            type="date"
+                                            value={filtros.dataFim}
+                                            onChange={(e) => handleFiltro('dataFim', e.target.value)}
+                                            className="border border-gray-200 rounded-lg px-2 py-1 text-xs text-gray-600 focus:outline-none"
+                                        />
+                                        <button
+                                            onClick={limparData}
+                                            className="text-xs text-red-400 hover:text-red-600 text-left mt-1"
+                                        >
+                                            Limpar
+                                        </button>
+                                    </div>
+                                )}
                             </th>
+
                             <th className="px-3 py-2">
                                 <select
                                     value={filtros.origem}
@@ -175,7 +210,11 @@ export default function Tabela({ titulo, dados }) {
                     <tbody>
                         {dadosFiltrados.map((m) => (
                             <tr key={m.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                                <td className="px-4 py-3 text-gray-400">#{m.id}</td>
+                                <td className="px-4 py-3">
+                                    <span className="font-mono text-xs font-medium bg-gray-100 text-gray-700 px-2 py-1 rounded-md">
+                                        #{m.id}
+                                    </span>
+                                </td>
                                 <td className="px-4 py-3"><TipoPill tipo={m.tipo} /></td>
                                 <td className="px-4 py-3 text-gray-700">{m.ferramenta ? 'Ferramenta' : 'Compartimento'}</td>
                                 <td className="px-4 py-3 text-gray-700">{m.ferramenta || m.compartimento}</td>
