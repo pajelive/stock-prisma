@@ -21,7 +21,10 @@ export default function Movimentacoes() {
         <div>
             <h1>Stock Prisma</h1>
 
-            <Tabela titulo="Tabela Prisma" />
+            <Tabela
+                titulo="Histórico"
+                dados={movimentacoes}
+            />
         </div>
     )
 }
