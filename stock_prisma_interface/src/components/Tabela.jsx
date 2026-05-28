@@ -2,11 +2,14 @@ export default function Tabela(props) {
     return (
         <div>
             <h2>{props.titulo}</h2>
-
+            <div className="bg-red-500 text-white p-4">
+                TESTE TAILWIND
+            </div>
             <table>
                 <thead>
                     <tr>
                         <th>ID</th>
+                        <th>Tipo</th>
                         <th>Categoria</th>
                         <th>Nome</th>
                         <th>Quantidade</th>
@@ -23,6 +26,7 @@ export default function Tabela(props) {
                 {props.dados.map((movimentacao) => (
                     <tr key={movimentacao.id}>
                         <td>{movimentacao.id}</td>
+                        <td>{movimentacao.tipo}</td>
                         <td>{movimentacao.ferramenta ? 'Ferramenta' : 'Compartimento'}</td>
                         <td>{movimentacao.ferramenta || movimentacao.compartimento}</td>
                         <td>{movimentacao.quantidade}</td>
