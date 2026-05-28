@@ -21,10 +21,10 @@ export default function Tabela(props) {
 
                 <tbody>
                 {props.dados.map((movimentacao) => (
-                    <tr>
+                    <tr key={movimentacao.id}>
                         <td>{movimentacao.id}</td>
                         <td>{movimentacao.ferramenta ? 'Ferramenta' : 'Compartimento'}</td>
-                        <td>movimentacao.ferramenta || movimentacao.compartimento</td>
+                        <td>{movimentacao.ferramenta || movimentacao.compartimento}</td>
                         <td>{movimentacao.quantidade}</td>
                         <td>{movimentacao.usuario}</td>
                         <td>{movimentacao.data_hora}</td>
