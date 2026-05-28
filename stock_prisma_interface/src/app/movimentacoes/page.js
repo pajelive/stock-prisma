@@ -1,3 +1,5 @@
+'use client'
+
 import Tabela from '../../components/Tabela'
 import {useState} from "react";
 import {useEffect} from "react";
