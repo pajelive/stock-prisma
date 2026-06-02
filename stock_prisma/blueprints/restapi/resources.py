@@ -1,5 +1,6 @@
 from flask_restful import Resource
 from flask import request
+from sqlalchemy.orm import joinedload
 
 from stock_prisma.services.MovimentacaoService import MovimentacaoService
 from stock_prisma.models import Usuario, Ferramenta, Compartimento, Movimentacao
@@ -50,7 +51,14 @@ class MovimentacaoResource(Resource):
             return {"erro": "erro interno", "detalhe": str(e)}, 500
 
     def get(self):
-        movimentacoes = Movimentacao.query.order_by(Movimentacao.data_hora.desc()).all()
+        movimentacoes = Movimentacao.query.options(
+            joinedload(Movimentacao.tipo_movimentacao),
+            joinedload(Movimentacao.usuario),
+            joinedload(Movimentacao.ferramenta),
+            joinedload(Movimentacao.compartimento),
+            joinedload(Movimentacao.etapa),
+            joinedload(Movimentacao.ordem_producao),
+        ).order_by(Movimentacao.data_hora.desc()).all()
 
         dados = []
         for m in movimentacoes:
