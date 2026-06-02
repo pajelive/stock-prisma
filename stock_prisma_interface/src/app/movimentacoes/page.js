@@ -10,10 +10,24 @@ export default function Movimentacoes() {
 
     useEffect(() => {
         async function buscarMovimentacoes() {
-            const resposta = await api.get('/public/movimentacoes')
-            setMovimentacoes(resposta.data)
+            try {
+                const resposta = await api.get('/public/movimentacoes')
+                setMovimentacoes(resposta.data)
+            } catch (erro) {
+                console.error('Erro ao buscar movimentações:', erro)
+            }
         }
         buscarMovimentacoes()
+
+        // atualização automática
+        const intervalo = setInterval(() => {
+            buscarMovimentacoes()
+        }, 5000)
+
+        // limpeza ao sair da página
+        return () => clearInterval(intervalo)
+
+
     }, [])
 
     return (
