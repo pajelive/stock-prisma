@@ -11,7 +11,7 @@ export default function Navbar() {
         <nav className="flex items-center justify-between px-8 py-4 bg-gray-900 border-b border-gray-700">
             <div className="flex items-center gap-3">
                 <Image
-                    src="/logo_nav.png"
+                    src="/logo_nav.svg"
                     alt="Stock Prisma"
                     width={40}
                     height={40}
