@@ -8,39 +8,36 @@ export default function Navbar() {
     const pathname = usePathname();
 
     return (
-        <nav className="flex items-center justify-between px-8 py-4 bg-gray-900 border-b border-gray-700">
-            <div className="flex items-center gap-3">
+        <nav className="flex items-center justify-between px-8 py-4 border-b border-zinc-200">
+            <div>
                 <Image
                     src="/logo_nav.svg"
                     alt="Stock Prisma"
-                    width={40}
+                    width={140}
                     height={40}
+                    priority
                 />
-
-                <span className="text-xl font-bold text-cyan-400">
-                    STOCK PRISMA
-                </span>
             </div>
 
-            <div className="flex gap-6">
+            <div className="flex items-center gap-8 text-sm font-medium">
                 <Link
                     href="/"
-                    className={
+                    className={`transition-colors ${
                         pathname === "/"
-                            ? "text-cyan-400 font-semibold"
-                            : "text-gray-300"
-                    }
+                            ? "text-zinc-900"
+                            : "text-zinc-500 hover:text-zinc-800"
+                    }`}
                 >
                     Início
                 </Link>
 
                 <Link
                     href="/movimentacoes"
-                    className={
+                    className={`transition-colors ${
                         pathname === "/movimentacoes"
-                            ? "text-cyan-400 font-semibold"
-                            : "text-gray-300"
-                    }
+                            ? "text-zinc-900"
+                            : "text-zinc-500 hover:text-zinc-800"
+                    }`}
                 >
                     Movimentações
                 </Link>
