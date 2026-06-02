@@ -32,7 +32,6 @@ export default function Movimentacoes() {
 
     return (
         <div className="p-6 bg-gray-50 min-h-screen">
-            <h1 className="text-2xl font-medium text-gray-800 mb-6">Stock Prisma</h1>
             <Tabela titulo="Histórico" dados={movimentacoes} />
         </div>
     )

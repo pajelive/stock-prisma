@@ -8,23 +8,22 @@ export default function Navbar() {
     const pathname = usePathname();
 
     return (
-        <nav className="flex items-center justify-between px-8 py-4 border-b border-zinc-200">
-            <div>
-                <Image
-                    src="/logo_nav.svg"
-                    alt="Stock Prisma"
-                    width={140}
-                    height={40}
-                    priority
-                />
-            </div>
+        <nav className="flex items-center justify-between px-8 h-20 border-b border-zinc-200 bg-white">
+            <Image
+                src="/logo_nav.svg"
+                alt="Stock Prisma"
+                width={320}
+                height={80}
+                priority
+                className="h-12 w-auto"
+            />
 
-            <div className="flex items-center gap-8 text-sm font-medium">
+            <div className="flex items-center gap-8">
                 <Link
                     href="/"
-                    className={`transition-colors ${
+                    className={`font-medium transition-colors ${
                         pathname === "/"
-                            ? "text-zinc-900"
+                            ? "text-sky-500"
                             : "text-zinc-500 hover:text-zinc-800"
                     }`}
                 >
@@ -33,9 +32,9 @@ export default function Navbar() {
 
                 <Link
                     href="/movimentacoes"
-                    className={`transition-colors ${
+                    className={`font-medium transition-colors ${
                         pathname === "/movimentacoes"
-                            ? "text-zinc-900"
+                            ? "text-sky-500"
                             : "text-zinc-500 hover:text-zinc-800"
                     }`}
                 >
