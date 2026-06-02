@@ -10,7 +10,7 @@ export default function Navbar() {
     return (
         <nav className="flex items-center justify-between px-8 h-20 border-b border-zinc-200 bg-white">
             <Image
-                src="/logo_nav.svg"
+                src="/logo_nav.png"
                 alt="Stock Prisma"
                 width={320}
                 height={80}
