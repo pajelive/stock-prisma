@@ -1,4 +1,6 @@
-import public from '../../public/logo_nav.png'
+import Link from "next/link";
+import Image from "next/image";
+import { usePathname } from "next/navigation";
 
 export default function TelaLogin() {
     return (
@@ -7,7 +9,14 @@ export default function TelaLogin() {
                 <h1>STOCK <span>PRISMA</span></h1>
                 <p className="slogan">A descoberta é o que nos move.</p>
             </div>
-            <img src="logo_nav.png" alt=""/>
+            <Image
+                src="/logo_nav.png"
+                alt="Stock Prisma"
+                width={320}
+                height={80}
+                priority
+                className="h-12 w-auto"
+            />
             <div className="right-panel">
                 <div className="login-card">
                     <h2>Login</h2>
