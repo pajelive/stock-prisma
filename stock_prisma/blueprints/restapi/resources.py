@@ -52,13 +52,13 @@ class MovimentacaoResource(Resource):
 
     def get(self):
         page = request.args.get("page", 1, type=int)
-        limit = request.args.get("limit", 20, type=int)
+        limit = request.args.get("limit", 12, type=int)
 
         if limit > 100:
             limit = 100
 
         if limit < 1:
-            limit = 20
+            limit = 12
 
         if page < 1:
             page = 1
