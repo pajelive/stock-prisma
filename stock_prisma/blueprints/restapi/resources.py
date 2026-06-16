@@ -51,17 +51,39 @@ class MovimentacaoResource(Resource):
             return {"erro": "erro interno", "detalhe": str(e)}, 500
 
     def get(self):
-        movimentacoes = Movimentacao.query.options(
+        page = request.args.get("page", 1, type=int)
+        limit = request.args.get("limit", 20, type=int)
+
+        if limit > 100:
+            limit = 100
+
+        if limit < 1:
+            limit = 20
+
+        if page < 1:
+            page = 1
+
+        query = Movimentacao.query.options(
             joinedload(Movimentacao.tipo_movimentacao),
             joinedload(Movimentacao.usuario),
             joinedload(Movimentacao.ferramenta),
             joinedload(Movimentacao.compartimento),
             joinedload(Movimentacao.etapa),
             joinedload(Movimentacao.ordem_producao),
-        ).order_by(Movimentacao.data_hora.desc()).all()
+        )
+
+        total = query.count()
+
+        paginacao = query.order_by(
+            Movimentacao.data_hora.desc()
+        ).paginate(
+            page=page,
+            per_page=limit,
+            error_out=False
+        )
 
         dados = []
-        for m in movimentacoes:
+        for m in paginacao.items:
             dados.append({
                 "id": m.id,
                 "data_hora": str(m.data_hora),
@@ -76,7 +98,15 @@ class MovimentacaoResource(Resource):
                 "op": m.ordem_producao.codigo if m.ordem_producao else None,
             })
 
-        return dados, 200
+        return {
+            "items": dados,
+            "page": paginacao.page,
+            "limit": paginacao.per_page,
+            "total": total,
+            "pages": paginacao.pages,
+            "has_next": paginacao.has_next,
+            "has_prev": paginacao.has_prev
+        }, 200
 
 class TipoRFIDResource(Resource):
 
