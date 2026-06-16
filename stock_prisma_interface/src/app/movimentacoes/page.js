@@ -12,7 +12,7 @@ export default function Movimentacoes() {
         async function buscarMovimentacoes() {
             try {
                 const resposta = await api.get('/public/movimentacoes')
-                setMovimentacoes(resposta.data)
+                setMovimentacoes(resposta.data.items)
             } catch (erro) {
                 console.error('Erro ao buscar movimentações:', erro)
             }
