@@ -18,13 +18,13 @@ export default function TelaLogin() {
                     <h2>Login</h2>
                     <form action="">
                         <div className="input-box">
-                            <input type="text" placeholder="Usuário"></input>
+                            <input type="text" placeholder="Usuário"/>
                         </div>
                         <div className="input-box">
-                            <input type="password" placeholder="Senha"></input>
+                            <input type="password" placeholder="Senha"/>
                         </div>
                         <div className="remember-forgot">
-                            <input type="checkbox"> Lembrar-me </input>
+                            <input type="checkbox"/>
                         </div>
                 <button type="submit" className="btn-login"> Login</button>
                 <a href="cadastro.html" className="btn-register"> Cadastrar</a>
