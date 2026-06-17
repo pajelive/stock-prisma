@@ -124,9 +124,25 @@
 /* Checkbox */
 
 .rememberForgot {
-    color: white;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
     margin-bottom: 30px;
+
+    color: white;
     font-size: 14px;
+}
+
+.rememberForgot input {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.rememberForgot label {
+    cursor: pointer;
+    user-select: none;
 }
 
 /* Botão Entrar */
