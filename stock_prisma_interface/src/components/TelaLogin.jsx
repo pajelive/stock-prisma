@@ -4,7 +4,7 @@ import styles from './TelaLogin.module.css'
 export default function TelaLogin() {
     return (
         <div className={styles.container}>
-            <div className="leftPanel">
+            <div className={styles.leftPanel}>
                 <Image
                     src="/stock-prisma-logo-vertical.png"
                     alt="Stock Prisma"
@@ -17,7 +17,7 @@ export default function TelaLogin() {
                 <p className="slogan">A descoberta é o que nos move.</p>
             </div>
             <div className={styles.rightPanel}>
-                <div className="loginCard">
+                <div className={styles.loginCard}>
                     <h2>Login</h2>
                     <form action="">
                         <div className={styles.inputBox}>
