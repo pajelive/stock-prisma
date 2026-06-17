@@ -45,7 +45,7 @@ body {
 
 /* Lado esquerdo */
 
-.left-panel {
+.leftPanel {
     width: 55%;
 
     display: flex;
@@ -61,12 +61,12 @@ body {
     margin-bottom: 20px;
 }
 
-.left-panel h1 {
+.leftPanel h1 {
     font-size: 4rem;
     color: #0A0A55;
 }
 
-.left-panel span {
+.leftPanel span {
     color: #29A8FF;
 }
 
@@ -79,7 +79,7 @@ body {
 
 /* Lado direito */
 
-.right-panel {
+.rightPanel {
     width: 45%;
 
     background: #19A4F5;
@@ -93,11 +93,11 @@ body {
 
 /* Card Login */
 
-.login-card {
+.loginCard {
     width: 80%;
 }
 
-.login-card h2 {
+.loginCard h2 {
     color: white;
     font-size: 3rem;
     margin-bottom: 40px;
@@ -105,11 +105,11 @@ body {
 
 /* Inputs */
 
-.input-box {
+.inputBox {
     margin-bottom: 20px;
 }
 
-.input-box input {
+.inputBox input {
     width: 100%;
 
     padding: 15px;
@@ -121,13 +121,13 @@ body {
     color: white;
 }
 
-.input-box input::placeholder {
+.inputBox input::placeholder {
     color: #d9ecff;
 }
 
 /* Checkbox */
 
-.remember-forgot {
+.rememberForgot {
     color: white;
     margin-bottom: 30px;
     font-size: 14px;
@@ -135,7 +135,7 @@ body {
 
 /* Botão Entrar */
 
-.btn-login {
+.btnLogin {
     width: 100%;
 
     padding: 15px;
@@ -154,7 +154,7 @@ body {
 
 /* Botão Cadastro */
 
-.btn-register {
+.btnRegister {
     display: block;
 
     width: 100%;
