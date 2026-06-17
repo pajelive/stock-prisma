@@ -31,9 +31,8 @@ export default function TelaLogin() {
                         <button type="submit" className="btn-login"> Login</button>
                         <a href="cadastro.html" className="btn-register"> Cadastrar</a>
                     </form>
+                </div>
+            </div>
         </div>
-    </div>
-
-    </div>
     )
 }
