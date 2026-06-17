@@ -26,7 +26,8 @@ export default function TelaLogin() {
                             <input type="password" placeholder="Senha"/>
                         </div>
                         <div className={styles.rememberForgot}>
-                            <input type="checkbox"/>
+                            <input id="remenber" type="checkbox"/>
+                            <label htmlFor="remember">Lembrar-me</label>
                         </div>
                         <button type="submit" className={styles.btnLogin}> Login</button>
                         <a href="cadastro.html" className={styles.btnRegister}> Cadastrar</a>
