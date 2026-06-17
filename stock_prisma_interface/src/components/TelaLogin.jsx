@@ -8,7 +8,7 @@ export default function TelaLogin() {
                 <p className="slogan">A descoberta é o que nos move.</p>
             </div>
             <Image
-                src="/logo_nav.png"
+                src="/stock-prisma-logo-vertical.png"
                 alt="Stock Prisma"
                 width={320}
                 height={80}
