@@ -1,0 +1,162 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Corpo da página */
+
+body {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f4f4f4;
+}
+
+/* Container principal */
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    height: 700px;
+
+    display: flex;
+
+    background-color: white;
+    border-radius: 30px;
+
+    overflow: hidden;
+
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
+
+/* Lado esquerdo */
+
+.left-panel {
+    width: 55%;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    padding: 50px;
+}
+
+.logo {
+    width: 220px;
+    margin-bottom: 20px;
+}
+
+.left-panel h1 {
+    font-size: 4rem;
+    color: #0A0A55;
+}
+
+.left-panel span {
+    color: #29A8FF;
+}
+
+.slogan {
+    margin-top: 10px;
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #222;
+}
+
+/* Lado direito */
+
+.right-panel {
+    width: 45%;
+
+    background: #19A4F5;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border-radius: 40px 0 0 40px;
+}
+
+/* Card Login */
+
+.login-card {
+    width: 80%;
+}
+
+.login-card h2 {
+    color: white;
+    font-size: 3rem;
+    margin-bottom: 40px;
+}
+
+/* Inputs */
+
+.input-box {
+    margin-bottom: 20px;
+}
+
+.input-box input {
+    width: 100%;
+
+    padding: 15px;
+
+    border: none;
+    border-radius: 30px;
+
+    background-color: #1189D0;
+    color: white;
+}
+
+.input-box input::placeholder {
+    color: #d9ecff;
+}
+
+/* Checkbox */
+
+.remember-forgot {
+    color: white;
+    margin-bottom: 30px;
+    font-size: 14px;
+}
+
+/* Botão Entrar */
+
+.btn-login {
+    width: 100%;
+
+    padding: 15px;
+
+    border: none;
+    border-radius: 30px;
+
+    background-color: white;
+    color: #1189D0;
+
+    font-weight: bold;
+    cursor: pointer;
+
+    margin-bottom: 20px;
+}
+
+/* Botão Cadastro */
+
+.btn-register {
+    display: block;
+
+    width: 100%;
+
+    padding: 15px;
+
+    text-align: center;
+
+    border-radius: 30px;
+
+    background-color: #2EB2FF;
+
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+}
