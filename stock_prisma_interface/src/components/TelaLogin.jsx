@@ -5,17 +5,17 @@ export default function TelaLogin() {
     return (
         <div className={styles.container}>
             <div className="left-panel">
+                <Image
+                    src="/stock-prisma-logo-vertical.png"
+                    alt="Stock Prisma"
+                    width={320}
+                    height={80}
+                    priority
+                    className="h-12 w-auto"
+                />
                 <h1>STOCK <span>PRISMA</span></h1>
                 <p className="slogan">A descoberta é o que nos move.</p>
             </div>
-            <Image
-                src="/stock-prisma-logo-vertical.png"
-                alt="Stock Prisma"
-                width={320}
-                height={80}
-                priority
-                className="h-12 w-auto"
-            />
             <div className={styles.rightPanel}>
                 <div className="loginCard">
                     <h2>Login</h2>
