@@ -76,9 +76,10 @@
     width: 45%;
 
     background: linear-gradient(
-    180deg,
+    135deg,
     #29A8FF 0%,
-    #1189D0 100%
+    #1189D0 55%,
+    #0A0A55 100%
 );
 
     display: flex;
@@ -86,7 +87,7 @@
     align-items: center;
 
     border-radius: 40px 0 0 40px;
-    padding:50px 30px;
+    padding: 50px 30px;
 }
 
 /* Card Login */
