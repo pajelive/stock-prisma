@@ -85,7 +85,7 @@
 /* Lado direito */
 
 .rightPanel {
-    width: 100%;
+    width: 45%;
 
     background: linear-gradient(
         to bottom,
@@ -99,9 +99,8 @@
     justify-content: center;
     align-items: center;
 
-    padding:45px 35px;
-
-    border-radius:0 0 30px 30px;
+    border-radius: 40px 0 0 40px;
+    padding: 50px 30px;
 }
 
 /* Card Login */
