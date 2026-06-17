@@ -1,5 +1,5 @@
 import Image from "next/image";
-import styles from '../../components/TelaLogin.module.css'
+import styles from './TelaLogin.module.css'
 
 export default function TelaLogin() {
     return (
