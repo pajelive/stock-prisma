@@ -87,11 +87,12 @@
     width: 45%;
 
     background: linear-gradient(
-    135deg,
-    #29A8FF 0%,
-    #1189D0 55%,
-    #0A0A55 100%
-);
+        to bottom,
+        #36B5FF 0%,
+        #1EA4F3 20%,
+        #1189D0 70%,
+        #0A0A55 100%
+    );
 
     display: flex;
     justify-content: center;
