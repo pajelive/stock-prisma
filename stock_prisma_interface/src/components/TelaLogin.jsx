@@ -6,7 +6,7 @@ export default function TelaLogin() {
         <div className={styles.container}>
             <div className={styles.leftPanel}>
                 <Image
-                    src="/stock-prisma-logo-vertical.png"
+                    src="/logo-simbolo.png"
                     alt="Stock Prisma"
                     width={220}
                     height={220}
