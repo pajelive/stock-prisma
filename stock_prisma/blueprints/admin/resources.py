@@ -61,6 +61,7 @@ class AuthResource(Resource):
         return {
             "token": token,
             "nome": usuario.nome,
+            "matricula": usuario.matricula,
             "perfil": usuario.perfil.nome
         }, 200
 
