@@ -8,13 +8,12 @@ export default function TelaLogin() {
                 <Image
                     src="/stock-prisma-logo-vertical.png"
                     alt="Stock Prisma"
-                    width={320}
-                    height={80}
-                    priority
-                    className="h-12 w-auto"
+                    width={220}
+                    height={220}
+                    className={styles.logo}
                 />
                 <h1>STOCK <span>PRISMA</span></h1>
-                <p className="slogan">A descoberta é o que nos move.</p>
+                <p className={styles.slogan}>A descoberta é o que nos move.</p>
             </div>
             <div className={styles.rightPanel}>
                 <div className={styles.loginCard}>
