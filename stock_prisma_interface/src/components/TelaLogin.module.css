@@ -48,6 +48,7 @@
     align-items: center;
 
     padding: 50px;
+    text-align: center;
 }
 
 .logo{
@@ -55,8 +56,15 @@
     margin-bottom:20px;
 }
 .leftPanel h1 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+
     font-size: 4rem;
     color: #0A0A55;
+
+    text-align: center;
 }
 
 .leftPanel span {
@@ -64,12 +72,15 @@
 }
 
 .slogan {
+    width: 100%;
     margin-top: 10px;
+
+    text-align: center;
+
     font-size: 1.3rem;
     font-weight: bold;
     color: #222;
 }
-
 /* Lado direito */
 
 .rightPanel {
