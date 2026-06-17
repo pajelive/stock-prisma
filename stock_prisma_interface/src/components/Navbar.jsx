@@ -7,39 +7,46 @@ import { usePathname } from "next/navigation";
 export default function Navbar() {
     const pathname = usePathname();
 
+    const navItem = (href, label) => (
+        <Link
+            href={href}
+            className={`text-sm md:text-base font-medium transition-colors ${
+                pathname === href
+                    ? "text-sky-500"
+                    : "text-zinc-500 hover:text-zinc-800"
+            }`}
+        >
+            {label}
+        </Link>
+    );
+
     return (
-        <nav className="flex items-center justify-between px-8 h-20 border-b border-zinc-200 bg-white">
+        <nav className="flex items-center justify-between px-4 md:px-8 h-16 md:h-20 border-b border-zinc-200 bg-white">
+
+            {/* Logo */}
             <Image
                 src="/logo_nav.png"
                 alt="Stock Prisma"
                 width={320}
                 height={80}
                 priority
-                className="h-12 w-auto"
+                className="h-8 md:h-12 w-auto"
             />
 
-            <div className="flex items-center gap-8">
-                <Link
-                    href="/"
-                    className={`font-medium transition-colors ${
-                        pathname === "/"
-                            ? "text-sky-500"
-                            : "text-zinc-500 hover:text-zinc-800"
-                    }`}
-                >
-                    Início
-                </Link>
+            {/* Menu */}
+            <div className="flex items-center gap-4 md:gap-8">
+
+                {navItem("/", "Início")}
+
+                {navItem("/movimentacoes", "Movimentações")}
 
                 <Link
-                    href="/movimentacoes"
-                    className={`font-medium transition-colors ${
-                        pathname === "/movimentacoes"
-                            ? "text-sky-500"
-                            : "text-zinc-500 hover:text-zinc-800"
-                    }`}
+                    href="/login"
+                    className="rounded-full bg-sky-500 px-4 py-2 text-sm md:text-base font-semibold text-white transition hover:bg-sky-600"
                 >
-                    Movimentações
+                    Login
                 </Link>
+
             </div>
         </nav>
     );
