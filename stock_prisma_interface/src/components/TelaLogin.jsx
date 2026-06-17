@@ -4,7 +4,7 @@ import styles from './TelaLogin.module.css'
 export default function TelaLogin() {
     return (
         <div className={styles.container}>
-            <div className="left-panel">
+            <div className="leftPanel">
                 <Image
                     src="/stock-prisma-logo-vertical.png"
                     alt="Stock Prisma"
