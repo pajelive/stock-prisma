@@ -75,7 +75,11 @@
 .rightPanel {
     width: 45%;
 
-    background: #19A4F5;
+    background: linear-gradient(
+    180deg,
+    #29A8FF 0%,
+    #1189D0 100%
+);
 
     display: flex;
     justify-content: center;
