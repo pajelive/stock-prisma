@@ -8,8 +8,8 @@ export default function TelaLogin() {
                 <Image
                     src="/logo-simbolo.png"
                     alt="Stock Prisma"
-                    width={280}
-                    height={280}
+                    width={400}
+                    height={400}
                     className={styles.logo}
                 />
                 <h1>STOCK <span>PRISMA</span></h1>
