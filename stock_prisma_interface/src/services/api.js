@@ -1,20 +1,19 @@
-import axios from 'axios';
+import axios from "axios";
 
 const api = axios.create({
-    baseURL: 'https://api.stockprisma.com.br/api/v1/',
+    baseURL: "https://api.stockprisma.com.br/api/v1/",
     timeout: 15000
-})
+});
 
 api.interceptors.request.use((config) => {
 
-    const token = localStorage.getItem("token");
+    const usuario = JSON.parse(localStorage.getItem("usuario"));
 
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
+    if (usuario?.token) {
+        config.headers.Authorization = `Bearer ${usuario.token}`;
     }
 
     return config;
 });
-
 
 export default api;

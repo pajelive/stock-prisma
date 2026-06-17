@@ -1,7 +1,18 @@
 import Image from "next/image";
 import styles from './TelaLogin.module.css'
+import { useState } from "react";
+import { useRouter } from "next/navigation"
+import { login } from '../services/authService'
 
 export default function TelaLogin() {
+    const [matricula, setMatricula] = useState("");
+    const [senha, setSenha] = useState("");
+    const router = useRouter();
+
+    const handleLogin = async (e) => {
+        e.preventDefault();
+    };
+
     return (
         <div className={styles.container}>
             <div className={styles.leftPanel}>
@@ -18,12 +29,12 @@ export default function TelaLogin() {
             <div className={styles.rightPanel}>
                 <div className={styles.loginCard}>
                     <h2>Login</h2>
-                    <form action="">
+                    <form onSubmit={handleLogin}>
                         <div className={styles.inputBox}>
-                            <input type="text" placeholder="Matrícula"/>
+                            <input type="text" placeholder="Matrícula" value={matricula} onChange={(e) => setMatricula(e.target.value)} />
                         </div>
                         <div className={styles.inputBox}>
-                            <input type="password" placeholder="Senha"/>
+                            <input type="password" placeholder="Senha" value={senha} onChange={(e) => setSenha(e.target.value)} />
                         </div>
                         <div className={styles.rememberForgot}>
                             <input id="remember" type="checkbox"/>

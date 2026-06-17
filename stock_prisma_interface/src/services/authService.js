@@ -1,12 +1,11 @@
-import api from './api';
+import api from "./api";
 
-api.interceptors.request.use((config) => {
+export async function login(matricula, senha) {
 
-    const usuario = JSON.parse(localStorage.getItem("usuario"));
+    const { data } = await api.post("/admin/auth/login", {
+        matricula,
+        senha
+    });
 
-    if (usuario?.token) {
-        config.headers.Authorization = `Bearer ${usuario.token}`;
-    }
-
-    return config;
-});
+    return data;
+}
