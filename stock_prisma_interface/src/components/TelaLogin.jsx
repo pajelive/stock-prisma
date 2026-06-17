@@ -16,21 +16,21 @@ export default function TelaLogin() {
                 priority
                 className="h-12 w-auto"
             />
-            <div className="rightPanel">
+            <div className={styles.rightPanel}>
                 <div className="loginCard">
                     <h2>Login</h2>
                     <form action="">
-                        <div className="inputBox">
+                        <div className={styles.inputBox}>
                             <input type="text" placeholder="Usuário"/>
                         </div>
-                        <div className="inputBox">
+                        <div className={styles.inputBox}>
                             <input type="password" placeholder="Senha"/>
                         </div>
-                        <div className="rememberForgot">
+                        <div className={styles.rememberForgot}>
                             <input type="checkbox"/>
                         </div>
-                        <button type="submit" className="btnLogin"> Login</button>
-                        <a href="cadastro.html" className="btnRegister"> Cadastrar</a>
+                        <button type="submit" className={styles.btnLogin}> Login</button>
+                        <a href="cadastro.html" className={styles.btnRegister}> Cadastrar</a>
                     </form>
                 </div>
             </div>
