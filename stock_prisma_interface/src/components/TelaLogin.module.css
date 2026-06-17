@@ -1,20 +1,24 @@
 .container {
-    width: 90%;
+    width: 100%;
     max-width: 1200px;
-    height: 700px;
+    min-height: 700px;
 
     display: flex;
+
     background: white;
     border-radius: 30px;
     overflow: hidden;
+
     box-shadow: 0 10px 30px rgba(0,0,0,.15);
 }
+
 .page{
     min-height:100vh;
     display:flex;
     justify-content:center;
     align-items:center;
-    padding:20px;
+    padding:24px;
+    background:#f4f4f4;
 }
 /* Container principal */
 
@@ -183,4 +187,91 @@
     color: white;
     text-decoration: none;
     font-weight: bold;
+}
+@media (max-width: 900px){
+
+    .container{
+        flex-direction:column;
+        max-width:650px;
+        min-height:auto;
+    }
+
+    .leftPanel{
+        width:100%;
+        padding:45px 35px 30px;
+    }
+
+    .rightPanel{
+        width:100%;
+        border-radius:30px 30px 0 0;
+        padding:45px 35px;
+    }
+
+    .logo{
+        width:180px;
+    }
+
+    .leftPanel h1{
+        font-size:3rem;
+    }
+
+    .loginCard{
+        width:100%;
+        max-width:450px;
+        margin:auto;
+    }
+}
+@media (max-width: 600px){
+
+    .page{
+        padding:0;
+    }
+
+    .container{
+        min-height:100vh;
+        border-radius:0;
+    }
+
+    .leftPanel{
+        padding:35px 25px;
+    }
+
+    .logo{
+        width:135px;
+        margin-bottom:15px;
+    }
+
+    .leftPanel h1{
+        font-size:2.2rem;
+        text-align:center;
+    }
+
+    .slogan{
+        text-align:center;
+        font-size:1rem;
+    }
+
+    .rightPanel{
+        padding:35px 25px 45px;
+        border-radius:0;
+    }
+
+    .loginCard{
+        width:100%;
+    }
+
+    .loginCard h2{
+        font-size:2rem;
+        text-align:center;
+    }
+
+    .inputBox input{
+        padding:14px;
+    }
+
+    .btnLogin,
+    .btnRegister{
+        padding:14px;
+        font-size:1rem;
+    }
 }
