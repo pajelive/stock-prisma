@@ -1,5 +1,5 @@
 import TelaLogin from '../../components/TelaLogin'
-import styles from './page.module.scss'
+import styles from './page.module.css'
 
 export default function Login() {
     return (
