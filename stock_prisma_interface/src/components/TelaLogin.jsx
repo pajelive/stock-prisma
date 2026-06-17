@@ -20,7 +20,7 @@ export default function TelaLogin() {
                     <h2>Login</h2>
                     <form action="">
                         <div className={styles.inputBox}>
-                            <input type="text" placeholder="Usuário"/>
+                            <input type="text" placeholder="Matrícula"/>
                         </div>
                         <div className={styles.inputBox}>
                             <input type="password" placeholder="Senha"/>
