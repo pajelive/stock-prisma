@@ -1,29 +1,29 @@
 "use client";
 
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
+import api from "@/services/api";
 
 export const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
+    const [usuario, setUsuario] = useState(null);
+    const [loading, setLoading] = useState(true);
 
-    const [token, setToken] = useState(() => {
-        return localStorage.getItem("token");
-    });
-
-    const [usuario, setUsuario] = useState(() => {
-        const usuario = localStorage.getItem("usuario");
-        return usuario ? JSON.parse(usuario) : null;
-    });
+    useEffect(() => {
+        api.get("/admin/auth/me")
+            .then((res) => {
+                setUsuario(res.data);
+            })
+            .catch(() => {
+                setUsuario(null);
+            })
+            .finally(() => {
+                setLoading(false);
+            });
+    }, []);
 
     return (
-        <AuthContext.Provider
-            value={{
-                token,
-                setToken,
-                usuario,
-                setUsuario
-            }}
-        >
+        <AuthContext.Provider value={{ usuario, setUsuario, loading }}>
             {children}
         </AuthContext.Provider>
     );
