@@ -51,7 +51,7 @@ export default function Navbar() {
                 {navItem("/", "Início")}
 
                 {navItem("/movimentacoes", "Movimentações")}
-
+                {/* Adiciona botão de sair */}
                 {usuario ? (
                     <button
                         onClick={handleLogout}
