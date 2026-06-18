@@ -58,9 +58,36 @@ export default function TelaLogin() {
                         <div className={styles.inputBox}>
                             <input type="text" placeholder="Matrícula" value={matricula} onChange={(e) => setMatricula(e.target.value)} name="username" autoComplete="username"/>
                         </div>
-                        <div className={styles.inputBox}>
-                            <input type="password" placeholder="Senha" value={senha} onChange={(e) => setSenha(e.target.value)} name="password" autoComplete="current-password"/>
-                        </div>
+                        <div className={styles.inputBox} style={{ position: "relative" }}>
+    <input
+        type={senhaVisivel ? "text" : "password"}
+        placeholder="Senha"
+        value={senha}
+        onChange={(e) => setSenha(e.target.value)}
+        name="password"
+        autoComplete="current-password"
+        style={{ paddingRight: "2.5rem" }}
+    />
+
+    <button
+        type="button"
+        onClick={() => setSenhaVisivel((prev) => !prev)}
+        onMouseDown={(e) => e.preventDefault()}
+        style={{
+            position: "absolute",
+            right: "0.75rem",
+            top: "50%",
+            transform: "translateY(-50%)",
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            padding: 0,
+            color: "#6b7280"
+        }}
+    >
+        {senhaVisivel ? "🙈" : "👁️"}
+    </button>
+</div>
                         <button type="submit" className={styles.btnLogin}> Login</button>
                         <a href="cadastro.html" className={styles.btnRegister}> Esqueci a senha</a>
                     </form>
