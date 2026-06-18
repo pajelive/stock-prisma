@@ -69,7 +69,7 @@ class AuthResource(Resource):
         return response, 200
 
 class MeResource(Resource):
-    @jwt_required
+    @jwt_required()
     def get(self):
         user_id = get_jwt_identity()
         usuario = Usuario.query.get(user_id)

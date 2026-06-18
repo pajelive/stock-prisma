@@ -9,7 +9,7 @@ from .resources import (
     EtapaResource,
     EtapaDetalheResource,
     OrdemProducaoResource,
-    OrdemProducaoDetalheResource
+    OrdemProducaoDetalheResource, MeResource
 )
 
 bp = Blueprint("admin", __name__, url_prefix="/api/v1/admin")
@@ -29,6 +29,8 @@ api.add_resource(EtapaDetalheResource, "/etapas/<int:id>")
 
 api.add_resource(OrdemProducaoResource, "/ordens-producao")
 api.add_resource(OrdemProducaoDetalheResource, "/ordens-producao/<int:id>")
+
+api.add_resource(MeResource,"/auth/me")
 
 def init_app(app):
     app.register_blueprint(bp)
