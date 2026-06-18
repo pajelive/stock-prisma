@@ -55,15 +55,15 @@ class AuthResource(Resource):
             }
         )
 
-        response = make_response(jsonify(({
+        response = make_response(jsonify({
             "nome": usuario.nome,
             "matricula": usuario.matricula,
             "perfil": usuario.perfil.nome
-        }))
+        }), 200)
 
         set_access_cookies(response, token)
 
-        return response, 200
+        return response
 
 class MeResource(Resource):
     @jwt_required()
