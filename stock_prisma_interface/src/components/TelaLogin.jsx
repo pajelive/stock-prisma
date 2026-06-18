@@ -27,9 +27,7 @@ export default function TelaLogin() {
 
         try {
             const res = await login(matricula, senha);
-
-            console.log("LOGIN OK:", res);
-
+            setUsuario(res.data);
             router.push("/");
         } catch (erro) {
             console.log("LOGIN ERRO:", erro);
@@ -37,6 +35,8 @@ export default function TelaLogin() {
             alert("Matrícula ou senha inválidas");
         }
     };
+
+    if (loading) return null;
 
     return (
         <div className={styles.container}>
