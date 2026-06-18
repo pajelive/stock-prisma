@@ -56,10 +56,10 @@ export default function TelaLogin() {
                     <h2>Login</h2>
                     <form onSubmit={handleLogin}>
                         <div className={styles.inputBox}>
-                            <input type="text" placeholder="Matrícula" value={matricula} onChange={(e) => setMatricula(e.target.value)} />
+                            <input type="text" placeholder="Matrícula" value={matricula} onChange={(e) => setMatricula(e.target.value)} name="username" autoComplete="username"/>
                         </div>
                         <div className={styles.inputBox}>
-                            <input type="password" placeholder="Senha" value={senha} onChange={(e) => setSenha(e.target.value)} />
+                            <input type="password" placeholder="Senha" value={senha} onChange={(e) => setSenha(e.target.value)} name="password" autoComplete="current-password"/>
                         </div>
                         <div className={styles.rememberForgot}>
                             <input id="remember" type="checkbox"/>
