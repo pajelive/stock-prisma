@@ -1,6 +1,6 @@
 from flask_restful import Resource
 from flask import request, jsonify, make_response
-from flask_jwt_extended import create_access_token, jwt_required, set_access_cookies, get_jwt_identity
+from flask_jwt_extended import create_access_token, jwt_required, set_access_cookies, get_jwt_identity, unset_jwt_cookies
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from stock_prisma.models import (
@@ -80,6 +80,12 @@ class MeResource(Resource):
             "nome": usuario.nome
         }, 200
 
+class LogoutResource(Resource):
+    @jwt_required()
+    def post(self):
+        response = make_response(jsonify({"msg": "logout realizado"}), 200)
+        unset_jwt_cookies(response)
+        return response
 # =========================
 # FERRAMENTAS
 # =========================
