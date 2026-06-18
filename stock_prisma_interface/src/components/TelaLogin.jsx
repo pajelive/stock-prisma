@@ -13,10 +13,16 @@ export default function TelaLogin() {
 
     const handleLogin = async (e) => {
         e.preventDefault();
+
         try {
-            await login(matricula, senha);
+            const res = await login(matricula, senha);
+
+            console.log("LOGIN OK:", res);
+
             router.push("/");
         } catch (erro) {
+            console.log("LOGIN ERRO:", erro);
+
             alert("Matrícula ou senha inválidas");
         }
     };
