@@ -1,5 +1,5 @@
 from flask_restful import Resource
-from flask import request, jsonify
+from flask import request, jsonify, make_response
 from flask_jwt_extended import create_access_token, jwt_required, set_access_cookies, get_jwt_identity
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -55,11 +55,11 @@ class AuthResource(Resource):
             }
         )
 
-        response = jsonify({
+        response = make_response(jsonify(({
             "nome": usuario.nome,
             "matricula": usuario.matricula,
             "perfil": usuario.perfil.nome
-        })
+        }))
 
         set_access_cookies(response, token)
 
