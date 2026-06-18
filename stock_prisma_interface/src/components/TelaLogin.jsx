@@ -27,7 +27,7 @@ export default function TelaLogin() {
 
         try {
             const res = await login(matricula, senha);
-            setUsuario(res.data);
+            setUsuario(res);
             router.push("/");
         } catch (erro) {
             console.log("LOGIN ERRO:", erro);
