@@ -1,7 +1,7 @@
 from flask_restful import Resource
 from flask import request, jsonify
 from flask_jwt_extended import create_access_token, jwt_required, set_access_cookies, get_jwt_identity
-import bcrypt
+from werkzeug.security import check_password_hash, generate_password_hash
 
 from stock_prisma.models import (
     Usuario,
@@ -42,10 +42,7 @@ class AuthResource(Resource):
         if not usuario.senha_hash:
             return {"erro": "usuário sem senha configurada"}, 401
 
-        senha_valida = bcrypt.checkpw(
-            senha.encode(),
-            usuario.senha_hash.encode()
-        )
+        senha_valida = check_password_hash(usuario.senha_hash, senha)
 
         if not senha_valida:
             return {"erro": "credenciais inválidas"}, 401
@@ -229,10 +226,7 @@ class UsuarioResource(Resource):
 
         senha_hash = None
         if dados.get("senha"):
-            senha_hash = bcrypt.hashpw(
-                dados["senha"].encode(),
-                bcrypt.gensalt()
-            ).decode()
+            senha_hash = generate_password_hash(dados["senha"]).decode()
 
         usuario = Usuario(
             nome=dados["nome"],

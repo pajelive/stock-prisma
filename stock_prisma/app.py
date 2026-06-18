@@ -53,6 +53,7 @@ def create_app():
     app.config["JWT_COOKIE_SECURE"] = True
 
     app.config["JWT_COOKIE_SAMESITE"] = "None"
+    app.config["JWT_COOKIE_DOMAIN"] = ".stockprisma.com.br"
 
     app.config["JWT_COOKIE_CSRF_PROTECT"] = False
     app.config["PROPAGATE_EXCEPTIONS"] = True  # ← propaga erros JWT
