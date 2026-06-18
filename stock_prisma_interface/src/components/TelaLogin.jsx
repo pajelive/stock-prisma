@@ -13,6 +13,13 @@ export default function TelaLogin() {
 
     const handleLogin = async (e) => {
         e.preventDefault();
+
+        try {
+            await login(matricula, senha);
+            router.push("/");
+        } catch (erro) {
+            alert("Matrícula ou senha inválidas");
+        }
     };
 
     return (
@@ -43,7 +50,7 @@ export default function TelaLogin() {
                             <label htmlFor="remember">Lembrar-me</label>
                         </div>
                         <button type="submit" className={styles.btnLogin}> Login</button>
-                        <a href="cadastro.html" className={styles.btnRegister}> Cadastrar</a>
+                        <a href="cadastro.html" className={styles.btnRegister}> Esqueci a senha</a>
                     </form>
                 </div>
             </div>
