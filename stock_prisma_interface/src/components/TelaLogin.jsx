@@ -2,14 +2,25 @@
 
 import Image from "next/image";
 import styles from './TelaLogin.module.css'
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation"
 import { login } from '../services/authService'
+import { useAuth } from "@/context/AuthContext";
+
 
 export default function TelaLogin() {
     const [matricula, setMatricula] = useState("");
     const [senha, setSenha] = useState("");
+    const { usuario, loading, setUsuario } = useAuth();
     const router = useRouter();
+
+    //redireciona se já estiver logado
+    useEffect(() => {
+        if (!loading && usuario) {
+            router.replace("/");
+        }
+    }, [usuario, loading]);
+
 
     const handleLogin = async (e) => {
         e.preventDefault();
