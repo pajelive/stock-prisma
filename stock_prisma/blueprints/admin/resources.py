@@ -1,6 +1,6 @@
 from flask_restful import Resource
-from flask import request
-from flask_jwt_extended import create_access_token, jwt_required
+from flask import request, jsonify
+from flask_jwt_extended import create_access_token, jwt_required, set_access_cookies
 import bcrypt
 
 from stock_prisma.models import (
@@ -58,12 +58,15 @@ class AuthResource(Resource):
             }
         )
 
-        return {
-            "token": token,
+        response = jsonify({
             "nome": usuario.nome,
             "matricula": usuario.matricula,
             "perfil": usuario.perfil.nome
-        }, 200
+        })
+
+        set_access_cookies(response, token)
+
+        return response, 200
 
 
 # =========================
