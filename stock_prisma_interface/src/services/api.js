@@ -7,10 +7,10 @@ const api = axios.create({
 
 api.interceptors.request.use((config) => {
 
-    const usuario = JSON.parse(localStorage.getItem("usuario"));
+    const token = localStorage.getItem("token");
 
-    if (usuario?.token) {
-        config.headers.Authorization = `Bearer ${usuario.token}`;
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
     }
 
     return config;
@@ -21,9 +21,7 @@ api.interceptors.response.use(
     (error) => {
 
         if (error.response?.status === 401) {
-
             localStorage.clear();
-
             window.location.href = "/login";
         }
 
