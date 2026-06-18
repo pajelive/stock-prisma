@@ -15,15 +15,6 @@ export default function TelaLogin() {
         e.preventDefault();
         try {
             await login(matricula, senha);
-            localStorage.setItem("token", resposta.token);
-            localStorage.setItem(
-                "usuario",
-                JSON.stringify({
-                    nome: resposta.nome,
-                    matricula: resposta.matricula,
-                    perfil: resposta.perfil,
-                })
-            )
             router.push("/");
         } catch (erro) {
             alert("Matrícula ou senha inválidas");
