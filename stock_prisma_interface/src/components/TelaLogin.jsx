@@ -36,7 +36,7 @@ export default function TelaLogin() {
         }
     };
 
-    if (loading) return null;
+    if (loading || usuario) return null;
 
     return (
         <div className={styles.container}>
