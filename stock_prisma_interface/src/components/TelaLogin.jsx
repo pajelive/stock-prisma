@@ -82,7 +82,7 @@ export default function TelaLogin() {
                                     border: "none",
                                     cursor: "pointer",
                                     padding: 0,
-                                    color: "#6b7280"
+                                    color: "#FFFFFF"
                                 }}
                             >
                                 {senhaVisivel ? <EyeOff size={18} /> : <Eye size={18} />}
