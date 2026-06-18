@@ -2,10 +2,22 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext"
+import api from "@/services/api"
 
 export default function Navbar() {
     const pathname = usePathname();
+    const { usuario, setUsuario } = useAuth();
+    const router = useRouter();
+
+    const handleLogout = async () => {
+        try {
+            await api.post("/admin/auth/logout");
+        }catch (_){}
+        setUsuario(null);
+        router.replace("/login");
+    }
 
     const navItem = (href, label) => (
         <Link
@@ -40,12 +52,21 @@ export default function Navbar() {
 
                 {navItem("/movimentacoes", "Movimentações")}
 
-                <Link
-                    href="/login"
-                    className="rounded-full bg-sky-500 px-4 py-2 text-sm md:text-base font-semibold text-white transition hover:bg-sky-600"
-                >
-                    Login
-                </Link>
+                {usuario ? (
+                    <button
+                        onClick={handleLogout}
+                        className="rounded-full bg-red-500 px-4 py-2 text-sm md:text-base font-semibold text-white transition hover:bg-red-600"
+                    >
+                        Sair
+                    </button>
+                ) : (
+                    <Link
+                        href="/login"
+                        className="rounded-full bg-sky-500 px-4 py-2 text-sm md:text-base font-semibold text-white transition hover:bg-sky-600"
+                    >
+                        Login
+                    </Link>
+                )}
 
             </div>
         </nav>
