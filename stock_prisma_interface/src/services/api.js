@@ -6,6 +6,8 @@ const api = axios.create({
     withCredentials: true
 });
 
+{/*adicionar a correção para não buscar autenticação em rotas publicas*/}
+
 api.interceptors.response.use(
     (response) => response,
     (error) => {
