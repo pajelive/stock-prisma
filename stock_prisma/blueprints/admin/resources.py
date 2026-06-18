@@ -226,7 +226,7 @@ class UsuarioResource(Resource):
 
         senha_hash = None
         if dados.get("senha"):
-            senha_hash = generate_password_hash(dados["senha"]).decode()
+            senha_hash = generate_password_hash(dados["senha"])
 
         usuario = Usuario(
             nome=dados["nome"],
