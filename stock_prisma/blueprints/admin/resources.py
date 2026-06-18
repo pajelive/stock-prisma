@@ -1,6 +1,6 @@
 from flask_restful import Resource
 from flask import request, jsonify
-from flask_jwt_extended import create_access_token, jwt_required, set_access_cookies
+from flask_jwt_extended import create_access_token, jwt_required, set_access_cookies, get_jwt_identity
 import bcrypt
 
 from stock_prisma.models import (
@@ -68,6 +68,20 @@ class AuthResource(Resource):
 
         return response, 200
 
+class MeResource(Resource):
+    @jwt_required
+    def get(self):
+        user_id = get_jwt_identity()
+        usuario = Usuario.query.get(user_id)
+
+        if not usuario:
+            return {"erro": "usuário não encontrado"}, 404
+
+        return {
+            "id": usuario.id,
+            "matricula": usuario.matricula,
+            "nome": usuario.nome
+        }, 200
 
 # =========================
 # FERRAMENTAS
