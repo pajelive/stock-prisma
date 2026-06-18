@@ -54,7 +54,7 @@ class AuthResource(Resource):
                 "perfil": usuario.perfil.nome
             }
         )
-
+        #foi necessário forçar o cookie como resposta porque o Flask-RESTful espera sempre retornar json
         response = make_response(jsonify({
             "nome": usuario.nome,
             "matricula": usuario.matricula,
