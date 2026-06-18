@@ -10,7 +10,14 @@ from stock_prisma.blueprints.admin import init_app as admin_init
 
 def create_app():
     app = Flask(__name__)
-    CORS(app)
+    CORS(
+        app,
+        supports_credentials=True,
+        origins=[
+            "https://stockprisma.com.br",
+            "http://localhost:3000"
+        ]
+    )
 
     # =========================
     # CONFIG DO BANCO
