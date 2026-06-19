@@ -1,7 +1,7 @@
 import { useState } from "react"
 import TipoPill from "./TipoPill"
 
-export default function Tabela({ titulo, dados }) {
+export default function Tabela({ titulo, dados, itensPorPagina = 12 }) {
 
     const [filtros, setFiltros] = useState({
         tipo: '',
@@ -18,13 +18,17 @@ export default function Tabela({ titulo, dados }) {
 
     const [mostrarData, setMostrarData] = useState(false)
 
+    const [paginaAtual, setPaginaAtual] = useState(1)
+
     function handleFiltro(campo, valor) {
         setFiltros(prev => ({ ...prev, [campo]: valor }))
+        setPaginaAtual(1)
     }
 
     function limparData() {
         setFiltros(prev => ({ ...prev, dataInicio: '', dataFim: '' }))
         setMostrarData(false)
+        setPaginaAtual(1)
     }
 
     const tipos = [...new Set(dados.map(m => m.tipo).filter(Boolean))]
@@ -52,8 +56,35 @@ export default function Tabela({ titulo, dados }) {
     })
 
     const temFiltroData = filtros.dataInicio || filtros.dataFim
+    const totalPaginas = Math.max(1, Math.ceil(dadosFiltrados.length / itensPorPagina))
+    const paginaCorrigida = Math.min(paginaAtual, totalPaginas)
 
-    return (
+    const inicio = (paginaCorrigida - 1) * itensPorPagina
+    const dadosPaginados = dadosFiltrados.slice(inicio, inicio + itensPorPagina)
+
+    function irParaPagina(pagina) {
+        if (pagina < 1 || pagina > totalPaginas) return
+        setPaginaAtual(pagina)
+    }
+    function getNumerosPagina() {
+        const numeros = []
+        const delta = 1 // quantas páginas mostrar ao redor da atual
+
+        for (let i = 1; i <= totalPaginas; i++) {
+            if (
+                i === 1 ||
+                i === totalPaginas ||
+                (i >= paginaCorrigida - delta && i <= paginaCorrigida + delta)
+            ) {
+                numeros.push(i)
+            } else if (numeros[numeros.length - 1] !== '...') {
+                numeros.push('...')
+            }
+        }
+        return numeros
+    }
+
+  return (
         <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
 
             <div className="px-5 py-4 border-b border-gray-200 flex items-center justify-between">
@@ -208,7 +239,7 @@ export default function Tabela({ titulo, dados }) {
                     </thead>
 
                     <tbody>
-                        {dadosFiltrados.map((m) => (
+                        {dadosPaginados.map((m) => (
                             <tr key={m.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
                                 <td className="px-4 py-3">
                                     <span className="font-mono text-xs font-medium bg-gray-100 text-gray-700 px-2 py-1 rounded-md">
@@ -227,9 +258,62 @@ export default function Tabela({ titulo, dados }) {
                                 <td className="px-4 py-3 text-gray-400">{m.observacao || '—'}</td>
                             </tr>
                         ))}
+
+                        {dadosPaginados.length === 0 && (
+                            <tr>
+                                <td colSpan={11} className="px-4 py-8 text-center text-gray-400">
+                                    Nenhum registro encontrado
+                                </td>
+                            </tr>
+                        )}
                     </tbody>
                 </table>
             </div>
+
+            {/* Paginação */}
+            {totalPaginas > 1 && (
+                <div className="px-5 py-4 border-t border-gray-100 flex items-center justify-between">
+                    <span className="text-xs text-gray-500">
+                        Página {paginaCorrigida} de {totalPaginas}
+                    </span>
+
+                    <div className="flex items-center gap-1">
+                        <button
+                            onClick={() => irParaPagina(paginaCorrigida - 1)}
+                            disabled={paginaCorrigida === 1}
+                            className="px-3 py-1.5 text-xs rounded-lg border border-gray-200 text-gray-600 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
+                        >
+                            Anterior
+                        </button>
+
+                        {getNumerosPagina().map((num, idx) =>
+                            num === '...' ? (
+                                <span key={`dots-${idx}`} className="px-2 text-xs text-gray-400">...</span>
+                            ) : (
+                                <button
+                                    key={num}
+                                    onClick={() => irParaPagina(num)}
+                                    className={`px-3 py-1.5 text-xs rounded-lg transition-colors ${
+                                        num === paginaCorrigida
+                                            ? 'bg-sky-500 text-white'
+                                            : 'border border-gray-200 text-gray-600 hover:bg-gray-50'
+                                    }`}
+                                >
+                                    {num}
+                                </button>
+                            )
+                        )}
+
+                        <button
+                            onClick={() => irParaPagina(paginaCorrigida + 1)}
+                            disabled={paginaCorrigida === totalPaginas}
+                            className="px-3 py-1.5 text-xs rounded-lg border border-gray-200 text-gray-600 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
+                        >
+                            Próxima
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }
