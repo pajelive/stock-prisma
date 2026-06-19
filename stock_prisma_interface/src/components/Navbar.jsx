@@ -52,7 +52,9 @@ export default function Navbar() {
 
                 {navItem("/movimentacoes", "Movimentações")}
                 {/* Adiciona botão de sair */}
-                {usuario ? (
+                {loading ? (
+                    <div className="h-9 w-20 md:h-10 md:w-24 rounded-full bg-zinc-100 animate-pulse" />
+                ) : usuario ? (
                     <button
                         onClick={handleLogout}
                         className="rounded-full bg-red-500 px-4 py-2 text-sm md:text-base font-semibold text-white transition hover:bg-red-600"
