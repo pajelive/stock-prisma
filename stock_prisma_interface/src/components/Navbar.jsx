@@ -8,7 +8,7 @@ import api from "@/services/api"
 
 export default function Navbar() {
     const pathname = usePathname();
-    const { usuario, setUsuario } = useAuth();
+    const { usuario, setUsuario, loading } = useAuth();
     const router = useRouter();
 
     const handleLogout = async () => {
