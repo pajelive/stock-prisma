@@ -1,5 +1,17 @@
-export default function Home() {
+import Compartimento from '../../components/Compartimento'
+
+export default function Compartimentos() {
     return (
-         <h1>Home</h1>
+        <div className="grid grid-cols-4 gap-6">
+            {compartiments.map((comp)=>{{
+                <Compartimento>
+                  key = {comp.id}
+                  compartimento = {comp}
+                  onClick={() => selecionarCompartimento(comp)}
+                </Compartimento>
+            }})
+
+            }
+        </div>
     )
 }

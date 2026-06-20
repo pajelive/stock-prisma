@@ -38,7 +38,7 @@ export default function Tabela({ titulo, dados, itensPorPagina = 12 }) {
     const dadosFiltrados = dados.filter((m) => {
         if (filtros.tipo && m.tipo !== filtros.tipo) return false
         if (filtros.categoria) {
-            const cat = m.ferramenta ? 'Ferramenta' : 'Compartimento'
+            const cat = m.ferramenta ? 'Ferramenta' : 'Compartimento.jsx'
             if (cat !== filtros.categoria) return false
         }
         if (filtros.nome) {
@@ -247,7 +247,7 @@ export default function Tabela({ titulo, dados, itensPorPagina = 12 }) {
                                     </span>
                                 </td>
                                 <td className="px-4 py-3"><TipoPill tipo={m.tipo} /></td>
-                                <td className="px-4 py-3 text-gray-700">{m.ferramenta ? 'Ferramenta' : 'Compartimento'}</td>
+                                <td className="px-4 py-3 text-gray-700">{m.ferramenta ? 'Ferramenta' : 'Compartimento.jsx'}</td>
                                 <td className="px-4 py-3 text-gray-700">{m.ferramenta || m.compartimento}</td>
                                 <td className="px-4 py-3 text-gray-700">{m.quantidade}</td>
                                 <td className="px-4 py-3 text-gray-700">{m.usuario}</td>
