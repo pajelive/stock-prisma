@@ -1,6 +1,6 @@
 import Compartimento from '../../components/Compartimento'
 
-export default function Compartimentos({ compartimentos, selecionarCompartimento }) {
+export default function Compartimentos({ compartimentos = [], selecionarCompartimento }) {
     return (
         <div className="grid grid-cols-4 gap-6">
             {compartimentos.map((comp) => (
