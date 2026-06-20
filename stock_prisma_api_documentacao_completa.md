@@ -79,7 +79,7 @@ GET http://127.0.0.1:5000/compartimentos
 [
   {
     "id": 1,
-    "nome": "Compartimento A1",
+    "nome": "Compartimento.jsx A1",
     "localizacao": "Setor Norte",
     "peso_atual": 12.5,
     "status": "ativo",
@@ -87,7 +87,7 @@ GET http://127.0.0.1:5000/compartimentos
   },
   {
     "id": 2,
-    "nome": "Compartimento B2",
+    "nome": "Compartimento.jsx B2",
     "localizacao": "Almoxarifado",
     "peso_atual": 4.7,
     "status": "vazio",

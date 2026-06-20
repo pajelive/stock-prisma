@@ -16,7 +16,7 @@ class Movimentacao(db.Model):
     ferramenta_id = db.Column(db.BigInteger, db.ForeignKey("ferramenta.id"))
 
     usuario = db.relationship("Usuario", back_populates="movimentacoes")
-    compartimento = db.relationship("Compartimento", back_populates="movimentacoes")
+    compartimento = db.relationship("Compartimento.jsx", back_populates="movimentacoes")
     ordem_producao = db.relationship("OrdemProducao", back_populates="movimentacoes")
     etapa = db.relationship("EtapaProcesso", back_populates="movimentacoes")
     tipo_movimentacao = db.relationship("TipoMovimentacao", back_populates="movimentacoes")

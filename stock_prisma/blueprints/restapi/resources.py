@@ -11,7 +11,9 @@ class CompartimentoResource(Resource):
 
     def get(self):
 
-        compartimentos = Compartimento.query.all()
+        compartimentos = Compartimento.query.options(
+            joinedload(Compartimento.insumo)
+        ).all()
 
         dados = []
 
@@ -20,9 +22,8 @@ class CompartimentoResource(Resource):
                 "id": c.id,
                 "nome": c.nome,
                 "localizacao": c.localizacao,
-                "peso_atual": c.peso_atual,
                 "status": c.status,
-                "insumo_id": c.insumo_id
+                "insumo_nome": c.insumo.nome if c.insumo else None
             })
 
         return dados, 200

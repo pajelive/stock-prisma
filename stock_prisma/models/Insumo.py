@@ -10,4 +10,4 @@ class Insumo(db.Model):
     peso_unitario = db.Column(db.Float, nullable=False)
     ativo = db.Column(db.Boolean, default=True)
 
-    compartimentos = db.relationship("Compartimento", back_populates="insumo")
+    compartimentos = db.relationship("Compartimento.jsx", back_populates="insumo")
