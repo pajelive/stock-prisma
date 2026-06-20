@@ -1,25 +1,31 @@
-import axios from "axios";
+import { useEffect, useState } from "react";
+import api from "../../services/api";
+import Compartimento from "../../components/Compartimento";
 
-const api = axios.create({
-    baseURL: "https://api.stockprisma.com.br/api/v1/",
-    timeout: 15000,
-    withCredentials: true
-});
+export default function Compartimentos() {
+    const [compartimentos, setCompartimentos] = useState([]);
 
-{/*adicionar a correção para não buscar autenticação em rotas publicas*/}
-
-api.interceptors.response.use(
-    (response) => response,
-    (error) => {
-        const isAuthMe = error.config?.url?.includes("/auth/me");
-        const isLogin = error.config?.url?.includes("/auth/login");
-
-        if (error.response?.status === 401 && !isAuthMe && !isLogin) {
-            window.location.href = "/login";
+    useEffect(() => {
+        async function carregarCompartimentos() {
+            try {
+                const response = await api.get("/compartimentos");
+                setCompartimentos(response.data);
+            } catch (err) {
+                console.error(err);
+            }
         }
 
-        return Promise.reject(error);
-    }
-);
+        carregarCompartimentos();
+    }, []);
 
-export default api;
+    return (
+        <div className="grid grid-cols-4 gap-6">
+            {compartimentos.map((comp) => (
+                <Compartimento
+                    key={comp.id}
+                    compartimento={comp}
+                />
+            ))}
+        </div>
+    );
+}
