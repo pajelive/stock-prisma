@@ -16,7 +16,7 @@ class MovimentacaoService:
     def registrar_movimentacao(data, session):
 
         # =========================
-        # USUÁRIO (obrigatório)
+        # USUÁRIO (SEMPRE OBRIGATÓRIO)
         # =========================
         usuario = session.query(Usuario).filter_by(
             uid_rfid=data.get("usuario_uid")
@@ -28,27 +28,43 @@ class MovimentacaoService:
         etapa = usuario.etapa
 
         # =========================
-        # COMPARTIMENTO
+        # COMPARTIMENTO (POR NOME)
         # =========================
         compartimento = None
 
         if data.get("compartimento_uid"):
+
             compartimento = session.query(Compartimento).filter_by(
-                uid_rfid=data["compartimento_uid"]
+                nome=data["compartimento_uid"]  # <<< CORREÇÃO FINAL
             ).first()
 
+            if not compartimento:
+                raise ValueError("Compartimento não encontrado")
+
         # =========================
-        # FERRAMENTA
+        # FERRAMENTA (RFID)
         # =========================
         ferramenta = None
 
         if data.get("ferramenta_uid"):
+
             ferramenta = session.query(Ferramenta).filter_by(
                 uid_rfid=data["ferramenta_uid"]
             ).first()
 
         # =========================
-        # TIPO MOVIMENTAÇÃO
+        # ORDEM PRODUÇÃO (opcional)
+        # =========================
+        op = None
+
+        if data.get("op_codigo"):
+
+            op = session.query(OrdemProducao).filter_by(
+                codigo=data["op_codigo"]
+            ).first()
+
+        # =========================
+        # INFERIR TIPO
         # =========================
         tipo_nome = MovimentacaoService._inferir_tipo_movimentacao(
             ferramenta=ferramenta,
@@ -65,23 +81,13 @@ class MovimentacaoService:
             raise ValueError(f"Tipo inválido: {tipo_nome}")
 
         # =========================
-        # OP (opcional)
-        # =========================
-        op = None
-
-        if data.get("op_codigo"):
-            op = session.query(OrdemProducao).filter_by(
-                codigo=data["op_codigo"]
-            ).first()
-
-        # =========================
-        # ATUALIZA PESO DO COMPARTIMENTO
+        # ATUALIZA PESO (BALANÇA)
         # =========================
         if compartimento and data.get("peso_atual") is not None:
             compartimento.peso_atual = data["peso_atual"]
 
         # =========================
-        # DATA
+        # DATA/HORA
         # =========================
         BRASILIA = timezone(timedelta(hours=-3))
 
@@ -89,20 +95,15 @@ class MovimentacaoService:
         # CRIA MOVIMENTAÇÃO
         # =========================
         mov = Movimentacao(
-
             usuario_id=usuario.id,
-
             compartimento_id=compartimento.id if compartimento else None,
             ferramenta_id=ferramenta.id if ferramenta else None,
-
             tipo_movimentacao_id=tipo.id,
             etapa_id=etapa.id if etapa else None,
             op_id=op.id if op else None,
-
             quantidade=data.get("quantidade", 1),
             origem_leitura=data.get("origem", "DESCONHECIDA"),
             observacao=data.get("observacao"),
-
             data_hora=datetime.now(BRASILIA).replace(tzinfo=None)
         )
 
@@ -112,7 +113,6 @@ class MovimentacaoService:
     # =========================
     # INFERÊNCIA DE TIPO
     # =========================
-
     @staticmethod
     def _inferir_tipo_movimentacao(ferramenta, compartimento, data, session):
 
@@ -121,19 +121,22 @@ class MovimentacaoService:
         # =========================
         if ferramenta:
 
-            ultima = session.query(Movimentacao).filter_by(
+            ultima_mov = session.query(Movimentacao).filter_by(
                 ferramenta_id=ferramenta.id
             ).order_by(Movimentacao.data_hora.desc()).first()
 
-            if not ultima:
+            if not ultima_mov:
                 return "Retirada"
 
-            ultimo_tipo = ultima.tipo_movimentacao.nome
+            ultimo_tipo = ultima_mov.tipo_movimentacao.nome
 
-            return "Devolucao" if ultimo_tipo == "Retirada" else "Retirada"
+            if ultimo_tipo == "Retirada":
+                return "Devolucao"
+
+            return "Retirada"
 
         # =========================
-        # COMPARTIMENTO
+        # COMPARTIMENTO (BALANÇA)
         # =========================
         if compartimento:
 
