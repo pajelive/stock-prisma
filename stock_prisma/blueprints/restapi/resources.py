@@ -27,7 +27,23 @@ class CompartimentoResource(Resource):
             })
 
         return dados, 200
+    
+    def identificar_compartimento(nome):
+        compartimento = Compartimento.query.options(
+            joinedload(Compartimento.insumo)
+        ).filter_by(nome=nome).first()
 
+        if not compartimento:
+            return None
+
+        return {
+            "id": compartimento.id,
+            "nome": compartimento.nome,
+            "localizacao": compartimento.localizacao,
+            "status": compartimento.status,
+            "insumo_id": compartimento.insumo_id,
+            "insumo_nome": compartimento.insumo.nome if compartimento.insumo else None
+        }
 
 class MovimentacaoResource(Resource):
     def post(self):
