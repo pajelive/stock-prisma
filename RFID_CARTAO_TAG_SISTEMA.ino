@@ -11,7 +11,6 @@
 
 MFRC522 rfid(SS_PIN, RST_PIN);
 
-// debounce RFID
 char ultimoUID[32] = "";
 unsigned long ultimoTempo = 0;
 const unsigned long intervaloLeitura = 3000;
@@ -27,13 +26,17 @@ HX711 escala;
 
 const char* ID_COMPARTIMENTO = "COMPARTIMENTO_1";
 
-// ajuste conforme sua calibração
 const float FATOR_CALIBRACAO = -272046.87;
 
-// diferença mínima para considerar alteração (kg)
-const float TOLERANCIA = 0.005;
+// tolerância de variação (ajuste fino)
+const float TOLERANCIA = 0.01;
 
+#define AMOSTRAS 10
+#define ESTABILIDADE 4
+
+float ultimoPesoEstavel = 0;
 float ultimoPesoEnviado = 0;
+int contadorEstavel = 0;
 
 // ============================
 // SETUP
@@ -44,7 +47,6 @@ void setup()
     Serial.begin(9600);
 
     inicializarRFID();
-
     inicializarBalanca();
 
     Serial.println("Sistema iniciado.");
@@ -57,7 +59,6 @@ void setup()
 void loop()
 {
     lerRFID();
-
     lerBalanca();
 }
 
@@ -68,9 +69,7 @@ void loop()
 void inicializarRFID()
 {
     SPI.begin();
-
     rfid.PCD_Init();
-
     delay(4);
 
     Serial.println("RFID iniciado.");
@@ -89,12 +88,11 @@ void lerRFID()
     for (byte i = 0; i < rfid.uid.size; i++)
     {
         char buffer[4];
-
         sprintf(buffer, "%02X", rfid.uid.uidByte[i]);
-
         strcat(uidAtual, buffer);
     }
 
+    // debounce RFID
     if (strcmp(uidAtual, ultimoUID) == 0 &&
         millis() - ultimoTempo < intervaloLeitura)
     {
@@ -104,14 +102,12 @@ void lerRFID()
     }
 
     strcpy(ultimoUID, uidAtual);
-
     ultimoTempo = millis();
 
     Serial.print("UID:");
     Serial.println(uidAtual);
 
     rfid.PICC_HaltA();
-
     rfid.PCD_StopCrypto1();
 }
 
@@ -122,29 +118,61 @@ void lerRFID()
 void inicializarBalanca()
 {
     escala.begin(DT, SCK);
-
     escala.set_scale(FATOR_CALIBRACAO);
-
     escala.tare(20);
 
     delay(500);
 
-    ultimoPesoEnviado = escala.get_units(20);
+    ultimoPesoEstavel = escala.get_units(10);
+    ultimoPesoEnviado = ultimoPesoEstavel;
 
     Serial.println("Balança iniciada.");
 }
 
+// média simples (filtro)
+float lerPesoFiltrado()
+{
+    float soma = 0;
+
+    for (int i = 0; i < AMOSTRAS; i++)
+    {
+        soma += escala.get_units(1);
+    }
+
+    return soma / AMOSTRAS;
+}
+
 void lerBalanca()
 {
-    float pesoAtual = escala.get_units(20);
+    float pesoAtual = lerPesoFiltrado();
 
-    if (abs(pesoAtual - ultimoPesoEnviado) >= TOLERANCIA)
+    // ainda dentro do ruído
+    if (abs(pesoAtual - ultimoPesoEstavel) < TOLERANCIA)
     {
+        contadorEstavel++;
+
+        if (contadorEstavel < ESTABILIDADE)
+            return;
+
+        // só envia se mudou de fato
+        if (abs(pesoAtual - ultimoPesoEnviado) < TOLERANCIA)
+            return;
+
         ultimoPesoEnviado = pesoAtual;
 
         enviarPeso(pesoAtual);
     }
+    else
+    {
+        // instável → reseta estabilização
+        contadorEstavel = 0;
+        ultimoPesoEstavel = pesoAtual;
+    }
 }
+
+// ============================
+// ENVIO
+// ============================
 
 void enviarPeso(float peso)
 {
@@ -152,6 +180,5 @@ void enviarPeso(float peso)
     Serial.print(ID_COMPARTIMENTO);
 
     Serial.print(";PESO:");
-
     Serial.println(peso, 3);
 }
