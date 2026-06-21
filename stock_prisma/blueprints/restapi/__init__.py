@@ -7,6 +7,7 @@ bp = Blueprint("restapi", __name__,url_prefix="/api/v1/public")
 api = Api(bp)
 
 api.add_resource(CompartimentoResource,"/compartimentos")
+api.add_resource(CompartimentoResource,"/compartimentos/<tipo:nome>")
 
 api.add_resource(MovimentacaoResource,"/movimentacoes")
 
