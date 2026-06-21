@@ -10,19 +10,24 @@ export function AuthProvider({ children }) {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        api.get("/admin/auth/me")
-            .then((res) => {
-                setUsuario(res.data);
-            })
-            .catch(() => {
-                setUsuario(null);
-            })
-            .finally(() => {
-                setLoading(false);
-            });
-    }, []);
+    let mounted = true;
 
-    return (
+    api.get("/admin/auth/me")
+        .then((res) => {
+            if (mounted) setUsuario(res.data);
+        })
+        .catch(() => {
+            if (mounted) setUsuario(null);
+        })
+        .finally(() => {
+            if (mounted) setLoading(false);
+        });
+
+        return () => {
+            mounted = false;
+        };
+        }, []);
+        return (
         <AuthContext.Provider value={{ usuario, setUsuario, loading }}>
             {children}
         </AuthContext.Provider>

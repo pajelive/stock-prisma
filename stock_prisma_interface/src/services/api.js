@@ -6,15 +6,19 @@ const api = axios.create({
     withCredentials: true
 });
 
-{/*adicionar a correção para não buscar autenticação em rotas publicas*/}
-
+// intercept apenas 401
 api.interceptors.response.use(
     (response) => response,
     (error) => {
-        const isAuthMe = error.config?.url?.includes("/auth/me");
-        const isLogin = error.config?.url?.includes("/auth/login");
 
-        if (error.response?.status === 401 && !isAuthMe && !isLogin) {
+        const status = error.response?.status;
+        const url = error.config?.url || "";
+
+        const isAuthRoute =
+            url.includes("/auth/me") ||
+            url.includes("/admin/auth/login");
+
+        if (status === 401 && !isAuthRoute) {
             window.location.href = "/login";
         }
 
