@@ -1,79 +1,157 @@
 #include <SPI.h>
 #include <MFRC522.h>
+#include "HX711.h"
+
+// ============================
+// RFID
+// ============================
 
 #define SS_PIN 10
 #define RST_PIN 9
 
 MFRC522 rfid(SS_PIN, RST_PIN);
 
-// debounce
+// debounce RFID
 char ultimoUID[32] = "";
 unsigned long ultimoTempo = 0;
-
 const unsigned long intervaloLeitura = 3000;
 
-void setup() {
+// ============================
+// BALANÇA
+// ============================
 
-  Serial.begin(9600);
+#define DT A1
+#define SCK A0
 
-  SPI.begin();
+HX711 escala;
 
-  rfid.PCD_Init();
+const char* ID_COMPARTIMENTO = "COMPARTIMENTO_1";
 
-  delay(4);
+// ajuste conforme sua calibração
+const float FATOR_CALIBRACAO = -272046.87;
 
-  Serial.println("Sistema RFID iniciado");
+// diferença mínima para considerar alteração (kg)
+const float TOLERANCIA = 0.005;
+
+float ultimoPesoEnviado = 0;
+
+// ============================
+// SETUP
+// ============================
+
+void setup()
+{
+    Serial.begin(9600);
+
+    inicializarRFID();
+
+    inicializarBalanca();
+
+    Serial.println("Sistema iniciado.");
 }
 
-void loop() {
+// ============================
+// LOOP
+// ============================
 
-  // cartão presente?
-  if (!rfid.PICC_IsNewCardPresent()) {
-    delay(10);
-    return;
-  }
+void loop()
+{
+    lerRFID();
 
-  // conseguiu ler?
-  if (!rfid.PICC_ReadCardSerial()) {
-    delay(10);
-    return;
-  }
+    lerBalanca();
+}
 
-  char uidAtual[32] = "";
+// ============================
+// RFID
+// ============================
 
-  for (byte i = 0; i < rfid.uid.size; i++) {
+void inicializarRFID()
+{
+    SPI.begin();
 
-    char buffer[4];
+    rfid.PCD_Init();
 
-    sprintf(buffer, "%02X", rfid.uid.uidByte[i]);
+    delay(4);
 
-    strcat(uidAtual, buffer);
-  }
+    Serial.println("RFID iniciado.");
+}
 
-  // debounce
-  if (
-    strcmp(uidAtual, ultimoUID) == 0 &&
-    millis() - ultimoTempo < intervaloLeitura
-  ) {
+void lerRFID()
+{
+    if (!rfid.PICC_IsNewCardPresent())
+        return;
+
+    if (!rfid.PICC_ReadCardSerial())
+        return;
+
+    char uidAtual[32] = "";
+
+    for (byte i = 0; i < rfid.uid.size; i++)
+    {
+        char buffer[4];
+
+        sprintf(buffer, "%02X", rfid.uid.uidByte[i]);
+
+        strcat(uidAtual, buffer);
+    }
+
+    if (strcmp(uidAtual, ultimoUID) == 0 &&
+        millis() - ultimoTempo < intervaloLeitura)
+    {
+        rfid.PICC_HaltA();
+        rfid.PCD_StopCrypto1();
+        return;
+    }
+
+    strcpy(ultimoUID, uidAtual);
+
+    ultimoTempo = millis();
+
+    Serial.print("UID:");
+    Serial.println(uidAtual);
 
     rfid.PICC_HaltA();
+
     rfid.PCD_StopCrypto1();
+}
 
-    delay(50);
+// ============================
+// BALANÇA
+// ============================
 
-    return;
-  }
+void inicializarBalanca()
+{
+    escala.begin(DT, SCK);
 
-  strcpy(ultimoUID, uidAtual);
+    escala.set_scale(FATOR_CALIBRACAO);
 
-  ultimoTempo = millis();
+    escala.tare(20);
 
-  Serial.print("UID:");
-  Serial.println(uidAtual);
+    delay(500);
 
-  rfid.PICC_HaltA();
+    ultimoPesoEnviado = escala.get_units(20);
 
-  rfid.PCD_StopCrypto1();
+    Serial.println("Balança iniciada.");
+}
 
-  delay(50);
+void lerBalanca()
+{
+    float pesoAtual = escala.get_units(20);
+
+    if (abs(pesoAtual - ultimoPesoEnviado) >= TOLERANCIA)
+    {
+        ultimoPesoEnviado = pesoAtual;
+
+        enviarPeso(pesoAtual);
+    }
+}
+
+void enviarPeso(float peso)
+{
+    Serial.print("ID:");
+    Serial.print(ID_COMPARTIMENTO);
+
+    Serial.print(";PESO:");
+
+    Serial.println(peso, 3);
 }
