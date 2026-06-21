@@ -29,7 +29,7 @@ class CompartimentoResource(Resource):
         return dados, 200
     
 class CompartimentoPorNomeResource(Resource):    
-    def identificar_compartimento(nome):
+    def get(self, nome):
         compartimento = Compartimento.query.options(
             joinedload(Compartimento.insumo)
         ).filter_by(nome=nome).first()
