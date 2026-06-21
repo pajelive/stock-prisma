@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 
 from stock_prisma.models import (
     Usuario,
@@ -16,7 +16,7 @@ class MovimentacaoService:
     def registrar_movimentacao(data, session):
 
         # =========================
-        # USUÁRIO (OBRIGATÓRIO)
+        # USUÁRIO (obrigatório)
         # =========================
         usuario = session.query(Usuario).filter_by(
             uid_rfid=data.get("usuario_uid")
@@ -31,6 +31,7 @@ class MovimentacaoService:
         # COMPARTIMENTO
         # =========================
         compartimento = None
+
         if data.get("compartimento_uid"):
             compartimento = session.query(Compartimento).filter_by(
                 uid_rfid=data["compartimento_uid"]
@@ -40,6 +41,7 @@ class MovimentacaoService:
         # FERRAMENTA
         # =========================
         ferramenta = None
+
         if data.get("ferramenta_uid"):
             ferramenta = session.query(Ferramenta).filter_by(
                 uid_rfid=data["ferramenta_uid"]
@@ -63,9 +65,10 @@ class MovimentacaoService:
             raise ValueError(f"Tipo inválido: {tipo_nome}")
 
         # =========================
-        # ORDEM PRODUÇÃO (opcional)
+        # OP (opcional)
         # =========================
         op = None
+
         if data.get("op_codigo"):
             op = session.query(OrdemProducao).filter_by(
                 codigo=data["op_codigo"]
@@ -78,53 +81,59 @@ class MovimentacaoService:
             compartimento.peso_atual = data["peso_atual"]
 
         # =========================
+        # DATA
+        # =========================
+        BRASILIA = timezone(timedelta(hours=-3))
+
+        # =========================
         # CRIA MOVIMENTAÇÃO
         # =========================
         mov = Movimentacao(
+
             usuario_id=usuario.id,
+
             compartimento_id=compartimento.id if compartimento else None,
             ferramenta_id=ferramenta.id if ferramenta else None,
+
             tipo_movimentacao_id=tipo.id,
             etapa_id=etapa.id if etapa else None,
             op_id=op.id if op else None,
+
             quantidade=data.get("quantidade", 1),
             origem_leitura=data.get("origem", "DESCONHECIDA"),
             observacao=data.get("observacao"),
-            data_hora=datetime.utcnow()
+
+            data_hora=datetime.now(BRASILIA).replace(tzinfo=None)
         )
 
         session.add(mov)
         return mov
 
-    # =====================================================
-    # INFERÊNCIA DE TIPO DE MOVIMENTAÇÃO (CORRIGIDO)
-    # =====================================================
+    # =========================
+    # INFERÊNCIA DE TIPO
+    # =========================
+
     @staticmethod
     def _inferir_tipo_movimentacao(ferramenta, compartimento, data, session):
 
         # =========================
-        # RFID - FERRAMENTA
+        # FERRAMENTA
         # =========================
         if ferramenta:
 
-            ultima_mov = session.query(Movimentacao).filter_by(
+            ultima = session.query(Movimentacao).filter_by(
                 ferramenta_id=ferramenta.id
-            ).order_by(
-                Movimentacao.data_hora.desc()
-            ).first()
+            ).order_by(Movimentacao.data_hora.desc()).first()
 
-            if not ultima_mov:
+            if not ultima:
                 return "Retirada"
 
-            ultimo_tipo = ultima_mov.tipo_movimentacao.nome
+            ultimo_tipo = ultima.tipo_movimentacao.nome
 
-            if ultimo_tipo == "Retirada":
-                return "Devolucao"
-
-            return "Retirada"
+            return "Devolucao" if ultimo_tipo == "Retirada" else "Retirada"
 
         # =========================
-        # COMPARTIMENTO (BALANÇA)
+        # COMPARTIMENTO
         # =========================
         if compartimento:
 
@@ -134,21 +143,12 @@ class MovimentacaoService:
             if peso_atual is None:
                 return "Inventario"
 
-            delta = peso_atual - peso_anterior
-
-            # filtro de ruído
-            if abs(delta) < 0.005:
-                return "Inventario"
-
-            # perda de peso
-            if delta < 0:
+            if peso_atual < peso_anterior:
                 return "Consumo"
 
-            # ganho de peso
-            if delta > 0:
+            if peso_atual > peso_anterior:
                 return "Entrada"
 
-        # =========================
-        # FALLBACK
-        # =========================
+            return "Inventario"
+
         raise ValueError("Não foi possível inferir o tipo de movimentação")
