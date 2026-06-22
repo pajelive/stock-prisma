@@ -4,22 +4,19 @@ export default function Compartimento({ compartimento, onClick }) {
     return (
         <button
             onClick={onClick}
-            className="group flex h-32 w-full flex-col justify-between rounded-2xl border border-sky-200 bg-sky-500/10 p-4 text-left transition-all duration-200 hover:scale-105 hover:border-sky-400 hover:bg-sky-500/20 hover:shadow-xl"
+            className="group flex h-36 w-full flex-col justify-between rounded-lg border-2 border-slate-200 bg-slate-50 p-4 text-left transition-all duration-200 hover:scale-[1.02] hover:border-sky-500 hover:bg-sky-50 hover:shadow-md"
         >
             <div>
-                <p className="text-[10px] uppercase tracking-widest text-sky-700">
-                    Compartimento
-                </p>
-
-                <h2 className="mt-1 text-lg font-bold text-slate-800">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 group-hover:text-sky-600 transition-colors">
                     {compartimento.nome}
-                </h2>
+                </p>
+                {/* Linha divisória sutil interna da gaveta */}
+                <div className="mt-1 h-[2px] w-8 bg-slate-200 group-hover:bg-sky-300 transition-colors" />
             </div>
 
-            <div>
-                <p className="text-[10px] text-gray-500">Insumo</p>
-
-                <p className="text-sm font-medium text-gray-800">
+            <div className="mt-4">
+                <p className="text-[10px] uppercase font-semibold text-gray-400">Insumo</p>
+                <p className="text-sm font-bold text-slate-700 truncate">
                     {compartimento.insumo_nome || "Vazio"}
                 </p>
             </div>
