@@ -95,7 +95,7 @@ export default function Compartimentos() {
             <Modal
                 aberto={selecionado !== null}
                 onFechar={() => setSelecionado(null)}
-                titulo={`Compartimento ${selecionado?.nome ?? ""}`}
+                titulo={`${selecionado?.nome ?? ""}`}
                 footer={
                     <>
                         {confirmDelete ? (
