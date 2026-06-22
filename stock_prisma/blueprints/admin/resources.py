@@ -8,10 +8,11 @@ from stock_prisma.models import (
     Ferramenta,
     Perfil,
     EtapaProcesso,
-    OrdemProducao
+    OrdemProducao,
+    Compartimento,
+    Insumo
 )
 from stock_prisma.ext.database import db
-
 
 # =========================
 # AUTH
@@ -77,7 +78,8 @@ class MeResource(Resource):
         return {
             "id": usuario.id,
             "matricula": usuario.matricula,
-            "nome": usuario.nome
+            "nome": usuario.nome,
+            "perfil": usuario.perfil.nome
         }, 200
 
 class LogoutResource(Resource):
@@ -501,3 +503,49 @@ class OrdemProducaoDetalheResource(Resource):
         db.session.commit()
 
         return {"msg": "Ordem removida"}, 200
+
+class CompartimentoAdminResource(Resource):
+    @jwt_required()
+    def put(self,id):
+        compartimento = Compartimento.query.get(id)
+
+        if not compartimento:
+            return {"erro":"compartimento não encontrado"},404
+
+        dados = request.json
+
+        if dados.get("nome"):
+            compartimento.nome = dados["nome"]
+        if dados.get("localizacao") is not None:
+            compartimento.localizacao = dados["localizacao"]
+        if dados.get("status"):
+            compartimento.status = dados["status"]
+        if dados.get("peso_tara") is not None:
+            compartimento.peso_tara = dados["peso_tara"]
+        if "sensor_ativo" in dados:
+            compartimento.sensor_ativo = dados["sensor_ativo"]
+
+        db.session.commit()
+        return {"msg": "Compartimento atualizado"}, 200
+
+    @jwt_required()
+    def delete(self, id):
+        compartimento = Compartimento.query.get(id)
+
+        if not compartimento:
+            return {"erro": "Compartimento não encontrado"}, 404
+
+        db.session.delete(compartimento)
+        db.session.commit()
+        return {"msg": "Compartimento removido"}, 200
+
+class InsumoResource(Resource):
+    @jwt_required()
+    def get(self):
+        insumos = Insumo.query.filter_by(ativo=True).all()
+        return [{
+            "id": i.id,
+            "nome": i.nome,
+            "categoria": i.categoria,
+            "unidade": i.unidade,
+        } for i in insumos], 200

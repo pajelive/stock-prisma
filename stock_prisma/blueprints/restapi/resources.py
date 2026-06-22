@@ -23,6 +23,10 @@ class CompartimentoResource(Resource):
                 "nome": c.nome,
                 "localizacao": c.localizacao,
                 "status": c.status,
+                "peso_tara": float(c.peso_tara) if c.peso_tara is not None else 0.0,
+                "peso_atual": float(c.peso_atual) if c.peso_atual is not None else 0.0,
+                "sensor_ativo": c.sensor_ativo,
+                "insumo_id": c.insumo_id,
                 "insumo_nome": c.insumo.nome if c.insumo else None
             })
 
