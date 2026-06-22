@@ -251,7 +251,7 @@ export default function Tabela({
                         {dadosPaginados.map((m) => (
                             <tr key={m.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
                                 <td className="px-4 py-3">
-                                    <span className="font-mono text-xs bg-gray-100 px-2 py-1 rounded-md">
+                                    <span className="font-mono text-xs bg-gray-700 px-2 py-1 rounded-md">
                                         #{m.id}
                                     </span>
                                 </td>
