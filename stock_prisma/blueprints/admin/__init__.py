@@ -12,7 +12,8 @@ from .resources import (
     OrdemProducaoDetalheResource,
     MeResource,
     LogoutResource,
-    InsumoResource
+    InsumoResource,
+    CompartimentoAdminResource
 )
 
 bp = Blueprint("admin", __name__, url_prefix="/api/v1/admin")
@@ -25,6 +26,7 @@ api.add_resource(FerramentaResource, "/ferramentas")
 api.add_resource(FerramentaDetalheResource, "/ferramentas/<int:id>")
 
 api.add_resource(InsumoResource, "/insumos")
+api.add_resource(CompartimentoAdminResource, "/compartimentos/<int:id>")
 
 
 api.add_resource(UsuarioResource, "/usuarios")
