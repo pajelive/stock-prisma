@@ -13,7 +13,7 @@ export default function Home() {
                 className="absolute inset-0 h-full w-full object-cover z-0 pointer-events-none"
                 // object-cover garante a responsividade: preenche a tela sem distorcer.
             >
-                <source src="/public/logo-loop.mp4" type="video/mp4" />
+                <source src="/logo-loop.mp4" type="video/mp4" />
                 Seu navegador não suporta a tag de vídeo.
             </video>
 
