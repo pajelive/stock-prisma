@@ -22,16 +22,16 @@ export default function Compartimentos({ selecionarCompartimento }) {
     }, []);
 
     return (
-    <div className="min-h-screen bg-gray-50 flex justify-center p-3">
-        <div className="w-full max-w-6xl mx-auto grid grid-cols-5 gap-[4px]">
-        {compartimentos.map((comp) => (
-            <Compartimento
-            key={comp.id}
-            compartimento={comp}
-            onClick={() => selecionarCompartimento(comp)}
-            />
-        ))}
-        </div>
+  <div className="min-h-screen bg-gray-50 flex justify-center p-3">
+    <div className="w-full max-w-6xl mx-auto grid grid-cols-5 auto-rows-[88px] gap-[3px]">
+      {compartimentos.map((comp) => (
+        <Compartimento
+          key={comp.id}
+          compartimento={comp}
+          onClick={() => selecionarCompartimento(comp)}
+        />
+      ))}
     </div>
-    );
+  </div>
+);
 }
