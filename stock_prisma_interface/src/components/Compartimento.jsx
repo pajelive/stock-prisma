@@ -1,61 +1,54 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import api from "@/services/api";
-import Compartimento from "../../components/Compartimento";
-import Modal from "../../components/Modal";
-import { useAuth } from "@/contexts/AuthContext";
-
-export default function Compartimentos() {
-    const [compartimentos, setCompartimentos] = useState([]);
-    const [selecionado, setSelecionado] = useState(null);
-    const { usuario } = useAuth();
-
-    const isAdmin = usuario?.perfil === "Administrador";
-
-    useEffect(() => {
-        async function load() {
-            try {
-                const res = await api.get("/public/compartimentos");
-                setCompartimentos(res.data ?? []);
-            } catch (err) {
-                console.error(err);
-                setCompartimentos([]);
-            }
-        }
-        load();
-    }, []);
-
-    function selecionarCompartimento(comp) {
-        if (!isAdmin) return;
-        setSelecionado(comp);
-    }
+export default function Compartimento({ compartimento, onClick }) {
+    const estaVazio = !compartimento.insumo_nome;
 
     return (
-        <div className="min-h-screen bg-gray-100 p-6 flex justify-center items-start">
-            <div className="w-full max-w-5xl mx-auto bg-white p-4 rounded-3xl shadow-xl border-4 border-slate-300">
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                    {compartimentos.map((comp) => (
-                        <Compartimento
-                            key={comp.id}
-                            compartimento={comp}
-                            onClick={() => selecionarCompartimento(comp)}
-                        />
-                    ))}
+        <button
+            onClick={onClick}
+            // Aumentado de h-36 para h-44 para dar mais espaço vertical
+            className="group relative flex h-44 w-full flex-col justify-between rounded-xl border border-slate-300/80 bg-gradient-to-b from-slate-50 to-slate-100/70 p-5 text-left shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-sky-400 hover:from-white hover:to-sky-50/40 hover:shadow-lg hover:shadow-sky-100/50"
+        >
+            {/* Detalhe estético: Linha superior que simula o encaixe/fresta da gaveta no armário */}
+            <div className="absolute top-0 left-3 right-3 h-[1px] bg-white group-hover:bg-sky-200/50 transition-colors" />
+
+            {/* Cabeçalho da Gaveta + "Puxador/Tag" Simbólico */}
+            <div className="flex w-full items-center justify-between">
+                <div>
+                    {/* Aumentado o texto da tag para text-xs (era 10px) e adicionado py-1 */}
+                    <span className="inline-block rounded-md bg-slate-200/70 px-2.5 py-1 text-xs font-bold font-mono tracking-wider text-slate-600 group-hover:bg-sky-500 group-hover:text-white transition-colors">
+                        {compartimento.nome}
+                    </span>
                 </div>
+
+                {/* Puxador Embutido Emulado */}
+                <div className="h-2 w-10 rounded-full bg-slate-200 group-hover:bg-sky-300/70 transition-all group-hover:w-12 shadow-inner" />
             </div>
 
-            <Modal
-                aberto={selecionado !== null}
-                onFechar={() => setSelecionado(null)}
-                titulo={`Compartimento ${selecionado?.nome ?? ""}`}
-            >
-                <p className="text-gray-600">
-                    <span className="font-semibold">Insumo:</span>{" "}
-                    {selecionado?.insumo_nome ?? "Vazio"}
+            {/* Conteúdo da Gaveta (O que está guardado lá dentro) */}
+            {/* Aumentado o padding interno para p-3.5 para destacar mais o conteúdo */}
+            <div className="w-full rounded-lg bg-white/60 p-3.5 border border-slate-200/50 shadow-inner group-hover:border-sky-200/60 group-hover:bg-white transition-all">
+                {/* Aumentado o título do campo para text-[10px] (era 9px) */}
+                <p className="text-[10px] uppercase font-bold tracking-wider text-slate-400/90 group-hover:text-sky-500/80 transition-colors">
+                    Insumo Armazenado
                 </p>
-                {/* coloca aqui o que quiser mostrar/editar no modal */}
-            </Modal>
-        </div>
+                {/* Aumentado o nome do insumo de text-xs (12px) para text-base (16px) e font-bold para font-extrabold */}
+                <p className={`text-base font-extrabold mt-1 truncate tracking-tight ${
+                    estaVazio ? 'text-slate-400 italic font-normal' : 'text-slate-700'
+                }`}>
+                    {compartimento.insumo_nome || "Disponível / Vazio"}
+                </p>
+            </div>
+
+            {/* Indicador LED sutil no rodapé */}
+            <div className="absolute bottom-3 right-4 flex items-center gap-1.5">
+                {/* Aumentado levemente o LED para h-2 w-2 para acompanhar o novo tamanho do card */}
+                <span className={`h-2 w-2 rounded-full transition-all ${
+                    estaVazio 
+                        ? 'bg-emerald-400 animate-pulse' 
+                        : 'bg-slate-300 group-hover:bg-sky-400'
+                }`} />
+            </div>
+        </button>
     );
 }
