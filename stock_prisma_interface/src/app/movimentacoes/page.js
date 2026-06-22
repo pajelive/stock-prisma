@@ -6,33 +6,49 @@ import Tabela from '../../components/Tabela'
 
 export default function Movimentacoes() {
 
-    const [movimentacoes, setMovimentacoes] = useState([])
+    const [data, setData] = useState({
+        items: [],
+        page: 1,
+        pages: 1,
+        total: 0
+    })
+
+    const [pagina, setPagina] = useState(1)
 
     useEffect(() => {
+
         async function buscarMovimentacoes() {
             try {
-                const resposta = await api.get('/public/movimentacoes')
-                setMovimentacoes(resposta.data.items)
+                const resposta = await api.get(
+                    `/public/movimentacoes?page=${pagina}`
+                )
+
+                setData(resposta.data)
+
             } catch (erro) {
                 console.error('Erro ao buscar movimentações:', erro)
             }
         }
+
         buscarMovimentacoes()
 
-        // atualização automática
-        const intervalo = setInterval(() => {
-            buscarMovimentacoes()
-        }, 5000)
+        const intervalo = setInterval(buscarMovimentacoes, 5000)
 
-        // limpeza ao sair da página
         return () => clearInterval(intervalo)
 
-
-    }, [])
+    }, [pagina])
 
     return (
         <div className="p-6 bg-gray-50 min-h-screen">
-            <Tabela titulo="Histórico" dados={movimentacoes} />
+
+            <Tabela
+                titulo="Histórico"
+                dados={data.items}
+                pagina={data.page}
+                totalPaginas={data.pages}
+                onPageChange={setPagina}
+            />
+
         </div>
     )
 }
