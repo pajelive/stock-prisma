@@ -7,6 +7,7 @@ import Compartimento from "../../components/Compartimento";
 export default function Compartimentos({ selecionarCompartimento }) {
     const [compartimentos, setCompartimentos] = useState([]);
 
+
     useEffect(() => {
         async function load() {
             try {
