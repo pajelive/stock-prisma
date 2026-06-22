@@ -74,13 +74,12 @@ class MovimentacaoResource(Resource):
 
         if limit > 100:
             limit = 100
-
         if limit < 1:
             limit = 12
-
         if page < 1:
             page = 1
 
+        # 1. Montamos a query base adicionando SEMPRE a ordenação descrita aqui
         query = Movimentacao.query.options(
             joinedload(Movimentacao.tipo_movimentacao),
             joinedload(Movimentacao.usuario),
@@ -88,13 +87,15 @@ class MovimentacaoResource(Resource):
             joinedload(Movimentacao.compartimento),
             joinedload(Movimentacao.etapa),
             joinedload(Movimentacao.ordem_producao),
+        ).order_by(
+            Movimentacao.data_hora.desc(), 
+            Movimentacao.id.desc()  # 🔥 Desempate crucial para manter a paginação estável
         )
 
+        # 2. Agora o count() e o paginate() vão ler exatamente a mesma estrutura ordenada
         total = query.count()
 
-        paginacao = query.order_by(
-            Movimentacao.data_hora.desc()
-        ).paginate(
+        paginacao = query.paginate(
             page=page,
             per_page=limit,
             error_out=False
