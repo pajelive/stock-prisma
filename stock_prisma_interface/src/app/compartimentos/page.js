@@ -16,6 +16,9 @@ export default function Compartimentos() {
     const { usuario } = useAuth();
     const isAdmin = usuario?.perfil === "Administrador";
 
+    console.log("usuario:", usuario);
+    console.log("isAdmin:", usuario?.perfil === "Administrador");
+
     useEffect(() => {
         async function load() {
             try {
