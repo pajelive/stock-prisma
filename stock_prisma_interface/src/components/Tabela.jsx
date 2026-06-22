@@ -3,12 +3,11 @@ import TipoPill from "./TipoPill"
 
 export default function Tabela({
     titulo,
-    dados,
+    dados = [],
     paginaAtual = 1,
     totalPaginas = 1,
     onPageChange
 }) {
-
     const [filtros, setFiltros] = useState({
         tipo: '',
         categoria: '',
@@ -33,47 +32,16 @@ export default function Tabela({
         setMostrarData(false)
     }
 
+    // Mantenha estático ou idealmente envie os filtros para a API buscar.
+    // Para evitar loops, calculamos apenas se existirem dados.
     const tipos = [...new Set(dados.map(m => m.tipo).filter(Boolean))]
     const origens = [...new Set(dados.map(m => m.origem_leitura).filter(Boolean))]
     const etapas = [...new Set(dados.map(m => m.etapa).filter(Boolean))]
 
-    const dadosFiltrados = dados.filter((m) => {
-        if (filtros.tipo && m.tipo !== filtros.tipo) return false
-
-        if (filtros.categoria) {
-            const cat = m.ferramenta ? 'Ferramenta' : 'Compartimento'
-            if (cat !== filtros.categoria) return false
-        }
-
-        if (filtros.nome) {
-            const nome = m.ferramenta || m.compartimento || ''
-            if (!nome.toLowerCase().includes(filtros.nome.toLowerCase())) return false
-        }
-
-        if (filtros.quantidade && m.quantidade !== Number(filtros.quantidade)) return false
-
-        if (filtros.usuario && !m.usuario?.toLowerCase().includes(filtros.usuario.toLowerCase())) return false
-
-        if (filtros.dataInicio && m.data_hora < filtros.dataInicio) return false
-
-        if (filtros.dataFim && m.data_hora > filtros.dataFim + ' 23:59:59') return false
-
-        if (filtros.origem && m.origem_leitura !== filtros.origem) return false
-
-        if (filtros.op && !m.op?.toLowerCase().includes(filtros.op.toLowerCase())) return false
-
-        if (filtros.etapa && m.etapa !== filtros.etapa) return false
-
-        return true
-    })
-
     const temFiltroData = filtros.dataInicio || filtros.dataFim
 
-    // 🔥 AGORA NÃO EXISTE MAIS PAGINAÇÃO LOCAL
-    const dadosPaginados = dadosFiltrados
-
     function irParaPagina(pagina) {
-        if (pagina < 1 || pagina > totalPaginas) return
+        if (pagina < 1 || pagina > totalPaginas || pagina === paginaAtual) return
         onPageChange?.(pagina)
     }
 
@@ -97,18 +65,19 @@ export default function Tabela({
 
     return (
         <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-
+            
+            {/* Cabeçalho */}
             <div className="px-5 py-4 border-b border-gray-200 flex items-center justify-between">
                 <h2 className="text-base font-medium text-gray-800">{titulo}</h2>
-                <span className="text-xs bg-gray-100 text-gray-500 px-3 py-1 rounded-full">
-                    {dadosFiltrados.length} registros
+                <span className="text-xs bg-gray-100 text-gray-600 font-medium px-3 py-1 rounded-full">
+                    {dados.length} registros nesta página
                 </span>
             </div>
 
+            {/* Tabela */}
             <div className="overflow-x-auto">
-                <table className="w-full text-sm">
+                <table className="w-full text-sm text-gray-600">
                     <thead>
-
                         <tr className="bg-gray-50 border-b border-gray-100">
                             <th className="px-4 py-3 text-left font-medium text-gray-500">ID</th>
                             <th className="px-4 py-3 text-left font-medium text-gray-500">Tipo</th>
@@ -123,6 +92,7 @@ export default function Tabela({
                             <th className="px-4 py-3 text-left font-medium text-gray-500">Observação</th>
                         </tr>
 
+                        {/* Filtros */}
                         <tr className="bg-white border-b border-gray-200">
                             <th></th>
                             <th className="px-3 py-2">
@@ -135,7 +105,6 @@ export default function Tabela({
                                     {tipos.map(t => <option key={t} value={t}>{t}</option>)}
                                 </select>
                             </th>
-
                             <th className="px-3 py-2">
                                 <select
                                     value={filtros.categoria}
@@ -147,7 +116,6 @@ export default function Tabela({
                                     <option value="Compartimento">Compartimento</option>
                                 </select>
                             </th>
-
                             <th className="px-3 py-2">
                                 <input
                                     type="text"
@@ -157,7 +125,6 @@ export default function Tabela({
                                     className="w-full border border-gray-200 rounded-lg px-2 py-1 text-xs text-gray-600 focus:outline-none"
                                 />
                             </th>
-
                             <th className="px-3 py-2">
                                 <input
                                     type="number"
@@ -167,7 +134,6 @@ export default function Tabela({
                                     className="w-full border border-gray-200 rounded-lg px-2 py-1 text-xs text-gray-600 focus:outline-none"
                                 />
                             </th>
-
                             <th className="px-3 py-2">
                                 <input
                                     type="text"
@@ -177,14 +143,13 @@ export default function Tabela({
                                     className="w-full border border-gray-200 rounded-lg px-2 py-1 text-xs text-gray-600 focus:outline-none"
                                 />
                             </th>
-
                             <th className="px-3 py-2 relative">
                                 <button
                                     onClick={() => setMostrarData(!mostrarData)}
-                                    className={`w-full border rounded-lg px-2 py-1 text-xs text-left ${
+                                    className={`w-full border rounded-lg px-2 py-1 text-xs text-left font-normal ${
                                         temFiltroData
-                                            ? 'border-blue-300 bg-blue-50 text-blue-600'
-                                            : 'border-gray-200 text-gray-600'
+                                            ? 'border-sky-300 bg-sky-50 text-sky-600 font-medium'
+                                            : 'border-gray-200 text-gray-500'
                                     }`}
                                 >
                                     {temFiltroData
@@ -197,19 +162,16 @@ export default function Tabela({
                                         <input type="date" value={filtros.dataInicio}
                                             onChange={(e) => handleFiltro('dataInicio', e.target.value)}
                                             className="border rounded px-2 py-1 text-xs" />
-
                                         <input type="date" value={filtros.dataFim}
                                             onChange={(e) => handleFiltro('dataFim', e.target.value)}
                                             className="border rounded px-2 py-1 text-xs" />
-
                                         <button onClick={limparData}
-                                            className="text-xs text-red-400 text-left">
-                                            Limpar
+                                            className="text-xs text-red-500 font-medium text-left pt-1">
+                                            Limpar Filtro
                                         </button>
                                     </div>
                                 )}
                             </th>
-
                             <th className="px-3 py-2">
                                 <select
                                     value={filtros.origem}
@@ -220,7 +182,6 @@ export default function Tabela({
                                     {origens.map(o => <option key={o} value={o}>{o}</option>)}
                                 </select>
                             </th>
-
                             <th className="px-3 py-2">
                                 <input
                                     type="text"
@@ -230,7 +191,6 @@ export default function Tabela({
                                     className="w-full border border-gray-200 rounded-lg px-2 py-1 text-xs text-gray-600 focus:outline-none"
                                 />
                             </th>
-
                             <th className="px-3 py-2">
                                 <select
                                     value={filtros.etapa}
@@ -241,88 +201,89 @@ export default function Tabela({
                                     {etapas.map(e => <option key={e} value={e}>{e}</option>)}
                                 </select>
                             </th>
-
                             <th></th>
                         </tr>
-
                     </thead>
 
-                    <tbody>
-                        {dadosPaginados.map((m) => (
-                            <tr key={m.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                    <tbody className="divide-y divide-gray-100">
+                        {dados.map((m) => (
+                            <tr key={m.id} className="hover:bg-gray-50/70 transition-colors">
                                 <td className="px-4 py-3">
-                                    <span className="font-mono text-gray-700 bg-gray-100 px-2 py-1 rounded-md">
+                                    <span className="font-mono text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-md">
                                         #{m.id}
                                     </span>
                                 </td>
-
-                                <td className="px-4 py-3">
-                                    <TipoPill tipo={m.tipo} />
-                                </td>
-
-                                <td className="px-4 py-3 text-gray-700">
-                                    {m.ferramenta ? 'Ferramenta' : 'Compartimento'}
-                                </td>
-
-                                <td className="px-4 py-3 text-gray-700">
-                                    {m.ferramenta || m.compartimento}
-                                </td>
-
-                                <td className="px-4 py-3 text-gray-700">{m.quantidade}</td>
-                                <td className="px-4 py-3 text-gray-700">{m.usuario}</td>
-                                <td className="px-4 py-3 text-gray-500">{m.data_hora}</td>
-                                <td className="px-4 py-3 text-gray-500">{m.origem_leitura}</td>
-                                <td className="px-4 py-3 text-gray-700">{m.op || '—'}</td>
-                                <td className="px-4 py-3 text-gray-700">{m.etapa || '—'}</td>
-                                <td className="px-4 py-3 text-gray-400">{m.observacao || '—'}</td>
+                                <td className="px-4 py-3"><TipoPill tipo={m.tipo} /></td>
+                                <td className="px-4 py-3 text-gray-600">{m.ferramenta ? 'Ferramenta' : 'Compartimento'}</td>
+                                <td className="px-4 py-3 font-medium text-gray-800">{m.ferramenta || m.compartimento}</td>
+                                <td className="px-4 py-3 font-mono">{m.quantidade}</td>
+                                <td className="px-4 py-3 text-gray-700 font-medium">{m.usuario}</td>
+                                <td className="px-4 py-3 text-gray-400 text-xs font-mono">{m.data_hora}</td>
+                                <td className="px-4 py-3 text-gray-500 text-xs">{m.origem_leitura}</td>
+                                <td className="px-4 py-3 text-gray-600 font-mono text-xs">{m.op || '—'}</td>
+                                <td className="px-4 py-3 text-gray-600">{m.etapa || '—'}</td>
+                                <td className="px-4 py-3 text-gray-400 italic text-xs max-w-xs truncate">{m.observacao || '—'}</td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
             </div>
 
+            {/* Nova Paginação Refinada e Elegante */}
             {totalPaginas > 1 && (
-                <div className="px-5 py-4 border-t border-gray-100 flex items-center justify-between">
+                <div className="px-6 py-4 bg-gray-50/50 border-t border-gray-200 flex items-center justify-between select-none">
+                    <div className="text-sm text-gray-500">
+                        Mostrando página <span className="font-semibold text-gray-700">{paginaAtual}</span> de <span className="font-semibold text-gray-700">{totalPaginas}</span>
+                    </div>
 
-                    <span className="text-xs text-gray-500">
-                        Página {paginaAtual} de {totalPaginas}
-                    </span>
-
-                    <div className="flex gap-1">
+                    <div className="flex items-center gap-1.5">
+                        {/* Botão Anterior */}
                         <button
                             onClick={() => irParaPagina(paginaAtual - 1)}
                             disabled={paginaAtual === 1}
-                            className="px-3 py-1 text-xs border rounded-lg"
+                            className="p-2 text-xs font-medium rounded-lg border border-gray-200 text-gray-600 bg-white shadow-sm
+                                       hover:bg-gray-50 active:bg-gray-100 transition flex items-center gap-1
+                                       disabled:opacity-40 disabled:hover:bg-white disabled:cursor-not-allowed"
                         >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
+                            </svg>
                             Anterior
                         </button>
 
-                        {getNumerosPagina().map((num, idx) =>
-                            num === '...' ? (
-                                <span key={idx} className="px-2 text-xs text-gray-400">...</span>
-                            ) : (
-                                <button
-                                    key={num}
-                                    onClick={() => irParaPagina(num)}
-                                    className={`px-3 py-1 text-xs rounded-lg ${
-                                        num === paginaAtual
-                                            ? 'bg-sky-500 text-white border-sky-500 shadow-sm'
-                                            : 'border-gray-200 text-gray-600 hover:bg-gray-100'
-                                    }`}
-                                >
-                                    {num}
-                                </button>
-                            )
-                        )}
+                        {/* Números das Páginas */}
+                        <div className="flex items-center gap-1 px-1">
+                            {getNumerosPagina().map((num, idx) =>
+                                num === '...' ? (
+                                    <span key={idx} className="w-8 text-center text-sm font-medium text-gray-400">...</span>
+                                ) : (
+                                    <button
+                                        key={num}
+                                        onClick={() => irParaPagina(num)}
+                                        className={`w-8 h-8 text-xs font-semibold rounded-lg border transition-all ${
+                                            num === paginaAtual
+                                                ? 'bg-sky-500 text-white border-sky-500 shadow-sm shadow-sky-100'
+                                                : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50 active:bg-gray-100'
+                                        }`}
+                                    >
+                                        {num}
+                                    </button>
+                                )
+                            )}
+                        </div>
 
+                        {/* Botão Próxima */}
                         <button
                             onClick={() => irParaPagina(paginaAtual + 1)}
                             disabled={paginaAtual === totalPaginas}
-                            className="px-3 py-1 text-xs rounded-lg border border-gray-200 text-gray-600 
-                                       hover:bg-gray-100 transition
-                                       disabled:opacity-40 disabled:cursor-not-allowed"
+                            className="p-2 text-xs font-medium rounded-lg border border-gray-200 text-gray-600 bg-white shadow-sm
+                                       hover:bg-gray-50 active:bg-gray-100 transition flex items-center gap-1
+                                       disabled:opacity-40 disabled:hover:bg-white disabled:cursor-not-allowed"
                         >
                             Próxima
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                            </svg>
                         </button>
                     </div>
                 </div>
