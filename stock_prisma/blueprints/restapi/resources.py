@@ -13,7 +13,7 @@ class CompartimentoResource(Resource):
 
         compartimentos = Compartimento.query.options(
             joinedload(Compartimento.insumo)
-        ).order_by(Compartimento.nome).all()
+        ).order_by(Compartimento.id).all()
 
         dados = []
 
