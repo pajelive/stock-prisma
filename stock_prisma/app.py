@@ -15,6 +15,7 @@ def create_app():
         supports_credentials=True,
         origins=[
             "https://stockprisma.com.br",
+            "https://www.stockprisma.com.br",
             "http://localhost:3000"
         ]
     )
