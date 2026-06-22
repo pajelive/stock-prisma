@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import api from "@/services/api";
 import Compartimento from "../../components/Compartimento";
 import Modal from "../../components/Modal";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/context/AuthContext";
 
 export default function Compartimentos() {
     const [compartimentos, setCompartimentos] = useState([]);
