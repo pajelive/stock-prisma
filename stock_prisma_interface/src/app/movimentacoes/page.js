@@ -15,25 +15,23 @@ export default function Movimentacoes() {
 
     const [pagina, setPagina] = useState(1)
 
-    useEffect(() => {
+    async function buscarMovimentacoes(page = 1) {
+        try {
+            const resposta = await api.get(`/public/movimentacoes?page=${page}`)
 
-        async function buscarMovimentacoes() {
-            try {
-                const resposta = await api.get(
-                    `/public/movimentacoes?page=${pagina}`
-                )
+            setData(resposta.data)
+            setPagina(resposta.data.page)
 
-                setData(resposta.data)
-
-            } catch (erro) {
-                console.error('Erro ao buscar movimentações:', erro)
-            }
+        } catch (erro) {
+            console.error('Erro ao buscar movimentações:', erro)
         }
+    }
 
-        buscarMovimentacoes()
+    useEffect(() => {
+        buscarMovimentacoes(pagina)
 
         const intervalo = setInterval(() => {
-            buscarMovimentacoes()
+            buscarMovimentacoes(pagina)
         }, 5000)
 
         return () => clearInterval(intervalo)
@@ -46,7 +44,7 @@ export default function Movimentacoes() {
             <Tabela
                 titulo="Histórico"
                 dados={data.items}
-                pagina={data.page}
+                paginaAtual={data.page}
                 totalPaginas={data.pages}
                 onPageChange={setPagina}
             />
