@@ -306,8 +306,8 @@ export default function Tabela({
                                     onClick={() => irParaPagina(num)}
                                     className={`px-3 py-1 text-xs rounded-lg ${
                                         num === paginaAtual
-                                            ? 'bg-sky-500 text-white'
-                                            : 'border'
+                                            ? 'bg-sky-500 text-white border-sky-500 shadow-sm'
+                                            : 'border-gray-200 text-gray-600 hover:bg-gray-100'
                                     }`}
                                 >
                                     {num}
@@ -318,7 +318,9 @@ export default function Tabela({
                         <button
                             onClick={() => irParaPagina(paginaAtual + 1)}
                             disabled={paginaAtual === totalPaginas}
-                            className="px-3 py-1 text-xs border rounded-lg"
+                            className="px-3 py-1 text-xs rounded-lg border border-gray-200 text-gray-600 
+                                       hover:bg-gray-100 transition
+                                       disabled:opacity-40 disabled:cursor-not-allowed"
                         >
                             Próxima
                         </button>
