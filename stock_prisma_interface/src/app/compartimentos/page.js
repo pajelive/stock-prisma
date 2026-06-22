@@ -11,9 +11,6 @@ export default function Compartimentos({ selecionarCompartimento }) {
         async function load() {
             try {
                 const res = await api.get("/public/compartimentos");
-
-                console.log("API:", res.data);
-
                 setCompartimentos(res.data ?? []);
             } catch (err) {
                 console.error(err);
@@ -25,14 +22,16 @@ export default function Compartimentos({ selecionarCompartimento }) {
     }, []);
 
     return (
-        <div className="grid grid-cols-4 gap-6">
-            {compartimentos.map((comp) => (
-                <Compartimento
-                    key={comp.id}
-                    compartimento={comp}
-                    onClick={() => selecionarCompartimento(comp)}
-                />
-            ))}
+        <div className="min-h-screen bg-gray-50 flex justify-center p-6">
+            <div className="w-full max-w-6xl grid grid-cols-4 gap-6">
+                {compartimentos.map((comp) => (
+                    <Compartimento
+                        key={comp.id}
+                        compartimento={comp}
+                        onClick={() => selecionarCompartimento(comp)}
+                    />
+                ))}
+            </div>
         </div>
     );
 }
