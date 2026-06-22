@@ -23,7 +23,7 @@ export default function Compartimentos({ selecionarCompartimento }) {
 
     return (
         <div className="min-h-screen bg-gray-50 flex justify-center p-6">
-            <div className="w-full max-w-6xl grid grid-cols-4 gap-2">
+            <div className="w-full max-w-6xl grid grid-cols-4 gap-x-2 gap-y-2">
                 {compartimentos.map((comp) => (
                     <Compartimento
                         key={comp.id}
