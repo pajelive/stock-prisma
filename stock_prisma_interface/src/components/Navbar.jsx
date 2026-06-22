@@ -51,6 +51,9 @@ export default function Navbar() {
                 {navItem("/", "Início")}
 
                 {navItem("/movimentacoes", "Movimentações")}
+
+                {navItem("/compartimentos", "Compartimentos")}
+
                 {/* Adiciona botão de sair */}
                 {loading ? (
                     <div className="h-9 w-20 md:h-10 md:w-24 rounded-full bg-zinc-100 animate-pulse" />
