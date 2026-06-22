@@ -32,7 +32,9 @@ export default function Movimentacoes() {
 
         buscarMovimentacoes()
 
-        const intervalo = setInterval(buscarMovimentacoes, 5000)
+        const intervalo = setInterval(() => {
+            buscarMovimentacoes()
+        }, 5000)
 
         return () => clearInterval(intervalo)
 
