@@ -6,7 +6,7 @@ export default function Home() {
                 loop
                 muted
                 playsInline
-                className="absolute inset-0 h-full w-full object-cover z-0 pointer-events-none md:object-center"
+                className="absolute inset-0 h-full w-full object-contain md:object-cover z-0 pointer-events-none"
             >
                 <source src="/logo-loop.mp4" type="video/mp4" />
                 Seu navegador não suporta a tag de vídeo.
