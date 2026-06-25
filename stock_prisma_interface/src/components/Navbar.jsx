@@ -36,7 +36,7 @@ export default function Navbar() {
     );
 
     return (
-        <nav className="flex items-center justify-between px-4 md:px-8 h-16 md:h-20 border-b border-zinc-200 bg-white">
+        <nav className="relative flex items-center justify-between px-4 md:px-8 h-16 md:h-20 border-b border-zinc-200 bg-white z-40">
 
             {/* Logo */}
             <Image
@@ -76,7 +76,7 @@ export default function Navbar() {
             {/* Botão Hambúrguer (apenas mobile) */}
             <button
                 onClick={() => setMenuOpen(!menuOpen)}
-                className="md:hidden flex flex-col justify-center items-center w-10 h-10"
+                className="md:hidden flex flex-col justify-center items-center w-10 h-10 z-50"
                 aria-label="Menu"
             >
                 <span className={`block w-6 h-0.5 bg-zinc-700 transition-all ${menuOpen ? 'rotate-45 translate-y-1.5' : ''}`} />
@@ -84,34 +84,43 @@ export default function Navbar() {
                 <span className={`block w-6 h-0.5 bg-zinc-700 transition-all ${menuOpen ? '-rotate-45 -translate-y-1.5' : ''}`} />
             </button>
 
-            {/* Menu Mobile */}
+            {/* Overlay (fundo escuro ao abrir) */}
             {menuOpen && (
-                <div className="absolute top-full left-0 w-full bg-white border-b border-zinc-200 shadow-lg md:hidden z-50">
-                    <div className="flex flex-col items-center gap-4 py-4">
-                        {navItem("/", "Início")}
-                        {navItem("/movimentacoes", "Movimentações")}
-                        {navItem("/compartimentos", "Compartimentos")}
+                <div
+                    onClick={() => setMenuOpen(false)}
+                    className="fixed inset-0 bg-black/50 md:hidden z-40"
+                />
+            )}
 
+            {/* Menu Lateral Mobile */}
+            <div className={`fixed top-0 right-0 h-full w-64 bg-white border-l border-zinc-200 shadow-xl md:hidden z-50 transform transition-transform duration-300 ease-in-out ${menuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+                <div className="flex flex-col gap-6 pt-24 px-6">
+                    {navItem("/", "Início")}
+                    {navItem("/movimentacoes", "Movimentações")}
+                    {navItem("/compartimentos", "Compartimentos")}
+
+                    <div className="pt-4 border-t border-zinc-200">
                         {loading ? (
-                            <div className="h-9 w-20 rounded-full bg-zinc-100 animate-pulse" />
+                            <div className="h-9 w-full rounded-full bg-zinc-100 animate-pulse" />
                         ) : usuario ? (
                             <button
                                 onClick={() => { handleLogout(); setMenuOpen(false); }}
-                                className="rounded-full bg-red-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-600"
+                                className="w-full rounded-full bg-red-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-600"
                             >
                                 Sair
                             </button>
                         ) : (
                             <Link
                                 href="/login"
-                                className="rounded-full bg-sky-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-sky-600"
+                                onClick={() => setMenuOpen(false)}
+                                className="block w-full text-center rounded-full bg-sky-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-sky-600"
                             >
                                 Login
                             </Link>
                         )}
                     </div>
                 </div>
-            )}
+            </div>
         </nav>
     );
 }
