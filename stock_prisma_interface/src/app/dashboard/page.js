@@ -1,20 +1,20 @@
 import AdminGuard from "@/auth/AdminGuard";
 import StatCard from "@/components/dashboard/StatCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-// Substitua 'Tool' por 'Toolbox'
-import { Grid3X3, Toolbox, Package, Shield, Warehouse, TrendingDown, Activity } from "lucide-react";
+import { Grid3X3, Toolbox, Package, Shield, Warehouse, TrendingDown, Activity } from "lucide-react"; // Remova RotateCcw daqui
 import AlertCard from "@/components/dashboard/AlertCard";
 import MovementsTimeline from "@/components/dashboard/MovementsTimeline";
 import CompartmentsCard from "@/components/dashboard/CompartmentsCard";
 import TopItemsList from "@/components/dashboard/TopItemsList";
 import InventoryDistributionChart from "@/components/dashboard/InventoryDistributionChart";
 import EntriesVsExitsChart from "@/components/dashboard/EntriesVsExitsChart";
+// Importe o novo componente
+import RecentActivityList from "@/components/dashboard/RecentActivityList";
 
 export default function Dashboard() {
   // Dados mockados
   const stats = [
     { title: "Total de Itens", value: "1,248", icon: Grid3X3, trend: { value: "+12%", positive: true }, color: 'primary' },
-    // Substitua 'Tool' por 'Toolbox' aqui também
     { title: "Ferramentas", value: "248", icon: Toolbox, trend: { value: "+5%", positive: true }, color: 'secondary' },
     { title: "Insumos", value: "632", icon: Package, trend: { value: "+8%", positive: true }, color: 'success' },
     { title: "EPIs", value: "156", icon: Shield, trend: { value: "+3%", positive: false }, color: 'warning' },
@@ -159,45 +159,9 @@ export default function Dashboard() {
             <CompartmentsCard compartimentos={compartimentos} />
           </div>
 
-          {/* Terceira linha */}
-          <div className="grid grid-cols-1 gap-6">
-            {/* Atividade recente */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Atividade Recente</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {movimentacoes.map((mov) => {
-                    let IconToUse, bgColorClass;
-                    if (mov.tipo === 'entrada') {
-                      IconToUse = Package; bgColorClass = 'bg-green-100 text-green-700';
-                    } else if (mov.tipo === 'saida') {
-                      IconToUse = TrendingDown; bgColorClass = 'bg-red-100 text-red-700';
-                    } else { // devolucao
-                      IconToUse = RotateCcw; bgColorClass = 'bg-blue-100 text-blue-700'; // Adiciona RotateCcw aqui também
-                    }
+          {/* Terceira linha - Agora usando o novo componente */}
+          <RecentActivityList movimentacoes={movimentacoes} />
 
-                    return (
-                      <div key={mov.id} className="flex items-center justify-between p-3 rounded-lg border">
-                        <div className="flex items-center space-x-4">
-                          <div className={`p-2 rounded-full ${bgColorClass}`}>
-                            <IconToUse className="h-4 w-4" />
-                          </div>
-                          <div>
-                            <p className="font-medium">{mov.descricao}</p>
-                            <p className="text-sm text-muted-foreground">por {mov.usuario}</p>
-                            <p className="text-xs text-muted-foreground">{mov.tipo}</p> {/* Adiciona tipo para clareza */}
-                          </div>
-                        </div>
-                        <span className="text-sm text-muted-foreground">{mov.data}</span>
-                      </div>
-                    )
-                  })}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
         </main>
       </div>
     </AdminGuard>
