@@ -1,7 +1,8 @@
 import AdminGuard from "@/auth/AdminGuard";
 import StatCard from "@/components/dashboard/StatCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Grid3X3, Tool, Package, Shield, Warehouse, TrendingDown, Activity } from "lucide-react";
+// Substitua 'Tool' por 'Toolbox'
+import { Grid3X3, Toolbox, Package, Shield, Warehouse, TrendingDown, Activity } from "lucide-react";
 import AlertCard from "@/components/dashboard/AlertCard";
 import MovementsTimeline from "@/components/dashboard/MovementsTimeline";
 import CompartmentsCard from "@/components/dashboard/CompartmentsCard";
@@ -13,7 +14,8 @@ export default function Dashboard() {
   // Dados mockados
   const stats = [
     { title: "Total de Itens", value: "1,248", icon: Grid3X3, trend: { value: "+12%", positive: true }, color: 'primary' },
-    { title: "Ferramentas", value: "248", icon: Tool, trend: { value: "+5%", positive: true }, color: 'secondary' },
+    // Substitua 'Tool' por 'Toolbox' aqui também
+    { title: "Ferramentas", value: "248", icon: Toolbox, trend: { value: "+5%", positive: true }, color: 'secondary' },
     { title: "Insumos", value: "632", icon: Package, trend: { value: "+8%", positive: true }, color: 'success' },
     { title: "EPIs", value: "156", icon: Shield, trend: { value: "+3%", positive: false }, color: 'warning' },
     { title: "Compartimentos", value: "24", icon: Warehouse, trend: { value: "0%", positive: true }, color: 'primary' },
