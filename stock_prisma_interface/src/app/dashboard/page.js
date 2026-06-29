@@ -168,26 +168,32 @@ export default function Dashboard() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {movimentacoes.map((mov) => (
-                    <div key={mov.id} className="flex items-center justify-between p-3 rounded-lg border">
-                      <div className="flex items-center space-x-4">
-                        <div className={`p-2 rounded-full ${
-                          mov.tipo === 'entrada' ? 'bg-green-100 text-green-700' :
-                          mov.tipo === 'saida' ? 'bg-red-100 text-red-700' :
-                          'bg-blue-100 text-blue-700'
-                        }`}>
-                          {mov.tipo === 'entrada' ? <Package className="h-4 w-4" /> :
-                           mov.tipo === 'saida' ? <TrendingDown className="h-4 w-4" /> :
-                           <RotateCcw className="h-4 w-4" />}
+                  {movimentacoes.map((mov) => {
+                    let IconToUse, bgColorClass;
+                    if (mov.tipo === 'entrada') {
+                      IconToUse = Package; bgColorClass = 'bg-green-100 text-green-700';
+                    } else if (mov.tipo === 'saida') {
+                      IconToUse = TrendingDown; bgColorClass = 'bg-red-100 text-red-700';
+                    } else { // devolucao
+                      IconToUse = RotateCcw; bgColorClass = 'bg-blue-100 text-blue-700'; // Adiciona RotateCcw aqui também
+                    }
+
+                    return (
+                      <div key={mov.id} className="flex items-center justify-between p-3 rounded-lg border">
+                        <div className="flex items-center space-x-4">
+                          <div className={`p-2 rounded-full ${bgColorClass}`}>
+                            <IconToUse className="h-4 w-4" />
+                          </div>
+                          <div>
+                            <p className="font-medium">{mov.descricao}</p>
+                            <p className="text-sm text-muted-foreground">por {mov.usuario}</p>
+                            <p className="text-xs text-muted-foreground">{mov.tipo}</p> {/* Adiciona tipo para clareza */}
+                          </div>
                         </div>
-                        <div>
-                          <p className="font-medium">{mov.descricao}</p>
-                          <p className="text-sm text-muted-foreground">por {mov.usuario}</p>
-                        </div>
+                        <span className="text-sm text-muted-foreground">{mov.data}</span>
                       </div>
-                      <span className="text-sm text-muted-foreground">{mov.data}</span>
-                    </div>
-                  ))}
+                    )
+                  })}
                 </div>
               </CardContent>
             </Card>
