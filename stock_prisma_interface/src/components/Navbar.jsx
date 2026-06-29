@@ -10,6 +10,7 @@ import api from "@/services/api"
 export default function Navbar() {
     const pathname = usePathname();
     const { usuario, setUsuario, loading } = useAuth();
+    const isAdmin = usuario?.perfil === "Administrador";
     const router = useRouter();
     const [menuOpen, setMenuOpen] = useState(false);
 
@@ -53,6 +54,7 @@ export default function Navbar() {
                 {navItem("/", "Início")}
                 {navItem("/movimentacoes", "Movimentações")}
                 {navItem("/compartimentos", "Compartimentos")}
+                {isAdmin && navItem("/dashboard", "Dashboard")}
 
                 {loading ? (
                     <div className="h-9 w-20 md:h-10 md:w-24 rounded-full bg-zinc-100 animate-pulse" />
