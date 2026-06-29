@@ -1,3 +1,5 @@
+"use client"
+
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts'
 
 export default function EntriesVsExitsChart({ data }) {
