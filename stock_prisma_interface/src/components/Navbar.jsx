@@ -55,6 +55,8 @@ export default function Navbar() {
                 {navItem("/movimentacoes", "Movimentações")}
                 {navItem("/compartimentos", "Compartimentos")}
                 {isAdmin && navItem("/dashboard", "Dashboard")}
+                {isAdmin && navItem("/ferramentas", "Ferramentas")}
+                {isAdmin && navItem("/insumos", "insumos")}
 
                 {loading ? (
                     <div className="h-9 w-20 md:h-10 md:w-24 rounded-full bg-zinc-100 animate-pulse" />
@@ -100,6 +102,9 @@ export default function Navbar() {
                     {navItem("/", "Início")}
                     {navItem("/movimentacoes", "Movimentações")}
                     {navItem("/compartimentos", "Compartimentos")}
+                    {isAdmin && navItem("/dashboard", "Dashboard")}
+                    {isAdmin && navItem("/ferramentas", "Ferramentas")}
+                    {isAdmin && navItem("/insumos", "insumos")}
 
                     <div className="pt-4 border-t border-zinc-200">
                         {loading ? (
