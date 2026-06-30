@@ -1,17 +1,16 @@
-// Adicione esta linha no TOPO do arquivo
+// components/dashboard/StatCard.jsx
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Grid3X3, Toolbox, Package, Shield, Warehouse, TrendingDown, Activity, Package as PackageIcon, TrendingDown as TrendingDownIcon, RotateCcw } from "lucide-react"; // Importe todos os ícones necessários
+import { Grid3X3, Toolbox, Package as PackageIcon, Shield, Warehouse, TrendingDown as TrendingDownIcon, Activity } from "lucide-react";
 
-// Mapeie os IDs para os componentes de ícone
 const iconMap = {
   Grid3X3,
   Toolbox,
-  Package: PackageIcon, // Usar alias para evitar conflito com a prop 'Package' acidentalmente
+  Package: PackageIcon,
   Shield,
   Warehouse,
-  TrendingDown: TrendingDownIcon, // Usar alias para evitar conflito
+  TrendingDown: TrendingDownIcon,
   Activity,
   // Adicione outros ícones conforme necessário
 };
@@ -19,7 +18,7 @@ const iconMap = {
 export default function StatCard({
   title,
   value,
-  iconId, // Recebe o ID do ícone
+  iconId,
   trend,
   color = 'primary'
 }) {
@@ -30,8 +29,11 @@ export default function StatCard({
     secondary: 'bg-gray-50 text-gray-700',
     success: 'bg-green-50 text-green-700',
     warning: 'bg-yellow-50 text-yellow-700',
-    destructive: 'bg-red-50 text-red-700',
+    destructive: 'bg-red-500 text-red-50 text-red-700', // Corrigido typo?
   }
+
+  // Garanta que color seja uma chave válida
+  const bgColorClass = colorClasses[color] || colorClasses.primary;
 
   return (
     <Card className="transition-all hover:shadow-md">
@@ -39,15 +41,15 @@ export default function StatCard({
         <CardTitle className="text-sm font-medium text-muted-foreground">
           {title}
         </CardTitle>
-        {Icon && (
-          <div className={`p-2 rounded-full ${colorClasses[color]}`}>
+        {Icon && ( // Verifica se Icon existe antes de tentar renderizar
+          <div className={`p-2 rounded-full ${bgColorClass.split(' ')[0]}`}> {/* Usa apenas a classe de background */}
             <Icon className="h-4 w-4" />
           </div>
         )}
       </CardHeader>
       <CardContent>
         <div className="text-2xl font-bold">{value}</div>
-        {trend && (
+        {trend && ( // Verifica se trend existe
           <p className={`text-xs mt-1 ${
             trend.positive ? 'text-green-600' : 'text-red-600'
           }`}>

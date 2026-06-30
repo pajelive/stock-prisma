@@ -1,4 +1,4 @@
-// Adicione esta linha no TOPO do arquivo
+// components/dashboard/AlertCard.jsx
 "use client";
 
 import { Card, CardContent } from "@/components/ui/card"
@@ -21,6 +21,12 @@ export default function AlertCard({ title, message, type }) { // Remova 'icon' d
   }
 
   const config = typeConfig[type]
+
+  // Verifique se o tipo é válido
+  if (!config) {
+    console.warn(`Tipo de alerta desconhecido: ${type}`);
+    return null; // Ou renderize um fallback
+  }
 
   return (
     <Card className={`${config.bg} ${config.border}`}>

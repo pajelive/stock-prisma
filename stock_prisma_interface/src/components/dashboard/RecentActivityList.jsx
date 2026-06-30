@@ -14,7 +14,9 @@ export default function RecentActivityList({ movimentacoes }) {
       case 'devolucao':
         return { Icon: RotateCcw, bgColorClass: 'bg-blue-100 text-blue-700' };
       default:
-        return { Icon: Package, bgColorClass: 'bg-gray-100 text-gray-700' }; // Fallback
+        // Retorne um fallback ou null
+        return { Icon: null, bgColorClass: 'bg-gray-100 text-gray-700' }; // Fallback
+        // OU return null; se quiser pular itens inválidos completamente
     }
   };
 
@@ -26,7 +28,15 @@ export default function RecentActivityList({ movimentacoes }) {
       <CardContent>
         <div className="space-y-4">
           {movimentacoes.map((mov) => {
-            const { Icon, bgColorClass } = getIconAndColor(mov.tipo);
+            const result = getIconAndColor(mov.tipo);
+
+            // Verifique se getIconAndColor retornou um objeto válido
+            if (!result || !result.Icon) {
+                 console.warn(`Ícone não encontrado para o tipo: ${mov.tipo} na Atividade Recente`);
+                 return null; // Retorna null para este item do map, não um objeto
+            }
+
+            const { Icon, bgColorClass } = result;
 
             return (
               <div key={mov.id} className="flex items-center justify-between p-3 rounded-lg border">
