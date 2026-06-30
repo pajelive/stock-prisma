@@ -1,33 +1,34 @@
 import AdminGuard from "@/auth/AdminGuard";
 import StatCard from "@/components/dashboard/StatCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Grid3X3, Toolbox, Package, Shield, Warehouse, TrendingDown, Activity } from "lucide-react"; // Remova RotateCcw daqui
+// Removemos os imports de ícones específicos, exceto aqueles usados apenas no servidor (embora nenhum seja usado aqui)
+// import { Grid3X3, Toolbox, Package, Shield, Warehouse, TrendingDown, Activity, RotateCcw } from "lucide-react";
 import AlertCard from "@/components/dashboard/AlertCard";
 import MovementsTimeline from "@/components/dashboard/MovementsTimeline";
 import CompartmentsCard from "@/components/dashboard/CompartmentsCard";
 import TopItemsList from "@/components/dashboard/TopItemsList";
 import InventoryDistributionChart from "@/components/dashboard/InventoryDistributionChart";
 import EntriesVsExitsChart from "@/components/dashboard/EntriesVsExitsChart";
-// Importe o novo componente
 import RecentActivityList from "@/components/dashboard/RecentActivityList";
 
 export default function Dashboard() {
   // Dados mockados
   const stats = [
-    { title: "Total de Itens", value: "1,248", icon: Grid3X3, trend: { value: "+12%", positive: true }, color: 'primary' },
-    { title: "Ferramentas", value: "248", icon: Toolbox, trend: { value: "+5%", positive: true }, color: 'secondary' },
-    { title: "Insumos", value: "632", icon: Package, trend: { value: "+8%", positive: true }, color: 'success' },
-    { title: "EPIs", value: "156", icon: Shield, trend: { value: "+3%", positive: false }, color: 'warning' },
-    { title: "Compartimentos", value: "24", icon: Warehouse, trend: { value: "0%", positive: true }, color: 'primary' },
-    { title: "Itens em Estoque Baixo", value: "12", icon: TrendingDown, trend: { value: "-2", positive: true }, color: 'destructive' },
-    { title: "Movimentações Hoje", value: "34", icon: Activity, trend: { value: "+6%", positive: true }, color: 'secondary' },
-  ]
+    // Passamos 'iconId' como string em vez do componente React
+    { title: "Total de Itens", value: "1,248", iconId: "Grid3X3", trend: { value: "+12%", positive: true }, color: 'primary' },
+    { title: "Ferramentas", value: "248", iconId: "Toolbox", trend: { value: "+5%", positive: true }, color: 'secondary' },
+    { title: "Insumos", value: "632", iconId: "Package", trend: { value: "+8%", positive: true }, color: 'success' },
+    { title: "EPIs", value: "156", iconId: "Shield", trend: { value: "+3%", positive: false }, color: 'warning' },
+    { title: "Compartimentos", value: "24", iconId: "Warehouse", trend: { value: "0%", positive: true }, color: 'primary' },
+    { title: "Itens em Estoque Baixo", value: "12", iconId: "TrendingDown", trend: { value: "-2", positive: true }, color: 'destructive' },
+    { title: "Movimentações Hoje", value: "34", iconId: "Activity", trend: { value: "+6%", positive: true }, color: 'secondary' },
+  ];
 
   const alerts = [
-    { title: "Estoque Baixo", message: "Luva de Segurança abaixo do mínimo recomendado", type: 'warning' },
-    { title: "Compartimento Cheio", message: "Compartimento A-03 atingiu 95% de capacidade", type: 'warning' },
-    { title: "Item Crítico", message: "Capacete de Segurança com 2 unidades restantes", type: 'error' },
-  ]
+    { title: "Estoque Baixo", message: "Luva de Segurança abaixo do mínimo recomendado", type: 'warning' }, // Usamos 'type'
+    { title: "Compartimento Cheio", message: "Compartimento A-03 atingiu 95% de capacidade", type: 'warning' }, // Usamos 'type'
+    { title: "Item Crítico", message: "Capacete de Segurança com 2 unidades restantes", type: 'error' }, // Usamos 'type'
+  ];
 
   const movimentacoes = [
     { id: "1", descricao: "Entrada de 50 Parafusos", tipo: "entrada", data: "há 15 minutos", usuario: "João Silva" },
@@ -35,14 +36,14 @@ export default function Dashboard() {
     { id: "3", descricao: "Devolução de Alicate", tipo: "devolucao", data: "há 1 hora", usuario: "Carlos Santos" },
     { id: "4", descricao: "Entrada de Luvas de Segurança", tipo: "entrada", data: "há 2 horas", usuario: "Ana Costa" },
     { id: "5", descricao: "Saída de Capacete", tipo: "saida", data: "há 3 horas", usuario: "Pedro Almeida" },
-  ]
+  ];
 
   const compartimentos = [
     { id: "A-01", nome: "A-01", totalItens: 35, capacidadeMaxima: 50 },
     { id: "A-02", nome: "A-02", totalItens: 18, capacidadeMaxima: 40 },
     { id: "B-01", nome: "B-01", totalItens: 12, capacidadeMaxima: 30 },
     { id: "B-02", nome: "B-02", totalItens: 27, capacidadeMaxima: 35 },
-  ]
+  ];
 
   const itensMaisUtilizados = [
     { nome: "Furadeira Bosch", quantidade: 45, total: 100 },
@@ -50,14 +51,14 @@ export default function Dashboard() {
     { nome: "Luvas de Segurança", quantidade: 32, total: 100 },
     { nome: "Capacete de Segurança", quantidade: 28, total: 100 },
     { nome: "Serra Circular", quantidade: 25, total: 100 },
-  ]
+  ];
 
   const distribuicaoInventario = [
     { name: "Ferramentas", value: 248, color: "#3b82f6" },
     { name: "Insumos", value: 632, color: "#10b981" },
     { name: "EPIs", value: 156, color: "#f59e0b" },
     { name: "Materiais", value: 212, color: "#ef4444" },
-  ]
+  ];
 
   const entradasVSsaidas = [
     { mes: "Jan", entradas: 120, saidas: 85 },
@@ -66,7 +67,7 @@ export default function Dashboard() {
     { mes: "Abr", entradas: 180, saidas: 140 },
     { mes: "Mai", entradas: 160, saidas: 110 },
     { mes: "Jun", entradas: 140, saidas: 130 },
-  ]
+  ];
 
   return (
     <AdminGuard>
@@ -83,11 +84,12 @@ export default function Dashboard() {
           {/* KPIs */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-7 gap-4 mb-8">
             {stats.map((stat, index) => (
+              // StatCard agora recebe 'iconId' como string
               <StatCard
                 key={index}
                 title={stat.title}
                 value={stat.value}
-                icon={stat.icon}
+                iconId={stat.iconId} // Passamos a string do ID
                 trend={stat.trend}
                 color={stat.color}
               />
@@ -116,11 +118,12 @@ export default function Dashboard() {
                 <CardContent>
                   <div className="space-y-4">
                     {alerts.map((alert, index) => (
+                      // AlertCard agora recebe 'type' como string
                       <AlertCard
                         key={index}
                         title={alert.title}
                         message={alert.message}
-                        type={alert.type}
+                        type={alert.type} // Passamos a string do tipo
                       />
                     ))}
                   </div>
