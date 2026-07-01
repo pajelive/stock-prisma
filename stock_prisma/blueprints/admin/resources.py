@@ -539,6 +539,37 @@ class CompartimentoAdminResource(Resource):
         db.session.commit()
         return {"msg": "Compartimento removido"}, 200
 
+    @jwt_required()
+    def post(self):
+        dados = request.json
+
+        if not dados.get("nome"):
+            return {"erro": "nome obrigatório"}, 400
+
+        # Criando a nova instância com os dados recebidos do formulário
+        novo_compartimento = Compartimento(
+            nome=dados["nome"],
+            localizacao=dados.get("localizacao"),
+            status=dados.get("status", "ATIVO"),
+            peso_tara=dados.get("peso_tara", 0.0),
+            sensor_ativo=dados.get("sensor_ativo", True)
+        )
+
+        db.session.add(novo_compartimento)
+        db.session.commit()
+
+        # Retornamos o objeto criado para o front-end injetar na lista imediatamente
+        return {
+            "id": novo_compartimento.id,
+            "nome": novo_compartimento.nome,
+            "localizacao": novo_compartimento.localizacao,
+            "status": novo_compartimento.status,
+            "peso_tara": novo_compartimento.peso_tara,
+            "sensor_ativo": novo_compartimento.sensor_ativo,
+            "peso_atual": 0.0,
+            "insumo_nome": None
+        }, 201
+
 class InsumoResource(Resource):
     @jwt_required()
     def get(self):
