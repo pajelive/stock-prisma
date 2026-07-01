@@ -26,7 +26,7 @@ api.add_resource(FerramentaResource, "/ferramentas")
 api.add_resource(FerramentaDetalheResource, "/ferramentas/<int:id>")
 
 api.add_resource(InsumoResource, "/insumos")
-api.add_resource(CompartimentoAdminResource, "/compartimentos/<int:id>")
+api.add_resource(CompartimentoAdminResource,"/compartimentos", "/compartimentos/<int:id>")
 
 
 api.add_resource(UsuarioResource, "/usuarios")
