@@ -79,6 +79,36 @@ export default function Compartimentos() {
     }
 
     return (
+        <div className="mb-6 flex items-center justify-between">
+            <div>
+                <h1 className="text-3xl font-bold text-slate-800">
+                    Compartimentos
+                </h1>
+                <p className="text-sm text-slate-500 mt-1">
+                    Gerencie os compartimentos da prateleira inteligente.
+                </p>
+            </div>
+
+            {isAdmin && (
+                <button
+                    onClick={() => {
+                        setSelecionado(null);
+                        setForm({
+                            nome: "",
+                            localizacao: "",
+                            status: "ATIVO",
+                            peso_tara: 0,
+                            sensor_ativo: true,
+                        });
+                        setModalNovo(true);
+                    }}
+                    className="flex items-center gap-2 rounded-xl bg-sky-600 px-5 py-3 font-medium text-white shadow hover:bg-sky-700 transition"
+                >
+                    <span className="text-xl">+</span>
+                    Novo Compartimento
+                </button>
+            )}
+        </div>
         <div className="min-h-screen bg-gray-100 p-6 flex justify-center items-start">
             <div className="w-full max-w-5xl mx-auto bg-white p-4 rounded-3xl shadow-xl border-4 border-slate-300">
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
