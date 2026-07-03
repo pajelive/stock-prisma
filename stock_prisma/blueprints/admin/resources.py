@@ -504,13 +504,14 @@ class OrdemProducaoDetalheResource(Resource):
 
         return {"msg": "Ordem removida"}, 200
 
+
 class CompartimentoAdminResource(Resource):
     @jwt_required()
-    def put(self,id):
+    def put(self, id):
         compartimento = Compartimento.query.get(id)
 
         if not compartimento:
-            return {"erro":"compartimento não encontrado"},404
+            return {"erro": "compartimento não encontrado"}, 404
 
         dados = request.json
 
@@ -525,8 +526,12 @@ class CompartimentoAdminResource(Resource):
         if "sensor_ativo" in dados:
             compartimento.sensor_ativo = dados["sensor_ativo"]
 
+        # SALVA O INSUMO NO COMPARTIMENTO (Edição)
+        if "insumo_id" in dados:
+            compartimento.insumo_id = dados["insumo_id"]
+
         db.session.commit()
-        return {"msg": "Compartimento atualizado"}, 200
+        return {"msg": "Compartimento updated"}, 200
 
     @jwt_required()
     def delete(self, id):
@@ -546,19 +551,26 @@ class CompartimentoAdminResource(Resource):
         if not dados.get("nome"):
             return {"erro": "nome obrigatório"}, 400
 
-        # Criando a nova instância com os dados recebidos do formulário
+        # Criando a nova instância aceitando também o insumo_id (Criação)
         novo_compartimento = Compartimento(
             nome=dados["nome"],
             localizacao=dados.get("localizacao"),
             status=dados.get("status", "ATIVO"),
             peso_tara=dados.get("peso_tara", 0.0),
-            sensor_ativo=dados.get("sensor_ativo", True)
+            sensor_ativo=dados.get("sensor_ativo", True),
+            insumo_id=dados.get("insumo_id")  # SALVA O INSUMO NO COMPARTIMENTO
         )
 
         db.session.add(novo_compartimento)
         db.session.commit()
 
-        # Retornamos o objeto criado para o front-end injetar na lista imediatamente
+        # Busca o nome do insumo caso ele tenha sido associado na criação
+        insumo_nome = None
+        if novo_compartimento.insumo_id:
+            insumo = Insumo.query.get(novo_compartimento.insumo_id)
+            if insumo:
+                insumo_nome = insumo.nome
+
         return {
             "id": novo_compartimento.id,
             "nome": novo_compartimento.nome,
@@ -567,9 +579,14 @@ class CompartimentoAdminResource(Resource):
             "peso_tara": novo_compartimento.peso_tara,
             "sensor_ativo": novo_compartimento.sensor_ativo,
             "peso_atual": 0.0,
-            "insumo_nome": None
+            "insumo_id": novo_compartimento.insumo_id,
+            "insumo_nome": insumo_nome
         }, 201
 
+
+# =========================
+# INSUMOS
+# =========================
 class InsumoResource(Resource):
     @jwt_required()
     def get(self):
@@ -580,3 +597,30 @@ class InsumoResource(Resource):
             "categoria": i.categoria,
             "unidade": i.unidade,
         } for i in insumos], 200
+
+    @jwt_required()
+    def post(self):
+        """MÉTODO ADICIONADO: Salva um novo Insumo no Banco de Dados"""
+        dados = request.json
+
+        if not dados.get("nome"):
+            return {"erro": "nome do insumo é obrigatório"}, 400
+        if not dados.get("unidade"):
+            return {"erro": "unidade de medida é obrigatória (ex: kg, L, un)"}, 400
+
+        novo_insumo = Insumo(
+            nome=dados["nome"],
+            categoria=dados.get("categoria"),
+            unidade=dados["unidade"],
+            ativo=True
+        )
+
+        db.session.add(novo_insumo)
+        db.session.commit()
+
+        return {
+            "id": novo_insumo.id,
+            "nome": novo_insumo.nome,
+            "categoria": novo_insumo.categoria,
+            "unidade": novo_insumo.unidade
+        }, 201
