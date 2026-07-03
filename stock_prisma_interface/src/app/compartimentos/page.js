@@ -6,19 +6,21 @@ import Compartimento from "../../components/Compartimento";
 import Modal from "../../components/Modal";
 import { useAuth } from "../../context/AuthContext";
 
-// Estado inicial limpo para criação de novos registros
+// 1. ADICIONADO: insumo_id no estado inicial do formulário
 const INITIAL_FORM = {
     nome: "",
     localizacao: "",
     status: "ATIVO",
     peso_tara: 0,
-    sensor_ativo: true
+    sensor_ativo: true,
+    insumo_id: ""
 };
 
 export default function Compartimentos() {
     const [compartimentos, setCompartimentos] = useState([]);
+    const [insumos, setInsumos] = useState([]); // 2. ADICIONADO: Estado para a lista de insumos vinda da API
     const [selecionado, setSelecionado] = useState(null);
-    const [isCriando, setIsCriando] = useState(false); // Controla se o modal está criando um novo item
+    const [isCriando, setIsCriando] = useState(false);
     const [form, setForm] = useState(INITIAL_FORM);
     const [salvando, setSalvando] = useState(false);
     const [confirmDelete, setConfirmDelete] = useState(false);
@@ -26,18 +28,24 @@ export default function Compartimentos() {
     const { usuario } = useAuth();
     const isAdmin = usuario?.perfil === "Administrador";
 
+    // 3. ALTERADO: Agora busca a lista de insumos cadastrados se o usuário for Admin
     useEffect(() => {
-        async function load() {
+        async function loadData() {
             try {
-                const res = await api.get("/public/compartimentos");
-                setCompartimentos(res.data ?? []);
+                const resComp = await api.get("/public/compartimentos");
+                setCompartimentos(resComp.data ?? []);
+
+                if (isAdmin) {
+                    // Chama o seu endpoint GET /insumos mapeado no InsumoResource
+                    const resInsumos = await api.get("/insumos");
+                    setInsumos(resInsumos.data ?? []);
+                }
             } catch (err) {
-                console.error(err);
-                setCompartimentos([]);
+                console.error("Erro ao carregar dados:", err);
             }
         }
-        load();
-    }, []);
+        loadData();
+    }, [isAdmin]);
 
     // Quando um compartimento existente é clicado para edição
     useEffect(() => {
@@ -48,6 +56,7 @@ export default function Compartimentos() {
                 status: selecionado.status ?? "ATIVO",
                 peso_tara: selecionado.peso_tara ?? 0,
                 sensor_ativo: selecionado.sensor_ativo ?? true,
+                insumo_id: selecionado.insumo_id ?? "", // 4. ADICIONADO: Vincula o id do insumo atual ao formulário
             });
             setConfirmDelete(false);
             setIsCriando(false);
@@ -59,13 +68,11 @@ export default function Compartimentos() {
         setSelecionado(comp);
     }
 
-    // Disparado ao clicar no botão "+ Novo Compartimento"
     function handleNovoCompartimento() {
         setForm(INITIAL_FORM);
         setIsCriando(true);
     }
 
-    // Reseta todos os estados de controle do modal
     function fecharModal() {
         setSelecionado(null);
         setIsCriando(false);
@@ -74,17 +81,29 @@ export default function Compartimentos() {
 
     async function handleSalvar() {
         setSalvando(true);
+
+        // 5. ADICIONADO: Tratamento para enviar null caso nenhum insumo seja selecionado
+        const payload = {
+            ...form,
+            insumo_id: form.insumo_id ? parseInt(form.insumo_id) : null
+        };
+
         try {
             if (isCriando) {
-                // 1. ROTA DE CRIAÇÃO (POST para /admin/compartimentos)
-                const res = await api.post("/admin/compartimentos", form);
-                // Adiciona o compartimento criado vindo do banco direto no estado
+                const res = await api.post("/admin/compartimentos", payload);
                 setCompartimentos((prev) => [...prev, res.data]);
             } else {
-                // 2. ROTA DE EDIÇÃO (PUT para /admin/compartimentos/:id)
-                await api.put(`/admin/compartimentos/${selecionado.id}`, form);
+                await api.put(`/admin/compartimentos/${selecionado.id}`, payload);
+
+                // Encontra o nome do insumo alterado localmente para atualizar a lista na tela de imediato
+                const insumoSelecionado = insumos.find(i => i.id === payload.insumo_id);
+
                 setCompartimentos((prev) =>
-                    prev.map((c) => c.id === selecionado.id ? { ...c, ...form } : c)
+                    prev.map((c) => c.id === selecionado.id ? {
+                        ...c,
+                        ...payload,
+                        insumo_nome: insumoSelecionado ? insumoSelecionado.nome : "—"
+                    } : c)
                 );
             }
             fecharModal();
@@ -112,13 +131,13 @@ export default function Compartimentos() {
         <div className="min-h-screen bg-gray-100 p-6 flex flex-col items-center justify-start gap-4">
             <div className="w-full max-w-5xl mx-auto bg-white p-6 rounded-3xl shadow-xl border-4 border-slate-300">
 
-                {/* Cabeçalho da Lista: Adicionado Título e o Botão Novo */}
                 <div className="flex justify-between items-center mb-6">
                     <h1 className="text-xl font-bold text-slate-800">Compartimentos</h1>
                     {isAdmin && (
                         <button
                             onClick={handleNovoCompartimento}
-                            className="px-4 py-2 bg-emerald-600 text-white rounded-xl text-sm font-semibold shadow hover:bg-emerald-700 transition-colors"
+                            {/* 6. ALTERADO: Classes bg-sky-600 e hover:bg-sky-700 para manter o botão AZUL padrão */}
+                            className="px-4 py-2 bg-sky-600 text-white rounded-xl text-sm font-semibold shadow hover:bg-sky-700 transition-colors"
                         >
                             + Novo Compartimento
                         </button>
@@ -161,7 +180,6 @@ export default function Compartimentos() {
                             </>
                         ) : (
                             <>
-                                {/* Esconde o botão excluir se estiver criando um registro novo */}
                                 {!isCriando && (
                                     <button
                                         onClick={() => setConfirmDelete(true)}
@@ -205,6 +223,24 @@ export default function Compartimentos() {
                             className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400"
                         />
                     </div>
+
+                    {/* 7. ADICIONADO: Campo Select para vincular o insumo dinamicamente */}
+                    <div>
+                        <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Insumo Vinculado</label>
+                        <select
+                            value={form.insumo_id}
+                            onChange={(e) => setForm({ ...form, insumo_id: e.target.value })}
+                            className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400"
+                        >
+                            <option value="">Nenhum (Vazio)</option>
+                            {insumos.map((insumo) => (
+                                <option key={insumo.id} value={insumo.id}>
+                                    {insumo.nome} ({insumo.unidade})
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
                     <div>
                         <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Status</label>
                         <select
@@ -230,6 +266,7 @@ export default function Compartimentos() {
                     <div className="flex items-center justify-between rounded-lg border border-gray-200 px-3 py-2">
                         <span className="text-sm text-gray-700">Sensor ativo</span>
                         <button
+                            type="button"
                             onClick={() => setForm({ ...form, sensor_ativo: !form.sensor_ativo })}
                             className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
                                 form.sensor_ativo ? "bg-sky-500" : "bg-gray-300"
@@ -241,10 +278,9 @@ export default function Compartimentos() {
                         </button>
                     </div>
 
-                    {/* Esconde as informações de Insumo e Peso Atual na criação */}
+                    {/* 8. ALTERADO: Mantém o histórico do peso atual se não for criação */}
                     {!isCriando && (
                         <div className="rounded-lg bg-gray-50 px-3 py-2 text-xs text-gray-500 flex flex-col gap-1">
-                            <span><span className="font-semibold">Insumo:</span> {selecionado?.insumo_nome ?? "—"}</span>
                             <span><span className="font-semibold">Peso atual:</span> {selecionado?.peso_atual ?? 0} kg</span>
                         </div>
                     )}
