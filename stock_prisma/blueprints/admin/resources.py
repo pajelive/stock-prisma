@@ -624,3 +624,53 @@ class InsumoResource(Resource):
             "categoria": novo_insumo.categoria,
             "unidade": novo_insumo.unidade
         }, 201
+
+class InsumoDetalheResource(Resource):
+
+    @jwt_required()
+    def get(self, id):
+        insumo = Insumo.query.filter_by(id=id, ativo=True).first()
+
+        if not insumo:
+            return {"erro": "Insumo não encontrado"}, 404
+
+        return {
+            "id": insumo.id,
+            "nome": insumo.nome,
+            "categoria": insumo.categoria,
+            "unidade": insumo.unidade,
+            "ativo": insumo.ativo
+        }, 200
+
+    @jwt_required()
+    def put(self, id):
+        insumo = Insumo.query.filter_by(id=id, ativo=True).first()
+
+        if not insumo:
+            return {"erro": "Insumo não encontrado"}, 404
+
+        dados = request.json
+
+        if dados.get("nome"):
+            insumo.nome = dados["nome"]
+        if dados.get("categoria"):
+            insumo.categoria = dados["categoria"]
+        if dados.get("unidade"):
+            insumo.unidade = dados["unidade"]
+
+        db.session.commit()
+
+        return {"msg": "Insumo atualizado"}, 200
+
+    @jwt_required()
+    def delete(self, id):
+        insumo = Insumo.query.get(id)
+
+        if not insumo:
+            return {"erro": "Insumo não encontrado"}, 404
+
+        # Exclusão lógica para preservar histórico de movimentações e balanças
+        insumo.ativo = False
+        db.session.commit()
+
+        return {"msg": "Insumo desativado"}, 200
