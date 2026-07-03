@@ -136,7 +136,6 @@ export default function Compartimentos() {
                     {isAdmin && (
                         <button
                             onClick={handleNovoCompartimento}
-                            {/* 6. ALTERADO: Classes bg-sky-600 e hover:bg-sky-700 para manter o botão AZUL padrão */}
                             className="px-4 py-2 bg-sky-600 text-white rounded-xl text-sm font-semibold shadow hover:bg-sky-700 transition-colors"
                         >
                             + Novo Compartimento
@@ -223,8 +222,6 @@ export default function Compartimentos() {
                             className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400"
                         />
                     </div>
-
-                    {/* 7. ADICIONADO: Campo Select para vincular o insumo dinamicamente */}
                     <div>
                         <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Insumo Vinculado</label>
                         <select
@@ -278,7 +275,7 @@ export default function Compartimentos() {
                         </button>
                     </div>
 
-                    {/* 8. ALTERADO: Mantém o histórico do peso atual se não for criação */}
+
                     {!isCriando && (
                         <div className="rounded-lg bg-gray-50 px-3 py-2 text-xs text-gray-500 flex flex-col gap-1">
                             <span><span className="font-semibold">Peso atual:</span> {selecionado?.peso_atual ?? 0} kg</span>
