@@ -6,7 +6,6 @@ import Compartimento from "../../components/Compartimento";
 import Modal from "../../components/Modal";
 import { useAuth } from "../../context/AuthContext";
 
-// 1. ADICIONADO: insumo_id no estado inicial do formulário
 const INITIAL_FORM = {
     nome: "",
     localizacao: "",
@@ -18,7 +17,7 @@ const INITIAL_FORM = {
 
 export default function Compartimentos() {
     const [compartimentos, setCompartimentos] = useState([]);
-    const [insumos, setInsumos] = useState([]); // 2. ADICIONADO: Estado para a lista de insumos vinda da API
+    const [insumos, setInsumos] = useState([]); 
     const [selecionado, setSelecionado] = useState(null);
     const [isCriando, setIsCriando] = useState(false);
     const [form, setForm] = useState(INITIAL_FORM);
@@ -28,7 +27,6 @@ export default function Compartimentos() {
     const { usuario } = useAuth();
     const isAdmin = usuario?.perfil === "Administrador";
 
-    // 3. ALTERADO: Agora busca a lista de insumos cadastrados se o usuário for Admin
     useEffect(() => {
         async function loadData() {
             try {
@@ -36,7 +34,6 @@ export default function Compartimentos() {
                 setCompartimentos(resComp.data ?? []);
 
                 if (isAdmin) {
-                    // Chama o seu endpoint GET /insumos mapeado no InsumoResource
                     const resInsumos = await api.get("/insumos");
                     setInsumos(resInsumos.data ?? []);
                 }
@@ -47,7 +44,6 @@ export default function Compartimentos() {
         loadData();
     }, [isAdmin]);
 
-    // Quando um compartimento existente é clicado para edição
     useEffect(() => {
         if (selecionado) {
             setForm({
@@ -56,7 +52,7 @@ export default function Compartimentos() {
                 status: selecionado.status ?? "ATIVO",
                 peso_tara: selecionado.peso_tara ?? 0,
                 sensor_ativo: selecionado.sensor_ativo ?? true,
-                insumo_id: selecionado.insumo_id ?? "", // 4. ADICIONADO: Vincula o id do insumo atual ao formulário
+                insumo_id: selecionado.insumo_id ?? "", 
             });
             setConfirmDelete(false);
             setIsCriando(false);
@@ -82,7 +78,6 @@ export default function Compartimentos() {
     async function handleSalvar() {
         setSalvando(true);
 
-        // 5. ADICIONADO: Tratamento para enviar null caso nenhum insumo seja selecionado
         const payload = {
             ...form,
             insumo_id: form.insumo_id ? parseInt(form.insumo_id) : null
@@ -93,16 +88,18 @@ export default function Compartimentos() {
                 const res = await api.post("/admin/compartimentos", payload);
                 setCompartimentos((prev) => [...prev, res.data]);
             } else {
-                await api.put(`/admin/compartimentos/${selecionado.id}`, payload);
+                const res = await api.put(`/admin/compartimentos/${selecionado.id}`, payload);
 
-                // Encontra o nome do insumo alterado localmente para atualizar a lista na tela de imediato
                 const insumoSelecionado = insumos.find(i => i.id === payload.insumo_id);
 
                 setCompartimentos((prev) =>
                     prev.map((c) => c.id === selecionado.id ? {
                         ...c,
                         ...payload,
-                        insumo_nome: insumoSelecionado ? insumoSelecionado.nome : "—"
+                        // 🚀 ATUALIZADO: Preserva os dados dinâmicos vindos da resposta do backend
+                        peso_atual: res.data.peso_atual ?? c.peso_atual,
+                        quantidade_atual: res.data.quantidade_atual ?? c.quantidade_atual,
+                        insumo_name: insumoSelecionado ? insumoSelecionado.nome : "—"
                     } : c)
                 );
             }
@@ -275,10 +272,15 @@ export default function Compartimentos() {
                         </button>
                     </div>
 
-
-                    {!isCriando && (
-                        <div className="rounded-lg bg-gray-50 px-3 py-2 text-xs text-gray-500 flex flex-col gap-1">
-                            <span><span className="font-semibold">Peso atual:</span> {selecionado?.peso_atual ?? 0} kg</span>
+                    {/* 🚀 EXIBIÇÃO DE TELEMETRIA: Apenas leitura para Administradores */}
+                    {!isCriando && isAdmin && (
+                        <div className="rounded-lg bg-gray-50 px-3 py-2 text-xs text-gray-500 flex flex-col gap-1.5 border border-gray-200">
+                            <span>
+                                <span className="font-semibold text-gray-600">Peso atual:</span> {selecionado?.peso_atual ?? 0} kg
+                            </span>
+                            <span className="text-sky-700">
+                                <span className="font-semibold">Quantidade em Estoque:</span> {selecionado?.quantidade_atual ?? 0} {selecionado?.insumo?.unidade ?? ""}
+                            </span>
                         </div>
                     )}
                 </div>
