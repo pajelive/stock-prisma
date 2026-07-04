@@ -1,4 +1,4 @@
-export default function Insumo({ insumo, onClick }) {
+export function Insumo({ insumo, onClick }) {
     return (
         <div
             onClick={onClick}
@@ -14,6 +14,13 @@ export default function Insumo({ insumo, onClick }) {
                 <p className="text-xs text-gray-400 mt-1">
                     <span className="font-medium text-gray-500">Categoria:</span> {insumo.categoria || "Geral"}
                 </p>
+                
+                {/* 4. ADICIONADO: Exibição opcional do peso unitário caso exista no card */}
+                {insumo.peso_unitario !== undefined && (
+                    <p className="text-xs text-gray-400 mt-0.5">
+                        <span className="font-medium text-gray-500">Peso Unit.:</span> {insumo.peso_unitario}g
+                    </p>
+                )}
             </div>
         </div>
     );
