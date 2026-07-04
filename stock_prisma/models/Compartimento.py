@@ -10,6 +10,7 @@ class Compartimento(db.Model):
     sensor_ativo = db.Column(db.Boolean, nullable=False)
     status = db.Column(db.String(50), nullable=False)
     ultima_calibracao = db.Column(db.DateTime, nullable=True)
+    quantidade = db.Column(db.Integer, default=0)
 
     insumo_id = db.Column(db.BigInteger, db.ForeignKey("insumo.id"))
 
