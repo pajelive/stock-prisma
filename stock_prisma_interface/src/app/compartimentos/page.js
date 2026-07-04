@@ -30,7 +30,7 @@ export default function Compartimentos() {
     useEffect(() => {
         async function loadData() {
             try {
-                // 🚀 ALTERAÇÃO: Se for Admin, consome a rota privada para buscar a 'quantidade' calculada
+                // Se for Admin, consome a rota privada para trazer a 'quantidade' calculada e 'peso_atual'
                 const rotaCompartimentos = isAdmin 
                     ? "/admin/compartimentos" 
                     : "/public/compartimentos";
@@ -47,22 +47,25 @@ export default function Compartimentos() {
             }
         }
         loadData();
-    }, [isAdmin]);
+    }, [isAdmin, usuario]); // Adicionado 'usuario' para garantir o recarregamento assim que o login for validado
 
     useEffect(() => {
         if (selecionado) {
+            // Busca o compartimento atualizado direto da lista do estado para garantir que pegamos os dados corretos
+            const compDoEstado = compartimentos.find(c => c.id === selecionado.id) || selecionado;
+            
             setForm({
-                nome: selecionado.nome ?? "",
-                localizacao: selecionado.localizacao ?? "",
-                status: selecionado.status ?? "ATIVO",
-                peso_tara: selecionado.peso_tara ?? 0,
-                sensor_ativo: selecionado.sensor_ativo ?? true,
-                insumo_id: selecionado.insumo_id ?? "", 
+                nome: compDoEstado.nome ?? "",
+                localizacao: compDoEstado.localizacao ?? "",
+                status: compDoEstado.status ?? "ATIVO",
+                peso_tara: compDoEstado.peso_tara ?? 0,
+                sensor_ativo: compDoEstado.sensor_ativo ?? true,
+                insumo_id: compDoEstado.insumo_id ?? "", 
             });
             setConfirmDelete(false);
             setIsCriando(false);
         }
-    }, [selecionado]);
+    }, [selecionado, compartimentos]);
 
     function selecionarCompartimento(comp) {
         if (!isAdmin) return;
@@ -207,7 +210,6 @@ export default function Compartimentos() {
                 }
             >
                 <div className="flex flex-col gap-4">
-                    {" "}
                     <div>
                         <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Nome</label>
                         <input
@@ -277,10 +279,10 @@ export default function Compartimentos() {
                         </button>
                     </div>
 
-                    {/* 🚀 TELEMETRIA EM TEMPO REAL CORRIGIDA E DEFENSIVA */}
+                    {/* Telemetria Corrigida buscando valores tipados corretamente do array de estado */}
                     {!isCriando && isAdmin && (() => {
-                        const compAtualizado = compartimentos.find(c => c.id === selecionado?.id) || selecionado;
-                        const insumoDoComp = insumos.find(i => i.id === compAtualizado?.insumo_id);
+                        const compAtualizado = compartimentos.find(c => String(c.id) === String(selecionado?.id)) || selecionado;
+                        const insumoDoComp = insumos.find(i => String(i.id) === String(compAtualizado?.insumo_id));
                         const unidadeTexto = compAtualizado?.insumo?.unidade || insumoDoComp?.unidade || "";
 
                         return (
