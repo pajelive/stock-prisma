@@ -24,13 +24,16 @@ export default function Compartimentos() {
     const [salvando, setSalvando] = useState(false);
     const [confirmDelete, setConfirmDelete] = useState(false);
 
-    const { usuario } = useAuth();
+    const { usuario, loading } = useAuth();
     const isAdmin = usuario?.perfil === "Administrador";
 
     useEffect(() => {
+        // Espera o /auth/me terminar antes de decidir qual rota chamar,
+        // evitando a corrida entre /public/compartimentos e /admin/compartimentos
+        if (loading) return;
+
         async function loadData() {
             try {
-                // Se for Admin, consome a rota privada para trazer a 'quantidade' calculada e 'peso_atual'
                 const rotaCompartimentos = isAdmin 
                     ? "/admin/compartimentos" 
                     : "/public/compartimentos";
@@ -47,7 +50,7 @@ export default function Compartimentos() {
             }
         }
         loadData();
-    }, [isAdmin, usuario]); // Adicionado 'usuario' para garantir o recarregamento assim que o login for validado
+    }, [isAdmin, usuario, loading]);
 
     useEffect(() => {
         if (selecionado) {
@@ -148,13 +151,15 @@ export default function Compartimentos() {
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                    {compartimentos.map((comp) => (
-                        <Compartimento
-                            key={comp.id}
-                            compartimento={comp}
-                            onClick={() => selecionarCompartimento(comp)}
-                        />
-                    ))}
+                    {[...compartimentos]
+                        .sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR", { numeric: true }))
+                        .map((comp) => (
+                            <Compartimento
+                                key={comp.id}
+                                compartimento={comp}
+                                onClick={() => selecionarCompartimento(comp)}
+                            />
+                        ))}
                 </div>
             </div>
 
@@ -279,7 +284,7 @@ export default function Compartimentos() {
                         </button>
                     </div>
 
-                    {/* Telemetria Corrigida buscando valores tipados corretamente do array de estado */}
+                    {/* Telemetria buscando valores tipados corretamente do array de estado */}
                     {!isCriando && isAdmin && (() => {
                         const compAtualizado = compartimentos.find(c => String(c.id) === String(selecionado?.id)) || selecionado;
                         const insumoDoComp = insumos.find(i => String(i.id) === String(compAtualizado?.insumo_id));
