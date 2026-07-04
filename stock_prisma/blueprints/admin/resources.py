@@ -531,7 +531,11 @@ class CompartimentoAdminResource(Resource):
             compartimento.insumo_id = dados["insumo_id"]
 
         db.session.commit()
-        return {"msg": "Compartimento updated"}, 200
+        return {
+            "msg": "Compartimento updated",
+            "quantidade_atual": compartimento.quantidade_atual,
+            "peso_atual": compartimento.peso_atual
+        }, 200
 
     @jwt_required()
     def delete(self, id):
@@ -552,11 +556,14 @@ class CompartimentoAdminResource(Resource):
             return {"erro": "nome obrigatório"}, 400
 
         # Criando a nova instância aceitando também o insumo_id (Criação)
+        # 🚀 Inicializamos peso_atual e quantidade_atual com 0.0 para satisfazer o modelo
         novo_compartimento = Compartimento(
             nome=dados["nome"],
             localizacao=dados.get("localizacao"),
             status=dados.get("status", "ATIVO"),
             peso_tara=dados.get("peso_tara", 0.0),
+            peso_atual=0.0,
+            quantidade_atual=0.0,
             sensor_ativo=dados.get("sensor_ativo", True),
             insumo_id=dados.get("insumo_id")  # SALVA O INSUMO NO COMPARTIMENTO
         )
@@ -578,12 +585,11 @@ class CompartimentoAdminResource(Resource):
             "status": novo_compartimento.status,
             "peso_tara": novo_compartimento.peso_tara,
             "sensor_ativo": novo_compartimento.sensor_ativo,
-            "peso_atual": 0.0,
+            "peso_atual": novo_compartimento.peso_atual,
+            "quantidade_atual": novo_compartimento.quantidade_atual, # 🚀 Retornado pro front
             "insumo_id": novo_compartimento.insumo_id,
             "insumo_nome": insumo_nome
         }, 201
-
-
 # =========================
 # INSUMOS
 # =========================
