@@ -504,12 +504,6 @@ class OrdemProducaoDetalheResource(Resource):
 
         return {"msg": "Ordem removida"}, 200
 
-
-from flask import request
-from flask_restful import Resource
-from flask_jwt_extended import jwt_required
-from stock_prisma.models import db, Compartimento, Insumo
-
 class CompartimentoAdminResource(Resource):
 
     @jwt_required()
