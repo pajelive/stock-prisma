@@ -1,5 +1,5 @@
 from datetime import datetime, timezone, timedelta
-import math  # Opcional, caso queira usar para arredondamento
+import math
 
 from stock_prisma.models import (
     Usuario,
@@ -9,6 +9,7 @@ from stock_prisma.models import (
     Ferramenta,
     OrdemProducao
 )
+
 class MovimentacaoService:
 
     @staticmethod
@@ -82,30 +83,40 @@ class MovimentacaoService:
         # =========================
         # ATUALIZA PESO E QUANTIDADE (BALANÇA)
         # =========================
+        # Valor padrão caso a leitura não venha de uma balança (ex: ferramentas por RFID)
+        quantidade_movimentada = data.get("quantidade", 1)
+
         if compartimento and data.get("peso_atual") is not None:
-            # 1. Atualiza o peso atual bruto vindo da requisição
+            # Captura a quantidade atual que estava salva antes da pesagem
+            quantidade_anterior = compartimento.quantidade or 0
+            
+            # 1. Atualiza o peso bruto vindo do microcontrolador
             compartimento.peso_atual = float(data["peso_atual"])
             
-            # 2. Busca o insumo vinculado a este compartimento
+            # 2. Resgata o relacionamento com o insumo
             insumo = compartimento.insumo
             
             if insumo and insumo.peso_unitario and insumo.peso_unitario > 0:
-                # 3. Desconta o peso da estrutura (tara)
+                # 3. Desconta a tara da estrutura
                 peso_liquido = compartimento.peso_atual - (compartimento.peso_tara or 0.0)
                 
-                # Proteção contra oscilações negativas de balança vazia
+                # Proteção contra ruídos que joguem o peso abaixo da tara com a balança vazia
                 if peso_liquido < 0:
                     peso_liquido = 0.0
                 
-                # 4. Divide pelo peso unitário do insumo cadastrado
+                # 4. Divide pelo peso unitário e arredonda para um inteiro seguro
                 calculo_qtd = peso_liquido / insumo.peso_unitario
+                nova_quantidade = int(round(calculo_qtd))
                 
-                # DICA: Se seus insumos forem sempre unidades inteiras (ex: parafusos, caixas),
-                # você pode usar int(round(calculo_qtd)) para evitar quebrados por oscilação física.
-                compartimento.quantidade_atual = calculo_qtd
+                # 5. Calcula o delta absoluto de itens movimentados (Entrada ou Consumo)
+                quantidade_movimentada = abs(nova_quantidade - quantidade_anterior)
+                
+                # Atualiza o estoque final do compartimento
+                compartimento.quantidade = nova_quantidade
             else:
-                # Se não houver insumo ou o peso unitário for inválido, zera a contagem
-                compartimento.quantidade_atual = 0.0
+                # Se o compartimento não tiver insumo vinculado, zera e calcula a perda
+                quantidade_movimentada = quantidade_anterior
+                compartimento.quantidade = 0
 
         # =========================
         # DATA/HORA
@@ -122,7 +133,7 @@ class MovimentacaoService:
             tipo_movimentacao_id=tipo.id,
             etapa_id=etapa.id if etapa else None,
             op_id=op.id if op else None,
-            quantidade=data.get("quantidade", 1),
+            quantidade=quantidade_movimentada,  # Delta ou valor fixo
             origem_leitura=data.get("origem", "DESCONHECIDA"),
             observacao=data.get("observacao"),
             data_hora=datetime.now(BRASILIA).replace(tzinfo=None)
