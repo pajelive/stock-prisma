@@ -118,6 +118,10 @@ class MovimentacaoService:
                 quantidade_movimentada = quantidade_anterior
                 compartimento.quantidade = 0
 
+            # 🚀 GARANTE A ATUALIZAÇÃO NO BANCO:
+            # Força a sessão do SQLAlchemy a rastrear o objeto modificado para o UPDATE ocorrer junto com o commit global.
+            session.add(compartimento)
+
         # =========================
         # DATA/HORA
         # =========================
