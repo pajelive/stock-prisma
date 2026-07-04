@@ -6,10 +6,13 @@ import Insumo from "../../components/Insumo";
 import Modal from "../../components/Modal";
 import { useAuth } from "../../context/AuthContext";
 
+// 1. ATUALIZADO: Incluídos os novos campos obrigatórios com valores padrão vazios
 const INITIAL_FORM = {
     nome: "",
     categoria: "",
-    unidade: "kg"
+    unidade: "kg",
+    uid_rfid: "",
+    peso_unitario: ""
 };
 
 export default function Insumos() {
@@ -36,12 +39,15 @@ export default function Insumos() {
         loadInsumos();
     }, []);
 
+    // 2. ATUALIZADO: Popula os novos campos ao carregar para edição
     useEffect(() => {
         if (selecionado) {
             setForm({
                 nome: selecionado.nome ?? "",
                 categoria: selecionado.categoria ?? "",
                 unidade: selecionado.unidade ?? "kg",
+                uid_rfid: selecionado.uid_rfid ?? "",
+                peso_unitario: selecionado.peso_unitario ?? "",
             });
             setConfirmDelete(false);
             setIsCriando(false);
@@ -66,14 +72,21 @@ export default function Insumos() {
 
     async function handleSalvar() {
         setSalvando(true);
+        
+        // Formata os dados garantindo que o peso seja enviado como número float
+        const payload = {
+            ...form,
+            peso_unitario: parseFloat(form.peso_unitario) || 0
+        };
+
         try {
             if (isCriando) {
-                const res = await api.post("/admin/insumos", form);
+                const res = await api.post("/admin/insumos", payload);
                 setInsumos((prev) => [...prev, res.data]);
             } else {
-                await api.put(`/admin/insumos/${selecionado.id}`, form);
+                await api.put(`/admin/insumos/${selecionado.id}`, payload);
                 setInsumos((prev) =>
-                    prev.map((i) => i.id === selecionado.id ? { ...i, ...form } : i)
+                    prev.map((i) => i.id === selecionado.id ? { ...i, ...payload } : i)
                 );
             }
             fecharModal();
@@ -177,6 +190,32 @@ export default function Insumos() {
                         />
                     </div>
 
+                    {/* 3. ADICIONADO: Inputs lado a lado para Peso Unitário e UID RFID */}
+                    <div className="grid grid-cols-2 gap-4">
+                        <div>
+                            <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Peso Unitário (g)</label>
+                            <input
+                                type="number"
+                                step="0.01"
+                                min="0"
+                                value={form.peso_unitario}
+                                onChange={(e) => setForm({ ...form, peso_unitario: e.target.value })}
+                                className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400"
+                                placeholder="Ex: 12.50"
+                            />
+                        </div>
+
+                        <div>
+                            <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">UID RFID</label>
+                            <input
+                                value={form.uid_rfid}
+                                onChange={(e) => setForm({ ...form, uid_rfid: e.target.value })}
+                                className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400"
+                                placeholder="Ex: AB12CD34"
+                            />
+                        </div>
+                    </div>
+
                     <div>
                         <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Unidade de Medida</label>
                         <select
@@ -194,6 +233,35 @@ export default function Insumos() {
                     </div>
                 </div>
             </Modal>
+        </div>
+    );
+}
+
+// Componente do Card de exibição ajustado para exibir o peso unitário
+export function Insumo({ insumo, onClick }) {
+    return (
+        <div
+            onClick={onClick}
+            className="p-4 bg-white rounded-2xl shadow-md border border-gray-200 hover:shadow-lg hover:border-sky-300 transition-all cursor-pointer flex flex-col justify-between gap-2"
+        >
+            <div>
+                <div className="flex justify-between items-start gap-2">
+                    <h3 className="font-bold text-slate-800 text-base line-clamp-1">{insumo.nome}</h3>
+                    <span className="text-[11px] font-semibold bg-sky-50 text-sky-700 border border-sky-100 px-2 py-0.5 rounded-md">
+                        {insumo.unidade}
+                    </span>
+                </div>
+                <p className="text-xs text-gray-400 mt-1">
+                    <span className="font-medium text-gray-500">Categoria:</span> {insumo.categoria || "Geral"}
+                </p>
+                
+                {/* 4. ADICIONADO: Exibição opcional do peso unitário caso exista no card */}
+                {insumo.peso_unitario !== undefined && (
+                    <p className="text-xs text-gray-400 mt-0.5">
+                        <span className="font-medium text-gray-500">Peso Unit.:</span> {insumo.peso_unitario}g
+                    </p>
+                )}
+            </div>
         </div>
     );
 }
