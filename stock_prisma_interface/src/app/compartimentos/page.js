@@ -30,7 +30,12 @@ export default function Compartimentos() {
     useEffect(() => {
         async function loadData() {
             try {
-                const resComp = await api.get("/public/compartimentos");
+                // 🚀 ALTERAÇÃO: Se for Admin, consome a rota privada para buscar a 'quantidade' calculada
+                const rotaCompartimentos = isAdmin 
+                    ? "/admin/compartimentos" 
+                    : "/public/compartimentos";
+
+                const resComp = await api.get(rotaCompartimentos);
                 setCompartimentos(resComp.data ?? []);
 
                 if (isAdmin) {
@@ -202,6 +207,7 @@ export default function Compartimentos() {
                 }
             >
                 <div className="flex flex-col gap-4">
+                    {" "}
                     <div>
                         <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Nome</label>
                         <input
@@ -271,7 +277,7 @@ export default function Compartimentos() {
                         </button>
                     </div>
 
-                    {/* 🚀 TELEMETRIA EM TEMPO REAL CORRIGIDA */}
+                    {/* 🚀 TELEMETRIA EM TEMPO REAL CORRIGIDA E DEFENSIVA */}
                     {!isCriando && isAdmin && (() => {
                         const compAtualizado = compartimentos.find(c => c.id === selecionado?.id) || selecionado;
                         const insumoDoComp = insumos.find(i => i.id === compAtualizado?.insumo_id);
