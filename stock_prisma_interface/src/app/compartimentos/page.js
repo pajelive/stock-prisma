@@ -39,7 +39,7 @@ export default function Compartimentos() {
                 setCompartimentos(resComp.data ?? []);
 
                 if (isAdmin) {
-                    const resInsumos = await api.get("/insumos");
+                    const resInsumos = await api.get("/admin/insumos");
                     setInsumos(resInsumos.data ?? []);
                 }
             } catch (err) {
