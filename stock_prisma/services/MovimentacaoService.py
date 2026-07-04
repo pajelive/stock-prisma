@@ -95,31 +95,32 @@ class MovimentacaoService:
             insumo = compartimento.insumo
             
             if insumo and insumo.peso_unitario and insumo.peso_unitario > 0:
-                # 3. Descoberta do Delta de peso baseado na movimentação física atual
-                delta_peso = abs(peso_novo - peso_anterior)
                 
-                # Desconta a tara se for a primeira pesagem absoluta do zero, ou calcula puramente o delta
-                if peso_anterior == 0.0 and peso_novo > 0:
-                    # Descontando a tara do compartimento se aplicável
-                    peso_liquido_delta = peso_novo - (compartimento.peso_tara or 0.0)
-                    if peso_liquido_delta < 0: peso_liquido_delta = 0.0
-                else:
-                    peso_liquido_delta = delta_peso
-                
-                # 4. Converte o delta de peso para quantidade de itens movimentados nesta ação
-                calculo_qtd_movimento = peso_liquido_delta / insumo.peso_unitario
-                quantidade_movimentada = int(round(calculo_qtd_movimento))
-                
-                # 5. Atualiza o estoque acumulado REAL do compartimento com base no Tipo de Movimentação
-                if tipo_nome == "Entrada":
-                    compartimento.quantidade = quantidade_anterior_total + quantidade_movimentada
-                elif tipo_nome == "Consumo":
-                    # Evita que o estoque total fique negativo por conta de ruídos
-                    novo_total = quantidade_anterior_total - quantidade_movimentada
-                    compartimento.quantidade = max(0, novo_total)
-                else:
-                    # Correção aqui: corrigido de quantity_anterior_total para quantidade_anterior_total
+                if tipo_nome == "Inventario":
+                    quantidade_movimentada = 0
                     compartimento.quantidade = quantidade_anterior_total
+                else:
+                    # 3. Calcula o Delta real de peso movimentado
+                    delta_peso = abs(peso_novo - peso_anterior)
+                    
+                    # Se saiu do zero absoluto para um peso positivo, desconta a tara estrutural da maquete
+                    if peso_anterior <= 0.005 and peso_novo > 0.005:
+                        peso_liquido_delta = peso_novo - (compartimento.peso_tara or 0.0)
+                        if peso_liquido_delta < 0: peso_liquido_delta = 0.0
+                    else:
+                        peso_liquido_delta = delta_peso
+                    
+                    # 4. Converte a variação de peso para quantidade de peças
+                    calculo_qtd_movimento = peso_liquido_delta / insumo.peso_unitario
+                    quantidade_movimentada = int(round(calculo_qtd_movimento))
+                    
+                    # 5. Atualiza o estoque acumulado total do compartimento
+                    if tipo_nome == "Entrada":
+                        compartimento.quantidade = quantidade_anterior_total + quantidade_movimentada
+                    elif tipo_nome == "Consumo":
+                        # Deduz a quantidade retirada do estoque total do compartimento
+                        novo_total = quantidade_anterior_total - quantidade_movimentada
+                        compartimento.quantidade = max(0, novo_total)
             else:
                 # Sem insumo vinculado
                 quantidade_movimentada = 0
@@ -158,9 +159,6 @@ class MovimentacaoService:
     @staticmethod
     def _inferir_tipo_movimentacao(ferramenta, compartimento, data, session):
 
-        # =========================
-        # FERRAMENTA
-        # =========================
         if ferramenta:
             ultima_mov = session.query(Movimentacao).filter_by(
                 ferramenta_id=ferramenta.id
@@ -175,9 +173,6 @@ class MovimentacaoService:
 
             return "Retirada"
 
-        # =========================
-        # COMPARTIMENTO (BALANÇA)
-        # =========================
         if compartimento:
             peso_atual = data.get("peso_atual")
             peso_anterior = compartimento.peso_atual or 0.0
@@ -187,18 +182,19 @@ class MovimentacaoService:
 
             peso_atual = float(peso_atual)
 
-            # PROTEÇÃO TCC: Se o peso atual enviado for 0.0 (ou menor que um limiar mínimo de ruído como 0.005)
-            # significa que a balança foi apenas esvaziada ou reiniciada. Não deve computar consumo.
-            if peso_atual <= 0.005:
+            # Se a balança já estava zerada e continua zerada, é apenas uma leitura de rotina (Inventário)
+            if peso_anterior <= 0.005 and peso_atual <= 0.005:
                 return "Inventario"
 
-            # Se a balança estava zerada no banco e colocou qualquer peso estável, é Entrada
+            # Se a balança estava zerada (vazia) e detetou peso, é uma ENTRADA (reabastecimento)
             if peso_anterior <= 0.005 and peso_atual > 0.005:
                 return "Entrada"
 
+            # Se o peso diminuiu (mesmo que tenha ido para 0.0), significa que o insumo foi RETIRADO (Consumo)
             if peso_atual < peso_anterior:
                 return "Consumo"
 
+            # Se o peso aumentou a partir de um estado que já tinha peso, é outra Entrada
             if peso_atual > peso_anterior:
                 return "Entrada"
 
