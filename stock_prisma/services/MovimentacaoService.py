@@ -118,8 +118,8 @@ class MovimentacaoService:
                     novo_total = quantidade_anterior_total - quantidade_movimentada
                     compartimento.quantidade = max(0, novo_total)
                 else:
-                    # Se for inventário ou outro, mantém o anterior total
-                    compartimento.quantidade = quantity_anterior_total
+                    # Correção aqui: corrigido de quantity_anterior_total para quantidade_anterior_total
+                    compartimento.quantidade = quantidade_anterior_total
             else:
                 # Sem insumo vinculado
                 quantidade_movimentada = 0
@@ -139,11 +139,11 @@ class MovimentacaoService:
         mov = Movimentacao(
             usuario_id=usuario.id,
             compartimento_id=compartimento.id if compartimento else None,
-            ferramenta_id=ferramenta.id if ferramenta else None,  # Corrigido aqui!
+            ferramenta_id=ferramenta.id if ferramenta else None,
             tipo_movimentacao_id=tipo.id,
             etapa_id=etapa.id if etapa else None,
             op_id=op.id if op else None,
-            quantidade=quantidade_movimentada,  # Registra estritamente o que variou (ex: consumiu 4, entrou 20)
+            quantidade=quantidade_movimentada,
             origem_leitura=data.get("origem", "DESCONHECIDA"),
             observacao=data.get("observacao"),
             data_hora=datetime.now(BRASILIA).replace(tzinfo=None)
@@ -187,9 +187,13 @@ class MovimentacaoService:
 
             peso_atual = float(peso_atual)
 
-            # Regra de Ouro para o TCC: Se a balança estava zerada no banco (reiniciou), 
-            # qualquer peso positivo colocado nela obrigatoriamente configura uma Entrada.
-            if peso_anterior == 0.0 and peso_atual > 0.0:
+            # PROTEÇÃO TCC: Se o peso atual enviado for 0.0 (ou menor que um limiar mínimo de ruído como 0.005)
+            # significa que a balança foi apenas esvaziada ou reiniciada. Não deve computar consumo.
+            if peso_atual <= 0.005:
+                return "Inventario"
+
+            # Se a balança estava zerada no banco e colocou qualquer peso estável, é Entrada
+            if peso_anterior <= 0.005 and peso_atual > 0.005:
                 return "Entrada"
 
             if peso_atual < peso_anterior:
