@@ -596,22 +596,37 @@ class InsumoResource(Resource):
             "nome": i.nome,
             "categoria": i.categoria,
             "unidade": i.unidade,
+            "uid_rfid": i.uid_rfid,
+            "peso_unitario": i.peso_unitario
         } for i in insumos], 200
 
     @jwt_required()
     def post(self):
-        """MÉTODO ADICIONADO: Salva um novo Insumo no Banco de Dados"""
+        """MÉTODO CORRIGIDO: Salva um novo Insumo validando os campos obrigatórios"""
         dados = request.json
 
+        # Validações dos campos obrigatórios do banco de dados
         if not dados.get("nome"):
             return {"erro": "nome do insumo é obrigatório"}, 400
+        if not dados.get("categoria"):
+            return {"erro": "categoria é obrigatória"}, 400
         if not dados.get("unidade"):
             return {"erro": "unidade de medida é obrigatória (ex: kg, L, un)"}, 400
+        if not dados.get("uid_rfid"):
+            return {"erro": "uid_rfid é obrigatório"}, 400
+        if dados.get("peso_unitario") is None:
+            return {"erro": "peso_unitario é obrigatório"}, 400
+
+        # Opcional: Validar se o uid_rfid já existe (já que ele é UNIQUE no banco)
+        if Insumo.query.filter_by(uid_rfid=dados["uid_rfid"]).first():
+            return {"erro": "Este uid_rfid já está cadastrado em outro insumo"}, 400
 
         novo_insumo = Insumo(
             nome=dados["nome"],
-            categoria=dados.get("categoria"),
+            categoria=dados["categoria"],
             unidade=dados["unidade"],
+            uid_rfid=dados["uid_rfid"],
+            peso_unitario=float(dados["peso_unitario"]),
             ativo=True
         )
 
@@ -622,8 +637,11 @@ class InsumoResource(Resource):
             "id": novo_insumo.id,
             "nome": novo_insumo.nome,
             "categoria": novo_insumo.categoria,
-            "unidade": novo_insumo.unidade
+            "unidade": novo_insumo.unidade,
+            "uid_rfid": novo_insumo.uid_rfid,
+            "peso_unitario": novo_insumo.peso_unitario
         }, 201
+
 
 class InsumoDetalheResource(Resource):
 
@@ -639,6 +657,8 @@ class InsumoDetalheResource(Resource):
             "nome": insumo.nome,
             "categoria": insumo.categoria,
             "unidade": insumo.unidade,
+            "uid_rfid": insumo.uid_rfid,
+            "peso_unitario": insumo.peso_unitario,
             "ativo": insumo.ativo
         }, 200
 
@@ -657,6 +677,14 @@ class InsumoDetalheResource(Resource):
             insumo.categoria = dados["categoria"]
         if dados.get("unidade"):
             insumo.unidade = dados["unidade"]
+        if dados.get("uid_rfid"):
+            # Opcional: validar unicidade se o RFID for alterado
+            existente = Insumo.query.filter_by(uid_rfid=dados["uid_rfid"]).first()
+            if existente and existente.id != id:
+                return {"erro": "Este uid_rfid já está em uso por outro insumo"}, 400
+            insumo.uid_rfid = dados["uid_rfid"]
+        if dados.get("peso_unitario") is not None:
+            insumo.peso_unitario = float(dados["peso_unitario"])
 
         db.session.commit()
 
@@ -669,7 +697,7 @@ class InsumoDetalheResource(Resource):
         if not insumo:
             return {"erro": "Insumo não encontrado"}, 404
 
-        # Exclusão lógica para preservar histórico de movimentações e balanças
+        # Perfeito: Mantida a exclusão lógica recomendada por boas práticas
         insumo.ativo = False
         db.session.commit()
 
