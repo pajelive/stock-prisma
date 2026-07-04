@@ -505,7 +505,57 @@ class OrdemProducaoDetalheResource(Resource):
         return {"msg": "Ordem removida"}, 200
 
 
+from flask import request
+from flask_restful import Resource
+from flask_jwt_extended import jwt_required
+from stock_prisma.models import db, Compartimento, Insumo
+
 class CompartimentoAdminResource(Resource):
+
+    @jwt_required()
+    def get(self, id=None):
+        """
+        Rota GET responsável por listar os compartimentos no painel.
+        Mapeia a coluna 'quantidade' diretamente para o JSON.
+        """
+        if id:
+            compartimento = Compartimento.query.get(id)
+            if not compartimento:
+                return {"erro": "Compartimento não encontrado"}, 404
+                
+            insumo_nome = compartimento.insumo.nome if compartimento.insumo else None
+            return {
+                "id": compartimento.id,
+                "nome": compartimento.nome,
+                "localizacao": compartimento.localizacao,
+                "status": compartimento.status,
+                "peso_tara": compartimento.peso_tara,
+                "peso_atual": compartimento.peso_atual,
+                "quantidade": compartimento.quantidade,  # 🚀 Padronizado
+                "sensor_ativo": compartimento.sensor_ativo,
+                "insumo_id": compartimento.insumo_id,
+                "insumo_nome": insumo_nome
+            }, 200
+
+        # Caso busque todos os compartimentos (Listagem Geral)
+        compartimentos = Compartimento.query.all()
+        resultado = []
+        for c in compartimentos:
+            insumo_nome = c.insumo.nome if c.insumo else None
+            resultado.append({
+                "id": c.id,
+                "nome": c.nome,
+                "localizacao": c.localizacao,
+                "status": c.status,
+                "peso_tara": c.peso_tara,
+                "peso_atual": c.peso_atual,
+                "quantidade": c.quantidade,  # 🚀 Padronizado
+                "sensor_ativo": c.sensor_ativo,
+                "insumo_id": c.insumo_id,
+                "insumo_nome": insumo_nome
+            })
+        return resultado, 200
+
     @jwt_required()
     def put(self, id):
         compartimento = Compartimento.query.get(id)
@@ -533,7 +583,7 @@ class CompartimentoAdminResource(Resource):
         db.session.commit()
         return {
             "msg": "Compartimento updated",
-            "quantidade_atual": compartimento.quantidade_atual,
+            "quantidade": compartimento.quantidade,  # 🚀 Padronizado
             "peso_atual": compartimento.peso_atual
         }, 200
 
@@ -555,23 +605,21 @@ class CompartimentoAdminResource(Resource):
         if not dados.get("nome"):
             return {"erro": "nome obrigatório"}, 400
 
-        # Criando a nova instância aceitando também o insumo_id (Criação)
-        # 🚀 Inicializamos peso_atual e quantidade_atual com 0.0 para satisfazer o modelo
+        # Criando a nova instância com o atributo correto
         novo_compartimento = Compartimento(
             nome=dados["nome"],
             localizacao=dados.get("localizacao"),
             status=dados.get("status", "ATIVO"),
             peso_tara=dados.get("peso_tara", 0.0),
             peso_atual=0.0,
-            quantidade_atual=0.0,
+            quantidade=0,  # 🚀 Padronizado para quantidade iniciar em 0 inteiro
             sensor_ativo=dados.get("sensor_ativo", True),
-            insumo_id=dados.get("insumo_id")  # SALVA O INSUMO NO COMPARTIMENTO
+            insumo_id=dados.get("insumo_id")
         )
 
         db.session.add(novo_compartimento)
         db.session.commit()
 
-        # Busca o nome do insumo caso ele tenha sido associado na criação
         insumo_nome = None
         if novo_compartimento.insumo_id:
             insumo = Insumo.query.get(novo_compartimento.insumo_id)
@@ -586,7 +634,7 @@ class CompartimentoAdminResource(Resource):
             "peso_tara": novo_compartimento.peso_tara,
             "sensor_ativo": novo_compartimento.sensor_ativo,
             "peso_atual": novo_compartimento.peso_atual,
-            "quantidade_atual": novo_compartimento.quantidade_atual, # 🚀 Retornado pro front
+            "quantidade": novo_compartimento.quantidade,  # 🚀 Padronizado
             "insumo_id": novo_compartimento.insumo_id,
             "insumo_nome": insumo_nome
         }, 201
