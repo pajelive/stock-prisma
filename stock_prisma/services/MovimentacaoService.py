@@ -96,37 +96,37 @@ class MovimentacaoService:
             
             if insumo and insumo.peso_unitario and insumo.peso_unitario > 0:
                 
-                if tipo_nome == "Inventario":
-                    quantidade_movimentada = 0
-                    compartimento.quantidade = quantidade_anterior_total
+                # Descoberta do Delta de peso baseado na variação física atual
+                delta_peso = abs(peso_novo - peso_anterior)
+                
+                # Se saiu do zero absoluto para um peso positivo, desconta a tara estrutural
+                if peso_anterior <= 0.005 and peso_novo > 0.005:
+                    peso_liquido_delta = peso_novo - (compartimento.peso_tara or 0.0)
+                    if peso_liquido_delta < 0: peso_liquido_delta = 0.0
                 else:
-                    # 3. Calcula o Delta real de peso movimentado
-                    delta_peso = abs(peso_novo - peso_anterior)
+                    peso_liquido_delta = delta_peso
+                
+                # Converte o delta medido para a quantidade da movimentação atual
+                calculo_qtd_movimento = peso_liquido_delta / insumo.peso_unitario
+                quantidade_movimentada = int(round(calculo_qtd_movimento))
+                
+                # LÓGICA DE ATUALIZAÇÃO DO COMPARTIMENTO (Sincronia Direta pelo Peso Total)
+                if peso_novo <= 0.005:
+                    # Se o peso zerou, o estoque atual do compartimento obrigatoriamente é zero
+                    compartimento.quantidade = 0
+                else:
+                    # Calcula a quantidade total líquida que restou sobre a balança
+                    peso_liquido_total = peso_novo - (compartimento.peso_tara or 0.0)
+                    if peso_liquido_total < 0: peso_liquido_total = 0.0
                     
-                    # Se saiu do zero absoluto para um peso positivo, desconta a tara estrutural da maquete
-                    if peso_anterior <= 0.005 and peso_novo > 0.005:
-                        peso_liquido_delta = peso_novo - (compartimento.peso_tara or 0.0)
-                        if peso_liquido_delta < 0: peso_liquido_delta = 0.0
-                    else:
-                        peso_liquido_delta = delta_peso
-                    
-                    # 4. Converte a variação de peso para quantidade de peças
-                    calculo_qtd_movimento = peso_liquido_delta / insumo.peso_unitario
-                    quantidade_movimentada = int(round(calculo_qtd_movimento))
-                    
-                    # 5. Atualiza o estoque acumulado total do compartimento
-                    if tipo_nome == "Entrada":
-                        compartimento.quantidade = quantidade_anterior_total + quantidade_movimentada
-                    elif tipo_nome == "Consumo":
-                        # Deduz a quantidade retirada do estoque total do compartimento
-                        novo_total = quantidade_anterior_total - quantidade_movimentada
-                        compartimento.quantidade = max(0, novo_total)
+                    quantidade_real_total = int(round(peso_liquido_total / insumo.peso_unitario))
+                    compartimento.quantidade = max(0, quantidade_real_total)
             else:
                 # Sem insumo vinculado
                 quantidade_movimentada = 0
                 compartimento.quantidade = 0
 
-            # Força a sessão do SQLAlchemy a rastrear o objeto modificado
+            # Força a sessão do SQLAlchemy a rastrear o objeto modificado para UPDATE
             session.add(compartimento)
 
         # =========================
@@ -182,19 +182,19 @@ class MovimentacaoService:
 
             peso_atual = float(peso_atual)
 
-            # Se a balança já estava zerada e continua zerada, é apenas uma leitura de rotina (Inventário)
+            # Se a balança já estava zerada e continua zerada
             if peso_anterior <= 0.005 and peso_atual <= 0.005:
                 return "Inventario"
 
-            # Se a balança estava zerada (vazia) e detetou peso, é uma ENTRADA (reabastecimento)
+            # Se a balança estava zerada (vazia) e detetou peso -> Entrada
             if peso_anterior <= 0.005 and peso_atual > 0.005:
                 return "Entrada"
 
-            # Se o peso diminuiu (mesmo que tenha ido para 0.0), significa que o insumo foi RETIRADO (Consumo)
+            # Se o peso diminuiu (mesmo indo para 0.0) -> Consumo
             if peso_atual < peso_anterior:
                 return "Consumo"
 
-            # Se o peso aumentou a partir de um estado que já tinha peso, é outra Entrada
+            # Se o peso aumentou a partir de um estado que já tinha peso -> Entrada
             if peso_atual > peso_anterior:
                 return "Entrada"
 
