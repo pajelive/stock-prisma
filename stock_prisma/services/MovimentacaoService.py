@@ -33,7 +33,6 @@ class MovimentacaoService:
         compartimento = None
 
         if data.get("compartimento_uid"):
-
             compartimento = session.query(Compartimento).filter_by(
                 nome=data["compartimento_uid"]
             ).first()
@@ -47,7 +46,6 @@ class MovimentacaoService:
         ferramenta = None
 
         if data.get("ferramenta_uid"):
-
             ferramenta = session.query(Ferramenta).filter_by(
                 uid_rfid=data["ferramenta_uid"]
             ).first()
@@ -58,7 +56,6 @@ class MovimentacaoService:
         op = None
 
         if data.get("op_codigo"):
-
             op = session.query(OrdemProducao).filter_by(
                 codigo=data["op_codigo"]
             ).first()
@@ -83,43 +80,53 @@ class MovimentacaoService:
         # =========================
         # ATUALIZA PESO E QUANTIDADE (BALANÇA)
         # =========================
-        # Valor padrão caso a leitura não venha de uma balança (ex: ferramentas por RFID)
         quantidade_movimentada = data.get("quantidade", 1)
 
         if compartimento and data.get("peso_atual") is not None:
-            # Captura a quantidade atual que estava salva antes da pesagem
-            quantidade_anterior = compartimento.quantidade or 0
+            # Captura o histórico atual que estava salvo antes da nova pesagem
+            quantidade_anterior_total = compartimento.quantidade or 0
+            peso_anterior = compartimento.peso_atual or 0.0
             
-            # 1. Atualiza o peso bruto vindo do microcontrolador
-            compartimento.peso_atual = float(data["peso_atual"])
+            # 1. Atualiza o peso bruto vindo do microcontrolador para o compartimento
+            peso_novo = float(data["peso_atual"])
+            compartimento.peso_atual = peso_novo
             
             # 2. Resgata o relacionamento com o insumo
             insumo = compartimento.insumo
             
             if insumo and insumo.peso_unitario and insumo.peso_unitario > 0:
-                # 3. Desconta a tara da estrutura
-                peso_liquido = compartimento.peso_atual - (compartimento.peso_tara or 0.0)
+                # 3. Descoberta do Delta de peso baseado na movimentação física atual
+                # (Se a balança iniciou em zero, peso_anterior era 0, então o peso_novo inteiro é tratado como a variação)
+                delta_peso = abs(peso_novo - peso_anterior)
                 
-                # Proteção contra ruídos que joguem o peso abaixo da tara com a balança vazia
-                if peso_liquido < 0:
-                    peso_liquido = 0.0
+                # Desconta a tara se for a primeira pesagem absoluta do zero, ou calcula puramente o delta
+                if peso_anterior == 0.0 and peso_novo > 0:
+                    # Descontando a tara do compartimento se aplicável
+                    peso_liquido_delta = peso_novo - (compartimento.peso_tara or 0.0)
+                    if peso_liquido_delta < 0: peso_liquido_delta = 0.0
+                else:
+                    peso_liquido_delta = delta_peso
                 
-                # 4. Divide pelo peso unitário e arredonda para um inteiro seguro
-                calculo_qtd = peso_liquido / insumo.peso_unitario
-                nova_quantidade = int(round(calculo_qtd))
+                # 4. Converte o delta de peso para quantidade de itens movimentados nesta ação
+                calculo_qtd_movimento = peso_liquido_delta / insumo.peso_unitario
+                quantidade_movimentada = int(round(calculo_qtd_movimento))
                 
-                # 5. Calcula o delta absoluto de itens movimentados (Entrada ou Consumo)
-                quantidade_movimentada = abs(nova_quantidade - quantidade_anterior)
-                
-                # Atualiza o estoque final do compartimento
-                compartimento.quantidade = nova_quantidade
+                # 5. Atualiza o estoque acumulado REAL do compartimento com base no Tipo de Movimentação
+                if tipo_nome == "Entrada":
+                    compartimento.quantidade = quantidade_anterior_total + quantidade_movimentada
+                elif tipo_nome == "Consumo":
+                    # Evita que o estoque total fique negativo por conta de ruídos
+                    novo_total = quantidade_anterior_total - quantidade_movimentada
+                    compartimento.quantidade = max(0, novo_total)
+                else:
+                    # Se for inventário ou outro, mantém o anterior total
+                    compartimento.quantidade = quantidade_anterior_total
             else:
-                # Se o compartimento não tiver insumo vinculado, zera e calcula a perda
-                quantidade_movimentada = quantidade_anterior
+                # Sem insumo vinculado
+                quantidade_movimentada = 0
                 compartimento.quantidade = 0
 
-            # 🚀 GARANTE A ATUALIZAÇÃO NO BANCO:
-            # Força a sessão do SQLAlchemy a rastrear o objeto modificado para o UPDATE ocorrer junto com o commit global.
+            # Força a sessão do SQLAlchemy a rastrear o objeto modificado
             session.add(compartimento)
 
         # =========================
@@ -133,11 +140,11 @@ class MovimentacaoService:
         mov = Movimentacao(
             usuario_id=usuario.id,
             compartimento_id=compartimento.id if compartimento else None,
-            ferramenta_id=ferramenta.id if ferramenta else None,
+            ferramenta_id=ferramenta.id if herramienta else None,
             tipo_movimentacao_id=tipo.id,
             etapa_id=etapa.id if etapa else None,
             op_id=op.id if op else None,
-            quantidade=quantidade_movimentada,  # Delta ou valor fixo
+            quantidade=quantidade_movimentada,  # Registra estritamente o que variou (ex: consumiu 4, entrou 20)
             origem_leitura=data.get("origem", "DESCONHECIDA"),
             observacao=data.get("observacao"),
             data_hora=datetime.now(BRASILIA).replace(tzinfo=None)
@@ -156,7 +163,6 @@ class MovimentacaoService:
         # FERRAMENTA
         # =========================
         if ferramenta:
-
             ultima_mov = session.query(Movimentacao).filter_by(
                 ferramenta_id=ferramenta.id
             ).order_by(Movimentacao.data_hora.desc()).first()
@@ -165,7 +171,6 @@ class MovimentacaoService:
                 return "Retirada"
 
             ultimo_tipo = ultima_mov.tipo_movimentacao.nome
-
             if ultimo_tipo == "Retirada":
                 return "Devolucao"
 
@@ -175,12 +180,18 @@ class MovimentacaoService:
         # COMPARTIMENTO (BALANÇA)
         # =========================
         if compartimento:
-
             peso_atual = data.get("peso_atual")
-            peso_anterior = compartimento.peso_atual or 0
+            peso_anterior = compartimento.peso_atual or 0.0
 
             if peso_atual is None:
                 return "Inventario"
+
+            peso_atual = float(peso_atual)
+
+            # Regra de Ouro para o TCC: Se a balança estava zerada no banco (reiniciou), 
+            # qualquer peso positivo colocado nela obrigatoriamente configura uma Entrada.
+            if peso_anterior == 0.0 and peso_atual > 0.0:
+                return "Entrada"
 
             if peso_atual < peso_anterior:
                 return "Consumo"
