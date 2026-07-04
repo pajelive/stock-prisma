@@ -96,7 +96,6 @@ class MovimentacaoService:
             
             if insumo and insumo.peso_unitario and insumo.peso_unitario > 0:
                 # 3. Descoberta do Delta de peso baseado na movimentação física atual
-                # (Se a balança iniciou em zero, peso_anterior era 0, então o peso_novo inteiro é tratado como a variação)
                 delta_peso = abs(peso_novo - peso_anterior)
                 
                 # Desconta a tara se for a primeira pesagem absoluta do zero, ou calcula puramente o delta
@@ -120,7 +119,7 @@ class MovimentacaoService:
                     compartimento.quantidade = max(0, novo_total)
                 else:
                     # Se for inventário ou outro, mantém o anterior total
-                    compartimento.quantidade = quantidade_anterior_total
+                    compartimento.quantidade = quantity_anterior_total
             else:
                 # Sem insumo vinculado
                 quantidade_movimentada = 0
@@ -140,7 +139,7 @@ class MovimentacaoService:
         mov = Movimentacao(
             usuario_id=usuario.id,
             compartimento_id=compartimento.id if compartimento else None,
-            ferramenta_id=ferramenta.id if herramienta else None,
+            ferramenta_id=ferramenta.id if ferramenta else None,  # Corrigido aqui!
             tipo_movimentacao_id=tipo.id,
             etapa_id=etapa.id if etapa else None,
             op_id=op.id if op else None,
