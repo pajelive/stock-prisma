@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import api from "@/services/api";
-import Insumo from "../../components/Insumo";
+import { Insumo } from "../../components/Insumo"; 
 import Modal from "../../components/Modal";
 import { useAuth } from "../../context/AuthContext";
 
