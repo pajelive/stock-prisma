@@ -97,7 +97,7 @@ export default function Compartimentos() {
                         ...c,
                         ...payload,
                         peso_atual: res.data.peso_atual ?? c.peso_atual,
-                        quantidade: res.data.quantidade ?? c.quantidade, // 🚀 CORRIGIDO: Mapeando 'quantidade' da API
+                        quantidade: res.data.quantidade ?? c.quantidade, 
                         insumo_name: insumoSelecionado ? insumoSelecionado.nome : "—"
                     } : c)
                 );
@@ -271,17 +271,23 @@ export default function Compartimentos() {
                         </button>
                     </div>
 
-                    {/* 🚀 TELEMETRIA CORRIGIDA: Lendo 'quantidade' diretamente da API */}
-                    {!isCriando && isAdmin && (
-                        <div className="rounded-lg bg-gray-50 px-3 py-2 text-xs text-gray-500 flex flex-col gap-1.5 border border-gray-200">
-                            <span>
-                                <span className="font-semibold text-gray-600">Peso atual:</span> {selecionado?.peso_atual ?? 0} kg
-                            </span>
-                            <span className="text-sky-700">
-                                <span className="font-semibold">Quantidade em Estoque:</span> {selecionado?.quantidade ?? 0} {selecionado?.insumo?.unidade ?? ""}
-                            </span>
-                        </div>
-                    )}
+                    {/* 🚀 TELEMETRIA EM TEMPO REAL CORRIGIDA */}
+                    {!isCriando && isAdmin && (() => {
+                        const compAtualizado = compartimentos.find(c => c.id === selecionado?.id) || selecionado;
+                        const insumoDoComp = insumos.find(i => i.id === compAtualizado?.insumo_id);
+                        const unidadeTexto = compAtualizado?.insumo?.unidade || insumoDoComp?.unidade || "";
+
+                        return (
+                            <div className="rounded-lg bg-gray-50 px-3 py-2 text-xs text-gray-500 flex flex-col gap-1.5 border border-gray-200">
+                                <span>
+                                    <span className="font-semibold text-gray-600">Peso atual:</span> {compAtualizado?.peso_atual ?? 0} kg
+                                </span>
+                                <span className="text-sky-700">
+                                    <span className="font-semibold">Quantidade em Estoque:</span> {compAtualizado?.quantidade ?? 0} {unidadeTexto}
+                                </span>
+                            </div>
+                        );
+                    })()}
                 </div>
             </Modal>
         </div>
