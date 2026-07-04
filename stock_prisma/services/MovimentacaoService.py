@@ -1,4 +1,5 @@
 from datetime import datetime, timezone, timedelta
+import math  # Opcional, caso queira usar para arredondamento
 
 from stock_prisma.models import (
     Usuario,
@@ -8,8 +9,6 @@ from stock_prisma.models import (
     Ferramenta,
     OrdemProducao
 )
-
-
 class MovimentacaoService:
 
     @staticmethod
@@ -35,7 +34,7 @@ class MovimentacaoService:
         if data.get("compartimento_uid"):
 
             compartimento = session.query(Compartimento).filter_by(
-                nome=data["compartimento_uid"]  # <<< CORREÇÃO FINAL
+                nome=data["compartimento_uid"]
             ).first()
 
             if not compartimento:
@@ -81,10 +80,32 @@ class MovimentacaoService:
             raise ValueError(f"Tipo inválido: {tipo_nome}")
 
         # =========================
-        # ATUALIZA PESO (BALANÇA)
+        # ATUALIZA PESO E QUANTIDADE (BALANÇA)
         # =========================
         if compartimento and data.get("peso_atual") is not None:
-            compartimento.peso_atual = data["peso_atual"]
+            # 1. Atualiza o peso atual bruto vindo da requisição
+            compartimento.peso_atual = float(data["peso_atual"])
+            
+            # 2. Busca o insumo vinculado a este compartimento
+            insumo = compartimento.insumo
+            
+            if insumo and insumo.peso_unitario and insumo.peso_unitario > 0:
+                # 3. Desconta o peso da estrutura (tara)
+                peso_liquido = compartimento.peso_atual - (compartimento.peso_tara or 0.0)
+                
+                # Proteção contra oscilações negativas de balança vazia
+                if peso_liquido < 0:
+                    peso_liquido = 0.0
+                
+                # 4. Divide pelo peso unitário do insumo cadastrado
+                calculo_qtd = peso_liquido / insumo.peso_unitario
+                
+                # DICA: Se seus insumos forem sempre unidades inteiras (ex: parafusos, caixas),
+                # você pode usar int(round(calculo_qtd)) para evitar quebrados por oscilação física.
+                compartimento.quantidade_atual = calculo_qtd
+            else:
+                # Se não houver insumo ou o peso unitário for inválido, zera a contagem
+                compartimento.quantidade_atual = 0.0
 
         # =========================
         # DATA/HORA
