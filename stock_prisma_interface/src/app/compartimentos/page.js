@@ -96,9 +96,8 @@ export default function Compartimentos() {
                     prev.map((c) => c.id === selecionado.id ? {
                         ...c,
                         ...payload,
-                        // 🚀 ATUALIZADO: Preserva os dados dinâmicos vindos da resposta do backend
                         peso_atual: res.data.peso_atual ?? c.peso_atual,
-                        quantidade_atual: res.data.quantidade_atual ?? c.quantidade_atual,
+                        quantidade: res.data.quantidade ?? c.quantidade, // 🚀 CORRIGIDO: Mapeando 'quantidade' da API
                         insumo_name: insumoSelecionado ? insumoSelecionado.nome : "—"
                     } : c)
                 );
@@ -272,14 +271,14 @@ export default function Compartimentos() {
                         </button>
                     </div>
 
-                    {/* 🚀 EXIBIÇÃO DE TELEMETRIA: Apenas leitura para Administradores */}
+                    {/* 🚀 TELEMETRIA CORRIGIDA: Lendo 'quantidade' diretamente da API */}
                     {!isCriando && isAdmin && (
                         <div className="rounded-lg bg-gray-50 px-3 py-2 text-xs text-gray-500 flex flex-col gap-1.5 border border-gray-200">
                             <span>
                                 <span className="font-semibold text-gray-600">Peso atual:</span> {selecionado?.peso_atual ?? 0} kg
                             </span>
                             <span className="text-sky-700">
-                                <span className="font-semibold">Quantidade em Estoque:</span> {selecionado?.quantidade_atual ?? 0} {selecionado?.insumo?.unidade ?? ""}
+                                <span className="font-semibold">Quantidade em Estoque:</span> {selecionado?.quantidade ?? 0} {selecionado?.insumo?.unidade ?? ""}
                             </span>
                         </div>
                     )}
