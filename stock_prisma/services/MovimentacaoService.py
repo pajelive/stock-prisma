@@ -1,8 +1,6 @@
 from datetime import datetime, timezone, timedelta
 import math
 
-from sqlalchemy.orm import joinedload
-
 from stock_prisma.models import (
     Usuario,
     Compartimento,
@@ -12,25 +10,7 @@ from stock_prisma.models import (
     OrdemProducao
 )
 
-
 class MovimentacaoService:
-
-    # Cache em memória dos tipos de movimentação (tabela estática, raramente muda).
-    # Elimina 1 round-trip ao banco por requisição. Se um novo tipo for criado
-    # em runtime, basta chamar MovimentacaoService.invalidar_cache_tipos().
-    _tipos_cache = None
-
-    @classmethod
-    def _get_tipo(cls, session, nome):
-        if cls._tipos_cache is None:
-            cls._tipos_cache = {
-                t.nome: t for t in session.query(TipoMovimentacao).all()
-            }
-        return cls._tipos_cache.get(nome)
-
-    @classmethod
-    def invalidar_cache_tipos(cls):
-        cls._tipos_cache = None
 
     @staticmethod
     def registrar_movimentacao(data, session):
@@ -38,10 +18,7 @@ class MovimentacaoService:
         # =========================
         # USUÁRIO (SEMPRE OBRIGATÓRIO)
         # =========================
-        # joinedload evita um segundo round-trip separado ao acessar usuario.etapa
-        usuario = session.query(Usuario).options(
-            joinedload(Usuario.etapa)
-        ).filter_by(
+        usuario = session.query(Usuario).filter_by(
             uid_rfid=data.get("usuario_uid")
         ).first()
 
@@ -93,7 +70,9 @@ class MovimentacaoService:
             session=session
         )
 
-        tipo = MovimentacaoService._get_tipo(session, tipo_nome)
+        tipo = session.query(TipoMovimentacao).filter_by(
+            nome=tipo_nome
+        ).first()
 
         if not tipo:
             raise ValueError(f"Tipo inválido: {tipo_nome}")
@@ -107,30 +86,30 @@ class MovimentacaoService:
             # Captura o histórico atual que estava salvo antes da nova pesagem
             quantidade_anterior_total = compartimento.quantidade or 0
             peso_anterior = compartimento.peso_atual or 0.0
-
+            
             # 1. Atualiza o peso bruto vindo do microcontrolador para o compartimento
             peso_novo = float(data["peso_atual"])
             compartimento.peso_atual = peso_novo
-
+            
             # 2. Resgata o relacionamento com o insumo
             insumo = compartimento.insumo
-
+            
             if insumo and insumo.peso_unitario and insumo.peso_unitario > 0:
-
+                
                 # Descoberta do Delta de peso baseado na variação física atual
                 delta_peso = abs(peso_novo - peso_anterior)
-
+                
                 # Se saiu do zero absoluto para um peso positivo, desconta a tara estrutural
                 if peso_anterior <= 0.005 and peso_novo > 0.005:
                     peso_liquido_delta = peso_novo - (compartimento.peso_tara or 0.0)
                     if peso_liquido_delta < 0: peso_liquido_delta = 0.0
                 else:
                     peso_liquido_delta = delta_peso
-
+                
                 # Converte o delta medido para a quantidade da movimentação atual
                 calculo_qtd_movimento = peso_liquido_delta / insumo.peso_unitario
                 quantidade_movimentada = int(round(calculo_qtd_movimento))
-
+                
                 # LÓGICA DE ATUALIZAÇÃO DO COMPARTIMENTO (Sincronia Direta pelo Peso Total)
                 if peso_novo <= 0.005:
                     # Se o peso zerou, o estoque atual do compartimento obrigatoriamente é zero
@@ -139,7 +118,7 @@ class MovimentacaoService:
                     # Calcula a quantidade total líquida que restou sobre a balança
                     peso_liquido_total = peso_novo - (compartimento.peso_tara or 0.0)
                     if peso_liquido_total < 0: peso_liquido_total = 0.0
-
+                    
                     quantidade_real_total = int(round(peso_liquido_total / insumo.peso_unitario))
                     compartimento.quantidade = max(0, quantidade_real_total)
             else:
@@ -181,9 +160,7 @@ class MovimentacaoService:
     def _inferir_tipo_movimentacao(ferramenta, compartimento, data, session):
 
         if ferramenta:
-            ultima_mov = session.query(Movimentacao).options(
-                joinedload(Movimentacao.tipo_movimentacao)
-            ).filter_by(
+            ultima_mov = session.query(Movimentacao).filter_by(
                 ferramenta_id=ferramenta.id
             ).order_by(Movimentacao.data_hora.desc()).first()
 
