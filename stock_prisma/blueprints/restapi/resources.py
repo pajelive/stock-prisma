@@ -119,7 +119,7 @@ class MovimentacaoResource(Resource):
                 "compartimento": (
                     m.compartimento.insumo.nome
                     if m.compartimento and m.compartimento.insumo
-                    else (m.compartimento.nome if m.compartimento else None)
+                    else None
                 ),
                 "etapa": m.etapa.nome if m.etapa else None,
                 "op": m.ordem_producao.codigo if m.ordem_producao else None,
