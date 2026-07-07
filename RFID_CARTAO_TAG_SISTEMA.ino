@@ -20,7 +20,7 @@ MFRC522 rfid(SS_PIN, RST_PIN);
 
 char ultimoUID[32] = "";
 unsigned long ultimoTempo = 0;
-const unsigned long intervaloLeitura = 3000; // Debounce do RFID (3 segundos)
+const unsigned long intervaloLeitura = 300; // Debounce do RFID (3 segundos)
 
 // ============================
 // CONFIGURAÇÕES: BALANÇA
@@ -55,6 +55,60 @@ const unsigned long intervaloBalanca = 200;
 unsigned long tempoUltimaTentativaReconexao = 0;
 const unsigned long intervaloReconexao = 5000;
 
+// Controle de falha real (evita falso positivo pelo ciclo natural do HX711,
+// que fica "não pronto" boa parte do tempo entre conversões).
+unsigned long tempoUltimoReadyBalanca = 0;
+const unsigned long timeoutFalhaBalanca = 2000; // 2s sem resposta = falha real
+
+// ============================
+// FEEDBACK NÃO-BLOQUEANTE (LED + BUZZER)
+// ============================
+// Estado único de feedback, usado tanto pelos comandos do agente ('S'/'E')
+// quanto, futuramente, por qualquer lógica local (ex: validação de peso).
+enum EstadoFeedback { FEEDBACK_OCIOSO, FEEDBACK_SUCESSO, FEEDBACK_ERRO };
+
+EstadoFeedback estadoFeedback = FEEDBACK_OCIOSO;
+unsigned long inicioFeedback = 0;
+const unsigned long duracaoFeedback = 400; // ms — ajuste aqui se quiser mais curto/longo
+
+// Dispara o feedback visual/sonoro sem travar o loop().
+void iniciarFeedback(bool sucesso)
+{
+    digitalWrite(LED_AZUL, LOW);
+
+    if (sucesso)
+    {
+        digitalWrite(LED_VERDE, HIGH);
+        digitalWrite(LED_VERMELHO, LOW);
+        tone(BUZZER, 2500);
+        estadoFeedback = FEEDBACK_SUCESSO;
+    }
+    else
+    {
+        digitalWrite(LED_VERMELHO, HIGH);
+        digitalWrite(LED_VERDE, LOW);
+        tone(BUZZER, 800);
+        estadoFeedback = FEEDBACK_ERRO;
+    }
+
+    inicioFeedback = millis();
+}
+
+// Deve ser chamada a cada loop(). Encerra o feedback sozinho quando o
+// tempo configurado (duracaoFeedback) passar, sem usar delay().
+void atualizarFeedback()
+{
+    if (estadoFeedback == FEEDBACK_OCIOSO)
+        return;
+
+    if (millis() - inicioFeedback >= duracaoFeedback)
+    {
+        noTone(BUZZER);
+        estadoFeedback = FEEDBACK_OCIOSO;
+        mostrarEspera();
+    }
+}
+
 // ============================
 // SETUP
 // ============================
@@ -84,6 +138,9 @@ void loop()
     // Escuta comandos do Python em background
     verificarComandosAgente();
 
+    // Atualiza/encerra o feedback visual sem bloquear nada
+    atualizarFeedback();
+
     lerRFID();
 
     if (balancaDisponivel) {
@@ -109,25 +166,11 @@ void verificarComandosAgente()
 
         if (comando == 'S')
         {
-            digitalWrite(LED_AZUL, LOW);
-            digitalWrite(LED_VERDE, HIGH);
-            tone(BUZZER, 2500);
-            delay(150);
-            noTone(BUZZER);
-
-            delay(1000); // 1 segundo de feedback verde
-            mostrarEspera();
+            iniciarFeedback(true);
         }
         else if (comando == 'E')
         {
-            digitalWrite(LED_AZUL, LOW);
-            digitalWrite(LED_VERMELHO, HIGH);
-            tone(BUZZER, 800);
-            delay(400);
-            noTone(BUZZER);
-
-            delay(1200); // 1.2 segundos de feedback vermelho
-            mostrarEspera();
+            iniciarFeedback(false);
         }
     }
 }
@@ -212,6 +255,7 @@ void inicializarBalanca()
         escala.tare(20);
         ultimoPesoEstavel = escala.get_units(5);
         balancaDisponivel = true;
+        tempoUltimoReadyBalanca = millis();
         Serial.println("Balança iniciada.");
     }
     else
@@ -240,6 +284,7 @@ void tentarReconectarBalanca()
         ultimoPesoEnviado = ultimoPesoEstavel;
         contadorEstavel = 0;
         balancaDisponivel = true;
+        tempoUltimoReadyBalanca = millis();
         Serial.println("Balança reconectada e recalibrada.");
     }
 }
@@ -255,14 +300,20 @@ float lerPesoFiltrado()
 
 void lerBalanca()
 {
-    // Se o HX711 parar de responder durante o uso (cabo solto etc.),
-    // volta para o modo "sem balança" em vez de continuar tentando.
+    // O HX711 fica "não pronto" boa parte do tempo entre conversões —
+    // isso é normal e NÃO significa falha. Só desativamos se ficar
+    // um tempo mínimo (timeoutFalhaBalanca) sem nunca responder.
     if (!escala.is_ready())
     {
-        balancaDisponivel = false;
-        Serial.println("Balança parou de responder — desativando temporariamente.");
+        if (millis() - tempoUltimoReadyBalanca >= timeoutFalhaBalanca)
+        {
+            balancaDisponivel = false;
+            Serial.println("Balança parou de responder — desativando temporariamente.");
+        }
         return;
     }
+
+    tempoUltimoReadyBalanca = millis(); // sensor respondeu, reseta o timeout de falha
 
     if (millis() - tempoUltimaLeituraBalanca < intervaloBalanca)
     {
