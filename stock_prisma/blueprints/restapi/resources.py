@@ -88,7 +88,7 @@ class MovimentacaoResource(Resource):
             joinedload(Movimentacao.tipo_movimentacao),
             joinedload(Movimentacao.usuario),
             joinedload(Movimentacao.ferramenta),
-            joinedload(Movimentacao.compartimento),
+            joinedload(Movimentacao.compartimento).joinedload(Compartimento.insumo),
             joinedload(Movimentacao.etapa),
             joinedload(Movimentacao.ordem_producao),
         ).order_by(
@@ -116,7 +116,11 @@ class MovimentacaoResource(Resource):
                 "tipo": m.tipo_movimentacao.nome if m.tipo_movimentacao else None,
                 "usuario": m.usuario.nome if m.usuario else None,
                 "ferramenta": m.ferramenta.nome if m.ferramenta else None,
-                "compartimento": m.compartimento.nome if m.compartimento else None,
+                "compartimento": (
+                    m.compartimento.insumo.nome
+                    if m.compartimento and m.compartimento.insumo
+                    else (m.compartimento.nome if m.compartimento else None)
+                ),
                 "etapa": m.etapa.nome if m.etapa else None,
                 "op": m.ordem_producao.codigo if m.ordem_producao else None,
             })
