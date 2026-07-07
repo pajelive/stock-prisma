@@ -215,7 +215,7 @@ export default function Tabela({
                                 </td>
                                 <td className="px-4 py-3"><TipoPill tipo={m.tipo} /></td>
                                 <td className="px-4 py-3 text-gray-600">{m.ferramenta ? 'Ferramenta' : 'Compartimento'}</td>
-                                <td className="px-4 py-3 font-medium text-gray-800">{m.ferramenta || m.compartimento}</td>
+                                <td className="px-4 py-3 font-medium text-gray-800">{m.ferramenta || m.insumo}</td>
                                 <td className="px-4 py-3 font-mono">{m.quantidade}</td>
                                 <td className="px-4 py-3 text-gray-700 font-medium">{m.usuario}</td>
                                 <td className="px-4 py-3 text-gray-400 text-xs font-mono">{m.data_hora}</td>
