@@ -63,7 +63,7 @@ export default function Navbar() {
                 ) : usuario ? (
                     <button
                         onClick={handleLogout}
-                        className="rounded-full bg-red-500 px-4 py-2 text-sm md:text-base font-semibold text-white transition hover:bg-red-600"
+                        className="rounded-lg px-4 py-2 text-sm font-medium text-gray-600 transition hover:bg-red-50 hover:text-red-600"
                     >
                         Sair
                     </button>
